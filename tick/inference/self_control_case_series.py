@@ -524,13 +524,20 @@ class LearnerSCCS(ABC, Base):
          >>> [(1, 3), (3, 5)]
          """
         n_cols = self.n_lags + 1
-        coeffs = np.array(coeffs).reshape((self.n_features, n_cols))
+        if not self.time_drift:
+            coeffs_list = np.array(coeffs).reshape((self.n_features, n_cols))
+            n_features = self.n_features
+        else:
+            block_size = int(self.n_lags + 1)
+            coeffs_list = [coeffs[i*block_size:(i+1)*block_size] for i in range(self._n_original_features)]
+            coeffs_list.append(coeffs[int(self._n_original_features * block_size):])
+            n_features = len(coeffs_list)
         kernel = np.array([1, -1])
         groups = []
-        for l in range(self.n_features):
+        for l in range(n_features):
             idx = l * n_cols
             acc = 1
-            for change in np.convolve(coeffs[l], kernel, 'valid'):
+            for change in np.convolve(coeffs_list[l], kernel, 'valid'):
                 if change:
                     if acc > 1:
                         groups.append((idx, idx + acc))

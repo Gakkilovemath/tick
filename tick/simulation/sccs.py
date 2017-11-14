@@ -70,8 +70,8 @@ class SimuSCCS(Simu):
         # TODO later: add properties for these parameters
         self.n_correlations = n_correlations
         self.hawkes_exp_kernels = hawkes_exp_kernels
-        self._time_drift = None  # TODO later: is this property useful?
         self.time_drift = time_drift  # function(t), used only for the paper, allow to add a baseline
+        # TODO: make a property from this baseline
 
     def simulate(self):
         """
@@ -249,8 +249,8 @@ class SimuSCCS(Simu):
 
     def _simulate_multinomial_outcomes(self, features, coeffs):
         baseline = np.zeros(self.n_intervals)
-        if self._time_drift is not None:
-            baseline = self._time_drift(np.arange(self.n_intervals))
+        if self.time_drift is not None:
+            baseline = self.time_drift(np.arange(self.n_intervals))
         dot_products = [baseline + feat.dot(coeffs) for feat in features]
 
         def sim(dot_prod):
@@ -261,11 +261,24 @@ class SimuSCCS(Simu):
 
         return [sim(dot_product) for dot_product in dot_products]
 
+    def _simulate_multinomial_outcomes_DEBUG(self, features, coeffs):
+        baseline = np.zeros(self.n_intervals)
+        if self.time_drift is not None:
+            baseline = self.time_drift(np.arange(self.n_intervals))
+        dot_products = [baseline + feat.dot(coeffs) for feat in features]
+
+        def sim(dot_prod):
+            dot_prod -= dot_prod.max()
+            probabilities = np.exp(dot_prod) / np.sum(np.exp(dot_prod))
+            return probabilities
+
+        return baseline, dot_products, [sim(dot_product) for dot_product in dot_products]
+
     def _simulate_poisson_outcomes(self, features, coeffs,
                                    first_tick_only=True):
         baseline = np.zeros(self.n_intervals)
-        if self._time_drift is not None:
-            baseline = self._time_drift(np.arange(self.n_intervals))
+        if self.time_drift is not None:
+            baseline = self.time_drift(np.arange(self.n_intervals))
         dot_products = [baseline + feat.dot(coeffs) for feat in features]
 
         def sim(dot_prod):
