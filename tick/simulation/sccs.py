@@ -29,7 +29,8 @@ class SimuSCCS(Simu):
     ]
 
     _attrinfos = {key: {'writable': False} for key in _const_attr}
-        
+    _attrinfos['hawkes'] = {'writable': True}
+
     def __init__(self, n_cases, n_intervals, n_features, n_lags,
                  time_drift=None, exposure_type="single_exposure",
                  distribution="multinomial", sparse=True,
@@ -43,6 +44,8 @@ class SimuSCCS(Simu):
         self.n_features = n_features
         self.n_lags = n_lags
         self.sparse = sparse
+
+        self.hawkes = None
 
         # attributes with restricted value range
         self._exposure_type = None
@@ -220,6 +223,7 @@ class SimuSCCS(Simu):
         self.hawkes_exp_kernels.track_intensity(dt)
         hawkes.simulate()
 
+        self.hawkes = hawkes
         # TODO later: using -1 here is hack. Do something better.
         features = [[np.min(np.floor(f)) if len(f) > 0 else -1
                      for f in patient_events]
