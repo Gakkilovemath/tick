@@ -70,6 +70,7 @@ class LearnerSCCS(ABC, Base):
     def __init__(self, n_lags: int = 0, penalty: str = 'None',
                  strength_tv=None, strength_group_l1=None,
                  strength_time_drift_tv=None, time_drift=False,
+                 time_drift_groups=None,
                  feature_products: bool = False, feature_type: str = 'infinite',
                  step: float = None, tol: float = 1e-5, max_iter: int = 100,
                  verbose: bool = False, print_every: int = 10,
@@ -109,6 +110,7 @@ class LearnerSCCS(ABC, Base):
         self.strength_group_l1 = strength_group_l1
         self.strength_time_drift = strength_time_drift_tv
         self.time_drift = time_drift  # TODO later: property?
+        self.time_drift_groups = time_drift_groups  # TODO: property + sort
         self.feature_products = feature_products
         self.feature_type = feature_type
 
@@ -226,7 +228,7 @@ class LearnerSCCS(ABC, Base):
                      strength_tv_range: tuple=(),
                      strength_group_l1_range: tuple=(),
                      strength_time_drift_range: tuple=(), logspace=True,
-                     soft_cv: bool = True, n_cv_iter: int= 100,
+                     soft_cv: bool = True, n_cv_iter: int= 10,
                      n_splits: int = 3, shuffle: bool = True,
                      bootstrap: bool = False, bootstrap_rep: int = 200,
                      bootstrap_confidence: float = .95):
@@ -238,7 +240,7 @@ class LearnerSCCS(ABC, Base):
         # split the data with stratified KFold
         kf = StratifiedKFold(n_splits, shuffle, self.random_state)
         labels_interval = np.nonzero(labels)[
-            1]  # TODO: investigate warning here
+            1]  # TODO: investigate this warning
 
         # Training loop
         model_global_parameters = {
@@ -506,6 +508,14 @@ class LearnerSCCS(ABC, Base):
                 end = int(self._n_total_features * block_size)
                 proxs.append(ProxTV(self._strength_time_drift,
                                     range=(start, end)))
+            if self.time_drift and self.time_drift_groups is not None:
+                start = int(self._n_original_features * block_size)
+                end = int(self._n_total_features * block_size)
+                groups = [start, *(self.time_drift_groups+start), end]
+                proxs.extend([
+                    ProxEquality(0, range=(int(groups[i]), int(groups[i+1])))
+                    for i in range(len(groups) -1)
+                ])
 
         prox_obj = ProxMulti(tuple(proxs))
 
@@ -639,7 +649,6 @@ class LearnerSCCS(ABC, Base):
             self._set('_strength_tv', value)
         else:
             raise ValueError('strength_tv should be a float greater than zero.')
-        
 
     @property
     def strength_group_l1(self):
@@ -665,7 +674,6 @@ class LearnerSCCS(ABC, Base):
             raise ValueError('strength_time_drift should be a float greater'
                              ' than zero.')
         
-
     @property
     def random_state(self):
         return self._random_state

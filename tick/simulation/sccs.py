@@ -195,6 +195,8 @@ class SimuSCCS(Simu):
 
             if self.n_correlations:
                 comb = list(combinations(range(self.n_features), 2))
+                comb.extend(list(combinations(range(self.n_features-1, -1, -1),
+                                              2)))
                 if len(comb) > 1:
                     idx = itemgetter(*np.random.choice(range(len(comb)),
                                                        size=self.n_correlations,
