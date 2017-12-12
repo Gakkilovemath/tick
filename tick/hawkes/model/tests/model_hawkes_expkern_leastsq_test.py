@@ -7,8 +7,9 @@ import pickle
 
 from tick.hawkes.model import ModelHawkesFixedExpKernLeastSq
 
-from tick.hawkes.model.tests.hawkes_utils import hawkes_exp_kernel_intensities, \
-    hawkes_least_square_error
+from tick.hawkes.model.tests.model_hawkes_test_utils import (
+    hawkes_exp_kernel_intensities, hawkes_least_square_error
+)
 
 
 class Test(unittest.TestCase):
@@ -68,7 +69,7 @@ class Test(unittest.TestCase):
             hawkes_exp_kernel_intensities(self.baseline, self.decays,
                                           self.adjacency, timestamps)
             for timestamps in self.timestamps_list
-            ]
+        ]
 
         integral_approx = sum([hawkes_least_square_error(intensities,
                                                          timestamps, end_time)
@@ -227,13 +228,12 @@ class Test(unittest.TestCase):
         """...Test that ModelHawkesFixedExpKernLeastSq can be serialized
         """
         for model in [self.model, self.model_list]:
-            
             pickled = pickle.loads(pickle.dumps(model))
-    
+
             self.assertEqual(model.n_nodes, pickled.n_nodes)
             np.testing.assert_equal(model.decays, pickled.decays)
             self.assertEqual(model.n_jumps, pickled.n_jumps)
-    
+
             self.assertEqual(model.n_coeffs, pickled.n_coeffs)
             self.assertEqual(model.n_threads, pickled.n_threads)
             np.testing.assert_equal(model.data, pickled.data)

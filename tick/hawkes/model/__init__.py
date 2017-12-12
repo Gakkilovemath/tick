@@ -2,10 +2,10 @@
 
 import tick.base
 
-from .hawkes_fixed_expkern_loglik import ModelHawkesFixedExpKernLogLik
-from .hawkes_fixed_sumexpkern_loglik import ModelHawkesFixedSumExpKernLogLik
-from .hawkes_fixed_expkern_leastsq import ModelHawkesFixedExpKernLeastSq
-from .hawkes_fixed_sumexpkern_leastsq import ModelHawkesFixedSumExpKernLeastSq
+from .model_hawkes_expkern_loglik import ModelHawkesFixedExpKernLogLik
+from .model_hawkes_sumexpkern_loglik import ModelHawkesFixedSumExpKernLogLik
+from .model_hawkes_expkern_leastsq import ModelHawkesFixedExpKernLeastSq
+from .model_hawkes_sumexpkern_leastsq import ModelHawkesFixedSumExpKernLeastSq
 
 
 __all__ = [

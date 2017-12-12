@@ -4,11 +4,12 @@ import numpy as np
 
 from tick.base import actual_kwargs
 from tick.hawkes.inference.base import LearnerHawkesParametric
-from tick.hawkes.model import ModelHawkesFixedExpKernLogLik, \
-    ModelHawkesFixedExpKernLeastSq
 from tick.prox import ProxElasticNet, ProxL1, ProxL2Sq, ProxNuclear, \
     ProxPositive
-from tick.hawkes import SimuHawkesExpKernels
+from tick.hawkes import (
+    ModelHawkesFixedExpKernLogLik, ModelHawkesFixedExpKernLeastSq,
+    SimuHawkesExpKernels
+)
 
 
 class HawkesExpKern(LearnerHawkesParametric):

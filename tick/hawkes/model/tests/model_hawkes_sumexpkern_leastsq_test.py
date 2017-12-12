@@ -9,7 +9,7 @@ from scipy.optimize import check_grad, fmin_bfgs
 
 from tick.base.inference import InferenceTest
 from tick.hawkes.model import ModelHawkesFixedSumExpKernLeastSq
-from tick.hawkes.model.tests.hawkes_utils import (
+from tick.hawkes.model.tests.model_hawkes_test_utils import (
     hawkes_sumexp_kernel_intensities, hawkes_sumexp_kernel_varying_intensities,
     hawkes_least_square_error)
 

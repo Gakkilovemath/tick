@@ -3,11 +3,10 @@
 import numpy as np
 
 from tick.hawkes.inference.base import LearnerHawkesNoParam
-from tick.hawkes.model import ModelHawkesFixedExpKernLogLik
 from tick.prox.prox_l1 import ProxL1
 from tick.prox import ProxNuclear
 from tick.solver.base.utils import relative_distance
-from tick.hawkes import SimuHawkesExpKernels
+from tick.hawkes import ModelHawkesFixedExpKernLogLik, SimuHawkesExpKernels
 from tick.hawkes.build.hawkes import HawkesADM4 as _HawkesADM4
 
 

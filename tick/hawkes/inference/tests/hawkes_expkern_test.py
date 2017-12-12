@@ -6,9 +6,9 @@ import numpy as np
 
 from tick.base.inference import InferenceTest
 from tick.hawkes.inference import HawkesExpKern
-from tick.hawkes.model.hawkes_fixed_expkern_leastsq import \
+from tick.hawkes.model.model_hawkes_expkern_leastsq import \
     ModelHawkesFixedExpKernLeastSq
-from tick.hawkes.model.hawkes_fixed_expkern_loglik import \
+from tick.hawkes.model.model_hawkes_expkern_loglik import \
     ModelHawkesFixedExpKernLogLik
 from tick.hawkes import SimuHawkesExpKernels
 from tick.prox import ProxNuclear
