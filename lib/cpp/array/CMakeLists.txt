@@ -21,5 +21,6 @@ add_library(tick_array EXCLUDE_FROM_ALL
         ${TICK_ARRAY_INCLUDE_DIR}/carray_python.h
         ${TICK_ARRAY_INCLUDE_DIR}/vector_operations.h
         ${TICK_ARRAY_INCLUDE_DIR}/alloc.h
+        ${TICK_ARRAY_INCLUDE_DIR}/promote.h
         alloc.cpp
         )
