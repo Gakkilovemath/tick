@@ -405,7 +405,7 @@ class HawkesConditionalLaw(Base):
 
         Examples
         --------
-        >>> from tick.hawkes.inference import HawkesConditionalLaw
+        >>> from tick.hawkes import HawkesConditionalLaw
         >>> import numpy as np
         >>> learner = HawkesConditionalLaw()
         >>> learner.incremental_fit([np.array([2.1, 3, 4]),
@@ -436,7 +436,7 @@ class HawkesConditionalLaw(Base):
 
         Examples
         --------
-        >>> from tick.hawkes.inference import HawkesConditionalLaw
+        >>> from tick.hawkes import HawkesConditionalLaw
         >>> import numpy as np
         >>> learner = HawkesConditionalLaw()
         >>> learner.incremental_fit([np.array([2.1, 3, 4]),

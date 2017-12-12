@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 import itertools
 
-from tick.hawkes.inference import HawkesSumExpKern
+from tick.hawkes import HawkesSumExpKern
 from tick.plot import plot_hawkes_kernels
 from tick.hawkes import SimuHawkesSumExpKernels
 

@@ -12,7 +12,14 @@ from .simulation import (
     HawkesKernelSumExp, HawkesKernelTimeFunc
 )
 
+from .inference import (
+    HawkesADM4, HawkesExpKern, HawkesSumExpKern, HawkesBasisKernels,
+    HawkesConditionalLaw, HawkesEM, HawkesSumGaussians
+)
+
 __all__ = [
+    "HawkesADM4", "HawkesExpKern", "HawkesSumExpKern", "HawkesBasisKernels",
+    "HawkesConditionalLaw", "HawkesEM", "HawkesSumGaussians",
     "ModelHawkesFixedExpKernLogLik", "ModelHawkesFixedExpKernLeastSq",
     "ModelHawkesFixedSumExpKernLogLik", "ModelHawkesFixedSumExpKernLeastSq",
     "SimuPoissonProcess", "SimuInhomogeneousPoisson", "SimuHawkes",
