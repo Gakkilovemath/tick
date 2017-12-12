@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 from tick.base import TimeFunction
-from tick.hawkes.simulation import SimuInhomogeneousPoisson
+from tick.hawkes import SimuInhomogeneousPoisson
 
 
 class Test(unittest.TestCase):

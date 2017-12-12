@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from tick.hawkes.simulation.hawkes_kernels import HawkesKernelExp, HawkesKernelPowerLaw
+from tick.hawkes import HawkesKernelExp, HawkesKernelPowerLaw
 
 
 # We test that HawkesKernel method are correctly instantiated with an

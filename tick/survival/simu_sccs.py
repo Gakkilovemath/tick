@@ -91,7 +91,7 @@ class SimuSCCS(Simu):
     Examples
     --------
     >>> import numpy as np
-    >>> from tick.hawkes.simulation import SimuSCCS
+    >>> from tick.survival import SimuSCCS
     >>> sim = SimuSCCS(n_samples=2, n_intervals=3, n_features=2, n_lags=2,
     ... seed=42, sparse=False, exposure_type="short")
     >>> features, labels, censoring, coeffs = sim.simulate()

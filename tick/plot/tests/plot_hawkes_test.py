@@ -7,7 +7,7 @@ import itertools
 
 from tick.hawkes.inference import HawkesSumExpKern
 from tick.plot import plot_hawkes_kernels
-from tick.hawkes.simulation import SimuHawkesSumExpKernels
+from tick.hawkes import SimuHawkesSumExpKernels
 
 
 class Test(unittest.TestCase):

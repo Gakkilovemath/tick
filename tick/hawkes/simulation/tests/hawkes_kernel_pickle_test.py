@@ -6,8 +6,10 @@ import pickle
 
 import numpy as np
 from tick.base import TimeFunction
-from tick.hawkes.simulation.hawkes_kernels import HawkesKernel0, HawkesKernelExp, \
-    HawkesKernelSumExp, HawkesKernelPowerLaw, HawkesKernelTimeFunc
+from tick.hawkes import (
+    HawkesKernel0, HawkesKernelExp, HawkesKernelSumExp,
+    HawkesKernelPowerLaw, HawkesKernelTimeFunc
+)
 
 
 class Test(unittest.TestCase):

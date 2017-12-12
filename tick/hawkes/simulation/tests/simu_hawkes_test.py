@@ -8,8 +8,7 @@ from itertools import product
 import numpy as np
 
 from tick.base import TimeFunction
-from tick.plot import plot_point_process
-from tick.hawkes.simulation import SimuHawkes, HawkesKernelExp, \
+from tick.hawkes import SimuHawkes, HawkesKernelExp, \
     HawkesKernelSumExp, \
     HawkesKernel0, HawkesKernelPowerLaw, HawkesKernelTimeFunc, \
     SimuHawkesExpKernels

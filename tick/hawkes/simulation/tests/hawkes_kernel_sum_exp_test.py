@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from tick.hawkes.simulation.hawkes_kernels import HawkesKernelSumExp
+from tick.hawkes import HawkesKernelSumExp
 
 
 class Test(unittest.TestCase):

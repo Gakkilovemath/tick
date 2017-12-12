@@ -8,7 +8,7 @@ from tick.base import actual_kwargs
 from tick.base.learner import LearnerOptim
 from tick.base_model import ModelLipschitz
 from tick.prox import ProxElasticNet, ProxL1, ProxL2Sq, ProxPositive
-from tick.hawkes.simulation import SimuHawkes
+from tick.hawkes import SimuHawkes
 from tick.solver import AGD, GD, SGD, SVRG, BFGS
 
 

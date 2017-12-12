@@ -5,10 +5,9 @@ import unittest
 import numpy as np
 
 from tick.base import TimeFunction
-from tick.hawkes.simulation import SimuHawkes, HawkesKernelExp, \
-    HawkesKernelSumExp, HawkesKernel0, HawkesKernelPowerLaw, \
-    HawkesKernelTimeFunc
-from tick.hawkes.simulation.hawkes_multi import SimuHawkesMulti
+from tick.hawkes import (
+    SimuHawkes, HawkesKernelExp, HawkesKernelSumExp, HawkesKernel0,
+    HawkesKernelPowerLaw, HawkesKernelTimeFunc, SimuHawkesMulti)
 
 
 class Test(unittest.TestCase):

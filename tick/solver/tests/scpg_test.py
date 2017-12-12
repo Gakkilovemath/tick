@@ -8,7 +8,7 @@ from tick.hawkes.model import ModelHawkesFixedExpKernLogLik
 from tick.prox import ProxL2Sq
 from tick.solver import SCPG
 from . import TestSolver
-from tick.hawkes.simulation import SimuHawkesExpKernels
+from tick.hawkes import SimuHawkesExpKernels
 
 
 class Test(TestSolver):

@@ -2,7 +2,7 @@
 
 import unittest
 
-from tick.hawkes.simulation.hawkes_kernels import HawkesKernelExp
+from tick.hawkes import HawkesKernelExp
 
 
 class Test(unittest.TestCase):

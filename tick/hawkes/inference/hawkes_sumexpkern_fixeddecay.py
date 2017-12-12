@@ -6,7 +6,7 @@ from tick.base import actual_kwargs
 from tick.hawkes.inference.base import LearnerHawkesParametric
 from tick.hawkes.model import ModelHawkesFixedSumExpKernLeastSq
 from tick.prox import ProxElasticNet, ProxL1, ProxL2Sq, ProxPositive
-from tick.hawkes.simulation.hawkes_sumexp_kernels import SimuHawkesSumExpKernels
+from tick.hawkes import SimuHawkesSumExpKernels
 
 
 class HawkesSumExpKern(LearnerHawkesParametric):

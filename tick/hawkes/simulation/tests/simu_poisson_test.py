@@ -2,7 +2,7 @@
 
 import unittest
 import numpy as np
-from tick.hawkes.simulation import SimuPoissonProcess
+from tick.hawkes import SimuPoissonProcess
 from scipy.stats import norm
 
 

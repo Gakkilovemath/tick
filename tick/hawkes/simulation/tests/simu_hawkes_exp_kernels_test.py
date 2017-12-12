@@ -4,27 +4,23 @@ import unittest
 from itertools import product
 import numpy as np
 
-from tick.hawkes.simulation import SimuHawkesSumExpKernels, HawkesKernelExp, \
-    HawkesKernel0, HawkesKernelSumExp
+from tick.hawkes import SimuHawkesExpKernels, HawkesKernelExp, HawkesKernel0
 
 
 class Test(unittest.TestCase):
     def setUp(self):
         np.random.seed(23982)
         self.n_nodes = 3
-        self.n_decays = 4
         self.baseline = np.random.rand(self.n_nodes)
-        self.adjacency = np.random.rand(self.n_nodes, self.n_nodes,
-                                        self.n_decays) / 10
-        self.decays = np.random.rand(self.n_decays)
+        self.adjacency = np.random.rand(self.n_nodes, self.n_nodes) / 2
+        self.decays = np.random.rand(self.n_nodes, self.n_nodes)
 
-        self.adjacency[0, 0, :] = 0
-        self.adjacency[-1, -1, :] = 0
+        self.adjacency[0, 0] = 0
+        self.adjacency[-1, -1] = 0
 
-        self.hawkes = SimuHawkesSumExpKernels(self.adjacency, self.decays,
-                                              baseline=self.baseline,
-                                              seed=203,
-                                              verbose=False)
+        self.hawkes = SimuHawkesExpKernels(self.adjacency, self.decays,
+                                           baseline=self.baseline, seed=203,
+                                           verbose=False)
 
     def test_hawkes_exponential_kernels(self):
         """...Test creation of a Hawkes Process with exponential kernels
@@ -34,7 +30,7 @@ class Test(unittest.TestCase):
         for i, j in product(range(self.n_nodes), range(self.n_nodes)):
             kernel_ij = self.hawkes.kernels[i, j]
 
-            if np.linalg.norm(self.adjacency[i, j, :]) == 0:
+            if self.adjacency[i, j] == 0:
                 self.assertEqual(kernel_ij.__class__, HawkesKernel0)
 
                 # We check that all 0 adjacency share the same kernel 0
@@ -46,10 +42,9 @@ class Test(unittest.TestCase):
                     self.assertEqual(kernel_0, kernel_ij)
 
             else:
-                self.assertEqual(kernel_ij.__class__, HawkesKernelSumExp)
-                np.testing.assert_array_equal(kernel_ij.decays, self.decays)
-                np.testing.assert_array_equal(kernel_ij.intensities,
-                                              self.adjacency[i, j, :])
+                self.assertEqual(kernel_ij.__class__, HawkesKernelExp)
+                self.assertEqual(kernel_ij.decay, self.decays[i, j])
+                self.assertEqual(kernel_ij.intensity, self.adjacency[i, j])
 
         np.testing.assert_array_equal(self.baseline, self.hawkes.baseline)
 
@@ -58,7 +53,7 @@ class Test(unittest.TestCase):
         methods
         """
         self.assertAlmostEqual(self.hawkes.spectral_radius(),
-                               0.5202743505580953)
+                               0.6645446549735008)
 
         self.hawkes.adjust_spectral_radius(0.6)
         self.assertAlmostEqual(self.hawkes.spectral_radius(), 0.6)
@@ -77,16 +72,6 @@ class Test(unittest.TestCase):
         for i in range(self.hawkes.n_nodes):
             self.assertAlmostEqual(np.mean(self.hawkes.tracked_intensity[i]),
                                    mean_intensity[i], delta=0.1)
-
-    def test_hawkes_sumexp_constructor_errors(self):
-        bad_adjacency = np.random.rand(self.n_nodes, self.n_nodes,
-                                       self.n_decays + 1)
-
-        msg = "^adjacency matrix shape should be \(3, 3, 4\) but its shape " \
-              "is \(3, 3, 5\)$"
-        with self.assertRaisesRegex(ValueError, msg):
-            SimuHawkesSumExpKernels(bad_adjacency, self.decays,
-                                    baseline=self.baseline)
 
 
 if __name__ == "__main__":

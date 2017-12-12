@@ -2,7 +2,7 @@
 
 import unittest
 
-from tick.hawkes.simulation.hawkes_kernels import HawkesKernelPowerLaw
+from tick.hawkes import HawkesKernelPowerLaw
 
 
 class Test(unittest.TestCase):

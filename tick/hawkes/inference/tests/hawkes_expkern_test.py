@@ -10,7 +10,7 @@ from tick.hawkes.model.hawkes_fixed_expkern_leastsq import \
     ModelHawkesFixedExpKernLeastSq
 from tick.hawkes.model.hawkes_fixed_expkern_loglik import \
     ModelHawkesFixedExpKernLogLik
-from tick.hawkes.simulation import SimuHawkesExpKernels
+from tick.hawkes import SimuHawkesExpKernels
 from tick.prox import ProxNuclear
 from tick.prox import ProxPositive, ProxL1, ProxL2Sq, ProxElasticNet
 from tick.solver import AGD, GD, BFGS, SGD, SVRG

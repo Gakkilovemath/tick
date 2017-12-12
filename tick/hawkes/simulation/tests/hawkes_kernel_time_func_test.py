@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 
 from tick.base import TimeFunction
-from tick.hawkes.simulation.hawkes_kernels import HawkesKernelTimeFunc
+from tick.hawkes import HawkesKernelTimeFunc
 
 
 class Test(unittest.TestCase):

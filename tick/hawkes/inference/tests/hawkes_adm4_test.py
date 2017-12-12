@@ -3,7 +3,7 @@
 import unittest
 import numpy as np
 from tick.hawkes.inference import HawkesADM4
-from tick.hawkes.simulation import SimuHawkesExpKernels, SimuHawkesMulti
+from tick.hawkes import SimuHawkesExpKernels, SimuHawkesMulti
 
 
 class Test(unittest.TestCase):
