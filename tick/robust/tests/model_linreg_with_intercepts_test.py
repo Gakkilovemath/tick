@@ -6,7 +6,7 @@ import numpy as np
 from scipy.sparse import csr_matrix
 
 from tick.linear_model import SimuLinReg
-from tick.linear_model.tests.generalized_linear_model import TestGLM
+from tick.base_model.tests.generalized_linear_model import TestGLM
 from tick.robust import ModelLinRegWithIntercepts
 from tick.simulation import weights_sparse_gauss
 
