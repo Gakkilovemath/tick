@@ -200,42 +200,6 @@ class SwigPath:
         self.lib_filename = '{}{}'.format(self.private_extension_name,
                                           sysconfig.get_config_var('SO'))
 
-        print("self.extension_path ", self.extension_path)
-        print("self.build ", self.build)
-        print("self.lib_filename ", self.lib_filename)
-
-    def _check_configuration(self):
-        exception_base_msg = (
-            "Swig directory structure must follow this structure :\n"
-            "├── module_path\n"
-            "    ├── src\n"
-            "    │   ├── file.h\n"
-            "    │   └── file.cpp\n"
-            "    ├── swig\n"
-            "    │   └── file.i\n"
-            "    └── build\n"
-            "        └── generated_files.*\n"
-        )
-        exception_missing_directory_msg = "%s folder was missing"
-        exception_file_instead_directory_msg = "%s should be a directory, " \
-                                               "not a file"
-
-        # # Check that src and swig folders do exists
-        # for directory in [self.src, self.swig]:
-        #     if not os.path.exists(directory):
-        #         raise FileNotFoundError(exception_base_msg + (
-        #             exception_missing_directory_msg % directory))
-        #     elif not os.path.isdir(directory):
-        #         raise NotADirectoryError(exception_base_msg + (
-        #             exception_file_instead_directory_msg % directory))
-
-        # # Check that build is a directory (not a file) or create it
-        # if not os.path.exists(self.build):
-        #     os.mkdir(self.build)
-        # elif not os.path.isdir(self.build):
-        #     raise NotADirectoryError(exception_base_msg + (
-        #         exception_file_instead_directory_msg % self.build))
-
 
 def create_extension(extension_name, module_dir,
                      cpp_files, h_files, swig_files, folders=[],
