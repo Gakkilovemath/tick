@@ -9,7 +9,7 @@ from tick.base import TimeFunction
 from tick.hawkes.simulation.base import SimuPointProcess
 from numpy.linalg import eig, inv
 
-from ..build.hawkes import Hawkes as _Hawkes
+from tick.hawkes.build.hawkes import Hawkes as _Hawkes
 from .hawkes_kernels import HawkesKernel0
 
 
