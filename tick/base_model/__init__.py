@@ -25,5 +25,6 @@ __all__ = [
     "ModelSecondOrder",
     "ModelLabelsFeatures",
     "ModelSelfConcordant",
-    "ModelGeneralizedLinear"
+    "ModelGeneralizedLinear",
+    "ModelLipschitz",
 ]
