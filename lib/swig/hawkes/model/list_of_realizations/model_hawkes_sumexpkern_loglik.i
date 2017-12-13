@@ -6,11 +6,11 @@
 %}
 
 
-class ModelHawkesFixedSumExpKernLogLikList : public ModelHawkesFixedKernLogLikList {
+class ModelHawkesSumExpKernLogLik : public ModelHawkesFixedKernLogLikList {
     
 public:
     
-  ModelHawkesFixedSumExpKernLogLikList(const ArrayDouble &decays,
+  ModelHawkesSumExpKernLogLik(const ArrayDouble &decays,
                                        const int max_n_threads = 1);
 
   void set_decays(ArrayDouble &decays);

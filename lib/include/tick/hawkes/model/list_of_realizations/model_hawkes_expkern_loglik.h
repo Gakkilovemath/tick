@@ -7,12 +7,12 @@
 #include "tick/hawkes/model/base/model_hawkes_loglik.h"
 #include "tick/hawkes/model/model_hawkes_expkern_loglik_single.h"
 
-/** \class ModelHawkesFixedExpKernLogLikList
+/** \class ModelHawkesExpKernLogLik
  * \brief Class for computing L2 Contrast function and gradient for Hawkes processes with
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  * on a list of realizations
  */
-class DLL_PUBLIC ModelHawkesFixedExpKernLogLikList : public ModelHawkesFixedKernLogLikList {
+class DLL_PUBLIC ModelHawkesExpKernLogLik : public ModelHawkesFixedKernLogLikList {
   //! @brief Value of decay for this model. Shared by all kernels
   double decay;
 
@@ -23,7 +23,7 @@ class DLL_PUBLIC ModelHawkesFixedExpKernLogLikList : public ModelHawkesFixedKern
    * \param max_n_threads : number of cores to be used for multithreading. If negative,
    * the number of physical cores will be used
    */
-  ModelHawkesFixedExpKernLogLikList(const double decay,
+  ModelHawkesExpKernLogLik(const double decay,
                                     const int max_n_threads = 1);
 
   /**

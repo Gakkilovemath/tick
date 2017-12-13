@@ -8,11 +8,11 @@
 #include "tick/hawkes/model/model_hawkes_sumexpkern_leastsq_single.h"
 #include "tick/hawkes/model/base/model_hawkes_leastsq.h"
 
-/** \class ModelHawkesFixedSumExpKernLeastSqList
+/** \class ModelHawkesSumExpKernLeastSq
  * \brief Class for computing L2 Contrast function and gradient for Hawkes processes with
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  */
-class DLL_PUBLIC ModelHawkesFixedSumExpKernLeastSqList : public ModelHawkesLeastSqList {
+class DLL_PUBLIC ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSqList {
   //! @brief Some arrays used for intermediate computings.
   std::vector<ArrayDouble2d> E, Dgg, C;
   ArrayDouble2dList1D Dg;
@@ -33,14 +33,14 @@ class DLL_PUBLIC ModelHawkesFixedSumExpKernLeastSqList : public ModelHawkesLeast
  public:
   //! @brief Empty constructor
   //! This constructor should only be used for serialization
-  ModelHawkesFixedSumExpKernLeastSqList(): ModelHawkesLeastSqList(0, 0) {}
+  ModelHawkesSumExpKernLeastSq(): ModelHawkesLeastSqList(0, 0) {}
 
   //! @brief Constructor
   //! \param timestamps : a list of arrays representing the realization
   //! \param decays : the 2d array of the decays
   //! \param n_cores : number of cores to be used for multithreading
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster (approximated) exponential function
-  ModelHawkesFixedSumExpKernLeastSqList(const ArrayDouble &decays,
+  ModelHawkesSumExpKernLeastSq(const ArrayDouble &decays,
                                         const ulong n_baselines,
                                         const double period_length,
                                         const unsigned int max_n_threads = 1,

@@ -253,7 +253,7 @@ TEST_F(HawkesModelTest, compute_loss_least_square_list){
   ArrayDouble2d decays(2, 2);
   decays.fill(2);
 
-  ModelHawkesFixedExpKernLeastSqList model(decays.as_sarray2d_ptr(), 2);
+  ModelHawkesExpKernLeastSq model(decays.as_sarray2d_ptr(), 2);
 
   auto timestamps_list = SArrayDoublePtrList2D(0);
   timestamps_list.push_back(timestamps);
@@ -279,7 +279,7 @@ TEST_F(HawkesModelTest, least_square_list_serialization){
   ArrayDouble2d decays(2, 2);
   decays.fill(2);
 
-  ModelHawkesFixedExpKernLeastSqList model(decays.as_sarray2d_ptr(), 2);
+  ModelHawkesExpKernLeastSq model(decays.as_sarray2d_ptr(), 2);
 
   auto timestamps_list = SArrayDoublePtrList2D(0);
   timestamps_list.push_back(timestamps);
@@ -303,7 +303,7 @@ TEST_F(HawkesModelTest, least_square_list_serialization){
   {
     cereal::BinaryInputArchive inputArchive(os);
 
-    ModelHawkesFixedExpKernLeastSqList restored_model(nullptr, 0);
+    ModelHawkesExpKernLeastSq restored_model(nullptr, 0);
     inputArchive( restored_model );
 
     EXPECT_EQ(restored_model.get_n_nodes(), 2);
@@ -319,7 +319,7 @@ TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_list){
   decays.fill(2);
 
   ArrayDouble end_times {5.65, 5.87};
-  ModelHawkesFixedSumExpKernLeastSqList model(decays, 1, 1e300, 1);
+  ModelHawkesSumExpKernLeastSq model(decays, 1, 1e300, 1);
   model.incremental_set_data(timestamps, end_times[0]);
   model.incremental_set_data(timestamps, end_times[1]);
 
@@ -339,7 +339,7 @@ TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_list_varying_baseline)
   decays.fill(2);
 
   ArrayDouble end_times {5.65, 5.87};
-  ModelHawkesFixedSumExpKernLeastSqList model(decays, 3, 2., 1);
+  ModelHawkesSumExpKernLeastSq model(decays, 3, 2., 1);
   model.incremental_set_data(timestamps, end_times[0]);
   model.incremental_set_data(timestamps, end_times[1]);
 
@@ -359,7 +359,7 @@ TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_list_serialization){
   ArrayDouble decays {0.1, 5.};
 
   ArrayDouble end_times {5.65, 5.87};
-  ModelHawkesFixedSumExpKernLeastSqList model(decays, 1, 1e300, 1);
+  ModelHawkesSumExpKernLeastSq model(decays, 1, 1e300, 1);
   model.incremental_set_data(timestamps, end_times[0]);
   model.incremental_set_data(timestamps, end_times[1]);
 
@@ -375,7 +375,7 @@ TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_list_serialization){
   {
     cereal::JSONInputArchive inputArchive(os);
 
-    ModelHawkesFixedSumExpKernLeastSqList restored_model;
+    ModelHawkesSumExpKernLeastSq restored_model;
     inputArchive( restored_model );
 
     EXPECT_EQ(restored_model.get_n_nodes(), 2);
@@ -389,7 +389,7 @@ TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_list_serialization){
 TEST_F(HawkesModelTest, compute_loss_loglik_list){
   const double decay = 2.;
 
-  ModelHawkesFixedExpKernLogLikList model(decay, 2);
+  ModelHawkesExpKernLogLik model(decay, 2);
 
   auto timestamps_list = SArrayDoublePtrList2D(0);
   timestamps_list.push_back(timestamps);
@@ -416,7 +416,7 @@ TEST_F(HawkesModelTest, compute_loss_loglik_list){
 TEST_F(HawkesModelTest, check_sto_loglikelihood_list){
   const double decay = 2.;
 
-  ModelHawkesFixedExpKernLogLikList model(decay, 1);
+  ModelHawkesExpKernLogLik model(decay, 1);
 
   model.incremental_set_data(timestamps, 5.65);
   model.incremental_set_data(timestamps, 5.87);
@@ -450,7 +450,7 @@ TEST_F(HawkesModelTest, check_sto_loglikelihood_list){
 TEST_F(HawkesModelTest, compute_loss_loglikelihood_list_sum_exp_kern){
   ArrayDouble decays {1., 2., 3.};
 
-  ModelHawkesFixedSumExpKernLogLikList model(decays, 1);
+  ModelHawkesSumExpKernLogLik model(decays, 1);
 
   model.incremental_set_data(timestamps, 5.65);
   model.incremental_set_data(timestamps, 5.87);

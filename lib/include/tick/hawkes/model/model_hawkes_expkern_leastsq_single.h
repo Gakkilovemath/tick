@@ -6,7 +6,7 @@
 #include "tick/base/base.h"
 #include "tick/hawkes/model/base/model_hawkes_single.h"
 
-class ModelHawkesFixedExpKernLeastSqList;
+class ModelHawkesExpKernLeastSq;
 
 /** \class ModelHawkesExpKernLeastSqSingle
  * \brief Class for computing L2 Contrast function and gradient for Hawkes processes with
@@ -108,7 +108,7 @@ class DLL_PUBLIC ModelHawkesExpKernLeastSqSingle : public ModelHawkesSingle {
    */
   void hessian_i(const ulong i, ArrayDouble &out);
 
-  friend class ModelHawkesFixedExpKernLeastSqList;
+  friend class ModelHawkesExpKernLeastSq;
 
  public:
   template<class Archive>

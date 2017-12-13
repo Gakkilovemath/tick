@@ -7,7 +7,7 @@
 
 #include "tick/hawkes/model/base/model_hawkes_loglik_single.h"
 
-class ModelHawkesFixedSumExpKernLogLikList;
+class ModelHawkesSumExpKernLogLik;
 
 /**
  * \class ModelHawkesSumExpKernLogLikSingle
@@ -80,7 +80,7 @@ class DLL_PUBLIC ModelHawkesSumExpKernLogLikSingle : public ModelHawkesFixedKern
     return decays.size();
   }
 
-  friend ModelHawkesFixedSumExpKernLogLikList;
+  friend ModelHawkesSumExpKernLogLik;
 };
 
 #endif  // TICK_OPTIM_MODEL_SRC_HAWKES_FIXED_SUMEXPKERN_LOGLIK_H_

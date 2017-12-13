@@ -19,10 +19,10 @@
 %shared_ptr(ModelHawkesLeastSqList);
 %shared_ptr(ModelHawkesFixedKernLogLikList);
 
-%shared_ptr(ModelHawkesFixedExpKernLeastSqList);
-%shared_ptr(ModelHawkesFixedSumExpKernLeastSqList);
-%shared_ptr(ModelHawkesFixedExpKernLogLikList);
-%shared_ptr(ModelHawkesFixedSumExpKernLogLikList);
+%shared_ptr(ModelHawkesExpKernLeastSq);
+%shared_ptr(ModelHawkesSumExpKernLeastSq);
+%shared_ptr(ModelHawkesExpKernLogLik);
+%shared_ptr(ModelHawkesSumExpKernLogLik);
 
 
 %include base/model_hawkes.i

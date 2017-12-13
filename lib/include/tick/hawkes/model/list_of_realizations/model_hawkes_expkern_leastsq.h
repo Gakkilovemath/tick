@@ -7,12 +7,12 @@
 #include "tick/hawkes/model/base/model_hawkes_leastsq.h"
 #include "tick/hawkes/model/model_hawkes_expkern_leastsq_single.h"
 
-/** \class ModelHawkesFixedExpKernLeastSqList
+/** \class ModelHawkesExpKernLeastSq
  * \brief Class for computing L2 Contrast function and gradient for Hawkes processes with
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  * on a list of realizations
  */
-class DLL_PUBLIC ModelHawkesFixedExpKernLeastSqList : public ModelHawkesLeastSqList {
+class DLL_PUBLIC ModelHawkesExpKernLeastSq : public ModelHawkesLeastSqList {
   //! @brief Some arrays used for intermediate computings. They are initialized in init()
   ArrayDouble2d E, Dg, Dg2, C;
 
@@ -22,14 +22,14 @@ class DLL_PUBLIC ModelHawkesFixedExpKernLeastSqList : public ModelHawkesLeastSqL
  public:
   //! @brief Empty constructor
   //! This constructor should only be used for serialization
-  ModelHawkesFixedExpKernLeastSqList(): ModelHawkesLeastSqList(0, 0) {}
+  ModelHawkesExpKernLeastSq(): ModelHawkesLeastSqList(0, 0) {}
 
   //! @brief Constructor
   //! \param decays : the 2d array of the decays
   //! \param max_n_threads : number of cores to be used for multithreading. If negative,
   //! the number of physical cores will be used
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster (approximated) exponential function
-  ModelHawkesFixedExpKernLeastSqList(const SArrayDouble2dPtr decays,
+  ModelHawkesExpKernLeastSq(const SArrayDouble2dPtr decays,
                                      const int max_n_threads = 1,
                                      const unsigned int optimization_level = 0);
 

@@ -6,11 +6,11 @@
 %}
 
 
-class ModelHawkesFixedExpKernLogLikList : public ModelHawkesFixedKernLogLikList {
+class ModelHawkesExpKernLogLik : public ModelHawkesFixedKernLogLikList {
     
 public:
     
-  ModelHawkesFixedExpKernLogLikList(const double decay,
+  ModelHawkesExpKernLogLik(const double decay,
                                     const int max_n_threads = 1);
 
   void set_decay(const double decay);

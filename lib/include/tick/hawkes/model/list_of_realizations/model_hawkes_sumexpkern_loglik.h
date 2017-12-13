@@ -7,12 +7,12 @@
 #include "tick/hawkes/model/base/model_hawkes_loglik.h"
 #include "tick/hawkes/model/model_hawkes_sumexpkern_loglik_single.h"
 
-/** \class ModelHawkesFixedSumExpKernLogLikList
+/** \class ModelHawkesSumExpKernLogLik
  * \brief Class for computing L2 Contrast function and gradient for Hawkes processes with
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  * on a list of realizations
  */
-class DLL_PUBLIC ModelHawkesFixedSumExpKernLogLikList : public ModelHawkesFixedKernLogLikList {
+class DLL_PUBLIC ModelHawkesSumExpKernLogLik : public ModelHawkesFixedKernLogLikList {
   //! @brief Value of decays array for this model
   ArrayDouble decays;
 
@@ -23,7 +23,7 @@ class DLL_PUBLIC ModelHawkesFixedSumExpKernLogLikList : public ModelHawkesFixedK
    * \param max_n_threads : number of cores to be used for multithreading. If negative,
    * the number of physical cores will be used
    */
-  ModelHawkesFixedSumExpKernLogLikList(const ArrayDouble &decay,
+  ModelHawkesSumExpKernLogLik(const ArrayDouble &decay,
                                        const int max_n_threads = 1);
 
   //! @brief Returns decay that was set

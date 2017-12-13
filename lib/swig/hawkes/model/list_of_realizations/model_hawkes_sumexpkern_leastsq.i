@@ -6,11 +6,11 @@
 %}
 
 
-class ModelHawkesFixedSumExpKernLeastSqList : public ModelHawkesLeastSqList {
+class ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSqList {
     
 public:
-  ModelHawkesFixedSumExpKernLeastSqList();
-  ModelHawkesFixedSumExpKernLeastSqList(const ArrayDouble &decays,
+  ModelHawkesSumExpKernLeastSq();
+  ModelHawkesSumExpKernLeastSq(const ArrayDouble &decays,
                                         const ulong n_baselines,
                                         const double period_length,
                                         const unsigned int max_n_threads = 1,
@@ -27,4 +27,4 @@ public:
   void set_period_length(double period_length);
 };
 
-TICK_MAKE_PICKLABLE(ModelHawkesFixedSumExpKernLeastSqList);
+TICK_MAKE_PICKLABLE(ModelHawkesSumExpKernLeastSq);

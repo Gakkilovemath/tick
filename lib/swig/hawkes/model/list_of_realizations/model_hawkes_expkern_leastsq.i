@@ -6,11 +6,11 @@
 %}
 
 
-class ModelHawkesFixedExpKernLeastSqList : public ModelHawkesLeastSqList {
+class ModelHawkesExpKernLeastSq : public ModelHawkesLeastSqList {
     
 public:
-  ModelHawkesFixedExpKernLeastSqList();
-  ModelHawkesFixedExpKernLeastSqList(const SArrayDouble2dPtr decays,
+  ModelHawkesExpKernLeastSq();
+  ModelHawkesExpKernLeastSq(const SArrayDouble2dPtr decays,
                                      const int max_n_threads = 1,
                                      const unsigned int optimization_level = 0);
 
@@ -18,4 +18,4 @@ public:
   void set_decays(const SArrayDouble2dPtr decays);
 };
 
-TICK_MAKE_PICKLABLE(ModelHawkesFixedExpKernLeastSqList);
+TICK_MAKE_PICKLABLE(ModelHawkesExpKernLeastSq);

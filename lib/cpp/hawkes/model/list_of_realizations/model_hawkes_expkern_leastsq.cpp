@@ -2,7 +2,7 @@
 
 #include "tick/hawkes/model/list_of_realizations/model_hawkes_expkern_leastsq.h"
 
-ModelHawkesFixedExpKernLeastSqList::ModelHawkesFixedExpKernLeastSqList(
+ModelHawkesExpKernLeastSq::ModelHawkesExpKernLeastSq(
     const SArrayDouble2dPtr decays,
     const int max_n_threads,
     const unsigned int optimization_level)
@@ -12,13 +12,13 @@ ModelHawkesFixedExpKernLeastSqList::ModelHawkesFixedExpKernLeastSqList(
       new ModelHawkesExpKernLeastSqSingle(decays, max_n_threads, optimization_level));
 }
 
-void ModelHawkesFixedExpKernLeastSqList::hessian(ArrayDouble &out) {
+void ModelHawkesExpKernLeastSq::hessian(ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   auto *casted_model = static_cast<ModelHawkesExpKernLeastSqSingle *>(aggregated_model.get());
   casted_model->hessian(out);
 }
 
-void ModelHawkesFixedExpKernLeastSqList::compute_weights_i_r(
+void ModelHawkesExpKernLeastSq::compute_weights_i_r(
     const ulong i_r, std::vector<ModelHawkesExpKernLeastSqSingle> &model_list) {
   const ulong r = static_cast<const ulong>(i_r / n_nodes);
   const ulong i = i_r % n_nodes;
@@ -26,7 +26,7 @@ void ModelHawkesFixedExpKernLeastSqList::compute_weights_i_r(
   model_list[r].compute_weights_i(i);
 }
 
-void ModelHawkesFixedExpKernLeastSqList::compute_weights_timestamps_list() {
+void ModelHawkesExpKernLeastSq::compute_weights_timestamps_list() {
   auto model_list =
       std::vector<ModelHawkesExpKernLeastSqSingle>(n_realizations);
 
@@ -38,7 +38,7 @@ void ModelHawkesFixedExpKernLeastSqList::compute_weights_timestamps_list() {
 
   // Multithreaded computation of the arrays
   parallel_run(get_n_threads(), n_realizations * n_nodes,
-               &ModelHawkesFixedExpKernLeastSqList::compute_weights_i_r, this, model_list);
+               &ModelHawkesExpKernLeastSq::compute_weights_i_r, this, model_list);
 
   for (ulong r = 0; r < n_realizations; ++r) {
     Dg.mult_incr(model_list[r].Dg, 1);
@@ -48,7 +48,7 @@ void ModelHawkesFixedExpKernLeastSqList::compute_weights_timestamps_list() {
   }
 }
 
-void ModelHawkesFixedExpKernLeastSqList::compute_weights_timestamps(
+void ModelHawkesExpKernLeastSq::compute_weights_timestamps(
     const SArrayDoublePtrList1D &timestamps, double end_time) {
   auto model = ModelHawkesExpKernLeastSqSingle(decays, get_n_threads(), optimization_level);
   model.set_data(timestamps, end_time);
@@ -60,7 +60,7 @@ void ModelHawkesFixedExpKernLeastSqList::compute_weights_timestamps(
   E.mult_incr(model.E, 1);
 }
 
-void ModelHawkesFixedExpKernLeastSqList::allocate_weights() {
+void ModelHawkesExpKernLeastSq::allocate_weights() {
   Dg = ArrayDouble2d(n_nodes, n_nodes);
   Dg.init_to_zero();
   Dg2 = ArrayDouble2d(n_nodes, n_nodes);
@@ -73,7 +73,7 @@ void ModelHawkesFixedExpKernLeastSqList::allocate_weights() {
   weights_allocated = true;
 }
 
-void ModelHawkesFixedExpKernLeastSqList::synchronize_aggregated_model() {
+void ModelHawkesExpKernLeastSq::synchronize_aggregated_model() {
   auto *casted_model = static_cast<ModelHawkesExpKernLeastSqSingle *>(aggregated_model.get());
 
   casted_model->set_n_nodes(n_nodes);
@@ -92,6 +92,6 @@ void ModelHawkesFixedExpKernLeastSqList::synchronize_aggregated_model() {
   casted_model->weights_computed = weights_computed;
 }
 
-ulong ModelHawkesFixedExpKernLeastSqList::get_n_coeffs() const {
+ulong ModelHawkesExpKernLeastSq::get_n_coeffs() const {
   return n_nodes + n_nodes * n_nodes;
 }

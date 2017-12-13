@@ -11,7 +11,7 @@
 
 #include "tick/hawkes/model/base/model_hawkes_loglik_single.h"
 
-class ModelHawkesFixedExpKernLogLikList;
+class ModelHawkesExpKernLogLik;
 
 /**
  * \class ModelHawkesExpKernLogLikSingle
@@ -78,7 +78,7 @@ class DLL_PUBLIC ModelHawkesExpKernLogLikSingle : public ModelHawkesFixedKernLog
     weights_computed = false;
   }
 
-  friend ModelHawkesFixedExpKernLogLikList;
+  friend ModelHawkesExpKernLogLik;
 };
 
 #endif  // TICK_OPTIM_MODEL_SRC_HAWKES_FIXED_EXPKERN_LOGLIK_H_

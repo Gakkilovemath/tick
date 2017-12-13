@@ -113,7 +113,7 @@ class DLL_PUBLIC ModelHawkesSumExpKernLeastSqSingle : public ModelHawkesSingle {
   ulong get_baseline_interval(const double t);
   double get_baseline_interval_length(const ulong interval_p);
 
-  friend class ModelHawkesFixedSumExpKernLeastSqList;
+  friend class ModelHawkesSumExpKernLeastSq;
 
  public:
   template<class Archive>
