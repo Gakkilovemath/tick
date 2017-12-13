@@ -11,7 +11,7 @@ from tick.hawkes.model.build.hawkes_model import (
 )
 
 
-class ModelHawkesFixedSumExpKernLeastSq(ModelHawkes):
+class ModelHawkesSumExpKernLeastSq(ModelHawkes):
     """Hawkes process model for sum-exponential kernels with fixed and
     given decays.
     It is modeled with least square loss:

@@ -7,9 +7,9 @@ import numpy as np
 from tick.base.inference import InferenceTest
 from tick.hawkes.inference import HawkesExpKern
 from tick.hawkes.model.model_hawkes_expkern_leastsq import \
-    ModelHawkesFixedExpKernLeastSq
+    ModelHawkesExpKernLeastSq
 from tick.hawkes.model.model_hawkes_expkern_loglik import \
-    ModelHawkesFixedExpKernLogLik
+    ModelHawkesExpKernLogLik
 from tick.hawkes import SimuHawkesExpKernels
 from tick.prox import ProxNuclear
 from tick.prox import ProxPositive, ProxL1, ProxL2Sq, ProxElasticNet
@@ -224,8 +224,8 @@ class Test(InferenceTest):
             HawkesExpKern(self.decays, penalty='wrong_name')
 
         # models
-        model_class_map = {'least-squares': ModelHawkesFixedExpKernLeastSq,
-                           'likelihood': ModelHawkesFixedExpKernLogLik}
+        model_class_map = {'least-squares': ModelHawkesExpKernLeastSq,
+                           'likelihood': ModelHawkesExpKernLogLik}
         for gofit in gofits:
             learner = HawkesExpKern(self.decays, gofit=gofit)
             model_class = model_class_map[gofit]

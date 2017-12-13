@@ -10,9 +10,9 @@ from tick.hawkes.model.build.hawkes_model import (
 )
 
 
-class ModelHawkesFixedSumExpKernLogLik(ModelHawkes,
-                                    ModelSecondOrder,
-                                    ModelSelfConcordant):
+class ModelHawkesSumExpKernLogLik(ModelHawkes,
+                                  ModelSecondOrder,
+                                  ModelSelfConcordant):
     """Hawkes process model for sum of exponential kernels with fixed and
     given decays.
     It is modeled with (opposite) log likelihood loss:

@@ -441,10 +441,10 @@ function used (least squares or log-likelihood).
 ===============================================================  ===============================
 Model                                                            Class
 ===============================================================  ===============================
-Least-squares for Hawkes model with exponential kernels          :class:`ModelHawkesFixedExpKernLeastSq <tick.optim.model.ModelHawkesFixedExpKernLeastSq>`
-Log-likelihood for Hawkes model with exponential kernels         :class:`ModelHawkesFixedExpKernLogLik <tick.optim.model.ModelHawkesFixedExpKernLogLik>`
-Least-squares for Hawkes model with sum of exponential kernels   :class:`ModelHawkesFixedSumExpKernLeastSq <tick.optim.model.ModelHawkesFixedSumExpKernLeastSq>`
-Log-likelihood for Hawkes model with sum of exponential kernels  :class:`ModelHawkesFixedSumExpKernLogLik <tick.optim.model.ModelHawkesFixedSumExpKernLogLik>`
+Least-squares for Hawkes model with exponential kernels          :class:`ModelHawkesExpKernLeastSq <tick.optim.model.ModelHawkesExpKernLeastSq>`
+Log-likelihood for Hawkes model with exponential kernels         :class:`ModelHawkesExpKernLogLik <tick.optim.model.ModelHawkesExpKernLogLik>`
+Least-squares for Hawkes model with sum of exponential kernels   :class:`ModelHawkesSumExpKernLeastSq <tick.optim.model.ModelHawkesSumExpKernLeastSq>`
+Log-likelihood for Hawkes model with sum of exponential kernels  :class:`ModelHawkesSumExpKernLogLik <tick.optim.model.ModelHawkesSumExpKernLogLik>`
 ===============================================================  ===============================
 
 

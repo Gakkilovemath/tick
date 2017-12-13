@@ -10,9 +10,9 @@ from tick.hawkes.model.build.hawkes_model import (
 )
 
 
-class ModelHawkesFixedExpKernLogLik(ModelHawkes,
-                                    ModelSecondOrder,
-                                    ModelSelfConcordant):
+class ModelHawkesExpKernLogLik(ModelHawkes,
+                               ModelSecondOrder,
+                               ModelSelfConcordant):
     """Hawkes process model exponential kernels with fixed and given decay.
     It is modeled with (opposite) log likelihood loss:
 

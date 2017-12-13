@@ -1,8 +1,8 @@
 # License: BSD 3 clause
 
 from .model import (
-    ModelHawkesFixedExpKernLogLik, ModelHawkesFixedExpKernLeastSq,
-    ModelHawkesFixedSumExpKernLogLik, ModelHawkesFixedSumExpKernLeastSq,
+    ModelHawkesExpKernLogLik, ModelHawkesExpKernLeastSq,
+    ModelHawkesSumExpKernLogLik, ModelHawkesSumExpKernLeastSq,
 )
 
 from .simulation import (
@@ -20,8 +20,8 @@ from .inference import (
 __all__ = [
     "HawkesADM4", "HawkesExpKern", "HawkesSumExpKern", "HawkesBasisKernels",
     "HawkesConditionalLaw", "HawkesEM", "HawkesSumGaussians",
-    "ModelHawkesFixedExpKernLogLik", "ModelHawkesFixedExpKernLeastSq",
-    "ModelHawkesFixedSumExpKernLogLik", "ModelHawkesFixedSumExpKernLeastSq",
+    "ModelHawkesExpKernLogLik", "ModelHawkesExpKernLeastSq",
+    "ModelHawkesSumExpKernLogLik", "ModelHawkesSumExpKernLeastSq",
     "SimuPoissonProcess", "SimuInhomogeneousPoisson", "SimuHawkes",
     "SimuHawkesMulti", "SimuHawkesExpKernels", "SimuHawkesSumExpKernels",
     "HawkesKernel0", "HawkesKernelExp", "HawkesKernelPowerLaw",

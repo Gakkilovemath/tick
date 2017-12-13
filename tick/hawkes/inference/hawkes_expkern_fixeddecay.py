@@ -7,7 +7,7 @@ from tick.hawkes.inference.base import LearnerHawkesParametric
 from tick.prox import ProxElasticNet, ProxL1, ProxL2Sq, ProxNuclear, \
     ProxPositive
 from tick.hawkes import (
-    ModelHawkesFixedExpKernLogLik, ModelHawkesFixedExpKernLeastSq,
+    ModelHawkesExpKernLogLik, ModelHawkesExpKernLeastSq,
     SimuHawkesExpKernels
 )
 
@@ -160,7 +160,7 @@ class HawkesExpKern(LearnerHawkesParametric):
 
     def _construct_model_obj(self):
         if self.gofit == "least-squares":
-            model = ModelHawkesFixedExpKernLeastSq(self.decays)
+            model = ModelHawkesExpKernLeastSq(self.decays)
         elif self.gofit == "likelihood":
             # decays must be constant
             if isinstance(self.decays, np.ndarray):
@@ -171,7 +171,7 @@ class HawkesExpKern(LearnerHawkesParametric):
                                           "you must provide a constant decay "
                                           "for all kernels")
 
-            model = ModelHawkesFixedExpKernLogLik(self.decays)
+            model = ModelHawkesExpKernLogLik(self.decays)
         return model
 
     def _set_gofit(self, val):

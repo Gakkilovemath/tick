@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from tick.hawkes import ModelHawkesFixedExpKernLogLik, SimuHawkesExpKernels
+from tick.hawkes import ModelHawkesExpKernLogLik, SimuHawkesExpKernels
 from tick.prox import ProxL2Sq
 from tick.solver import SCPG
 from . import TestSolver
@@ -35,7 +35,7 @@ class Test(TestSolver):
         hawkes.simulate()
         timestamps = hawkes.timestamps
 
-        model = ModelHawkesFixedExpKernLogLik(beta).fit(timestamps)
+        model = ModelHawkesExpKernLogLik(beta).fit(timestamps)
         prox = ProxL2Sq(1e-7, positive=True)
         pg = SCPG(max_iter=2000, tol=1e-10, verbose=False,
                   step=1e-5).set_model(model).set_prox(prox)

@@ -8,7 +8,7 @@ from numpy.linalg import norm
 from scipy.optimize import check_grad, fmin_bfgs
 
 from tick.base.inference import InferenceTest
-from tick.hawkes.model import ModelHawkesFixedSumExpKernLeastSq
+from tick.hawkes.model import ModelHawkesSumExpKernLeastSq
 from tick.hawkes.model.tests.model_hawkes_test_utils import (
     hawkes_sumexp_kernel_intensities, hawkes_sumexp_kernel_varying_intensities,
     hawkes_least_square_error)
@@ -35,41 +35,41 @@ class Test(InferenceTest):
 
         self.realization = 0
         self.model = \
-            ModelHawkesFixedSumExpKernLeastSq(decays=self.decays)
+            ModelHawkesSumExpKernLeastSq(decays=self.decays)
         self.model.fit(self.timestamps_list[self.realization])
 
         self.model_list = \
-            ModelHawkesFixedSumExpKernLeastSq(decays=self.decays)
+            ModelHawkesSumExpKernLeastSq(decays=self.decays)
         self.model_list.fit(self.timestamps_list)
 
     def test_model_hawkes_sum_exp_kernel_least_sq_parameters(self):
-        """...Test parameters of ModelHawkesFixedSumExpKernLeastSq
+        """...Test parameters of ModelHawkesSumExpKernLeastSq
         """
-        model = ModelHawkesFixedSumExpKernLeastSq([1., 2.])
+        model = ModelHawkesSumExpKernLeastSq([1., 2.])
         self.assertEqual(model.n_decays, 2)
-        model = ModelHawkesFixedSumExpKernLeastSq(np.array([1, 2]))
+        model = ModelHawkesSumExpKernLeastSq(np.array([1, 2]))
         self.assertEqual(model.n_decays, 2)
 
         n_baselines = 3
         period_length = 2.
         msg = "n_baselines must be positive"
         with self.assertRaisesRegex(ValueError, msg):
-            ModelHawkesFixedSumExpKernLeastSq(self.decays, n_baselines=-1,
-                                              period_length=period_length)
+            ModelHawkesSumExpKernLeastSq(self.decays, n_baselines=-1,
+                                         period_length=period_length)
         msg = "period_length must be given if multiple baselines are used"
         with self.assertRaisesRegex(ValueError, msg):
-            ModelHawkesFixedSumExpKernLeastSq(self.decays,
-                                              n_baselines=n_baselines)
+            ModelHawkesSumExpKernLeastSq(self.decays,
+                                         n_baselines=n_baselines)
         msg = "period_length has no effect when using a constant baseline"
         with self.assertWarnsRegex(UserWarning, msg):
-            ModelHawkesFixedSumExpKernLeastSq(self.decays,
-                                              period_length=period_length)
+            ModelHawkesSumExpKernLeastSq(self.decays,
+                                         period_length=period_length)
 
     def test_model_hawkes_sum_exp_kernel_least_sq_parameters_change(self):
-        """...Test changing parameters of ModelHawkesFixedSumExpKernLeastSq
+        """...Test changing parameters of ModelHawkesSumExpKernLeastSq
         """
-        model = ModelHawkesFixedSumExpKernLeastSq(self.decays, n_baselines=3,
-                                                  period_length=10.)
+        model = ModelHawkesSumExpKernLeastSq(self.decays, n_baselines=3,
+                                             period_length=10.)
         new_decays = model.decays + 1.
         model.decays = new_decays
         np.testing.assert_array_equal(model.decays, new_decays)
@@ -84,19 +84,19 @@ class Test(InferenceTest):
 
     def test_baseline_intervals(self):
         """...Test baseline intervals property of 
-        ModelHawkesFixedSumExpKernLeastSq
+        ModelHawkesSumExpKernLeastSq
         """
         n_baselines = 4
         period_length = 10
-        model = ModelHawkesFixedSumExpKernLeastSq(decays=self.decays,
-                                                  n_baselines=n_baselines,
-                                                  period_length=period_length)
+        model = ModelHawkesSumExpKernLeastSq(decays=self.decays,
+                                             n_baselines=n_baselines,
+                                             period_length=period_length)
         np.testing.assert_array_equal(model.baseline_intervals,
                                       np.array([0., 2.5, 5., 7.5]))
 
         n_baselines = 1
-        model = ModelHawkesFixedSumExpKernLeastSq(decays=self.decays,
-                                                  n_baselines=n_baselines)
+        model = ModelHawkesSumExpKernLeastSq(decays=self.decays,
+                                             n_baselines=n_baselines)
         np.testing.assert_array_equal(model.baseline_intervals,
                                       np.array([0.]))
 
@@ -119,7 +119,7 @@ class Test(InferenceTest):
                                places=2)
 
     def test_model_hawkes_least_sq_multiple_events(self):
-        """...Test that multiple events list for ModelHawkesFixedExpKernLeastSq
+        """...Test that multiple events list for ModelHawkesExpKernLeastSq
         is consistent with direct integral estimation
         """
         # precision of the integral approximation (and the corresponding
@@ -150,11 +150,11 @@ class Test(InferenceTest):
                                places=precison)
 
     def test_model_hawkes_least_sq_incremental_fit(self):
-        """...Test that multiple events list for ModelHawkesFixedExpKernLeastSq
+        """...Test that multiple events list for ModelHawkesExpKernLeastSq
         are correctly handle with incremental_fit
         """
         model_incremental_fit = \
-            ModelHawkesFixedSumExpKernLeastSq(decays=self.decays)
+            ModelHawkesSumExpKernLeastSq(decays=self.decays)
 
         for timestamps in self.timestamps_list:
             model_incremental_fit.incremental_fit(timestamps)
@@ -163,7 +163,7 @@ class Test(InferenceTest):
                          self.model_list.loss(self.coeffs))
 
     def test_model_hawkes_least_sq_grad(self):
-        """...Test that ModelHawkesFixedExpKernLeastSq gradient is consistent
+        """...Test that ModelHawkesExpKernLeastSq gradient is consistent
         with loss
         """
 
@@ -179,13 +179,13 @@ class Test(InferenceTest):
 
     def test_model_hawkes_least_sq_change_decays(self):
         """...Test that loss is still consistent after decays modification in
-        ModelHawkesFixedSumExpKernLeastSq
+        ModelHawkesSumExpKernLeastSq
         """
         decays = np.random.rand(self.n_decays)
 
         self.assertNotEqual(decays[0], self.decays[0])
 
-        model_change_decay = ModelHawkesFixedSumExpKernLeastSq(decays=decays)
+        model_change_decay = ModelHawkesSumExpKernLeastSq(decays=decays)
         model_change_decay.fit(self.timestamps_list)
         loss_old_decay = model_change_decay.loss(self.coeffs)
 
@@ -226,9 +226,9 @@ class Test(InferenceTest):
             intensities, timestamps, end_time)
         integral_approx /= self.model.n_jumps
 
-        model = ModelHawkesFixedSumExpKernLeastSq(decays=self.decays,
-                                                  n_baselines=n_baselines,
-                                                  period_length=period_length)
+        model = ModelHawkesSumExpKernLeastSq(decays=self.decays,
+                                             n_baselines=n_baselines,
+                                             period_length=period_length)
         model.fit(self.timestamps_list[self.realization])
 
         coeffs = np.hstack((baselines.ravel(), self.adjacency.ravel()))
@@ -237,7 +237,7 @@ class Test(InferenceTest):
                                places=2)
 
     def test_model_hawkes_varying_baseline_least_sq_grad(self):
-        """...Test that ModelHawkesFixedExpKernLeastSq gradient is consistent
+        """...Test that ModelHawkesExpKernLeastSq gradient is consistent
         with loss
         """
         for model in [self.model, self.model_list]:
@@ -255,7 +255,7 @@ class Test(InferenceTest):
                                    .0, delta=1e-4)
 
     def test_model_hawkes_sum_exp_least_sq_serialization(self):
-        """...Test that ModelHawkesFixedExpKernLeastSq can be serialized
+        """...Test that ModelHawkesExpKernLeastSq can be serialized
         """
         import os
         file_name = 'model.pickle'

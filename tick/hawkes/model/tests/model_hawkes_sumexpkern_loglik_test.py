@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 from scipy.optimize import check_grad
 
-from tick.hawkes.model import ModelHawkesFixedSumExpKernLogLik
+from tick.hawkes.model import ModelHawkesSumExpKernLogLik
 from tick.hawkes.model.tests.model_hawkes_test_utils import (
     hawkes_log_likelihood, hawkes_sumexp_kernel_intensities)
 
@@ -32,11 +32,11 @@ class Test(unittest.TestCase):
         self.coeffs = np.hstack((self.baseline, self.adjacency.ravel()))
 
         self.realization = 0
-        self.model = ModelHawkesFixedSumExpKernLogLik(self.decays)
+        self.model = ModelHawkesSumExpKernLogLik(self.decays)
         self.model.fit(self.timestamps_list[self.realization],
                        end_times=self.end_time)
 
-        self.model_list = ModelHawkesFixedSumExpKernLogLik(self.decays)
+        self.model_list = ModelHawkesSumExpKernLogLik(self.decays)
         self.model_list.fit(self.timestamps_list)
 
     def test_model_hawkes_losses(self):
@@ -58,7 +58,7 @@ class Test(unittest.TestCase):
                                places=precision)
 
     def test_model_hawkes_loglik_multiple_events(self):
-        """...Test that multiple events list for ModelHawkesFixedSumExpKernLogLik
+        """...Test that multiple events list for ModelHawkesSumExpKernLogLik
         is consistent with direct integral estimation
         """
         end_times = np.array([max(map(max, e)) for e in self.timestamps_list])
@@ -84,10 +84,10 @@ class Test(unittest.TestCase):
                                places=2)
 
     def test_model_hawkes_loglik_incremental_fit(self):
-        """...Test that multiple events list for ModelHawkesFixedSumExpKernLogLik
+        """...Test that multiple events list for ModelHawkesSumExpKernLogLik
         are correctly handle with incremental_fit
         """
-        model_incremental_fit = ModelHawkesFixedSumExpKernLogLik(self.decays)
+        model_incremental_fit = ModelHawkesSumExpKernLogLik(self.decays)
 
         for timestamps in self.timestamps_list:
             model_incremental_fit.incremental_fit(timestamps)
@@ -96,7 +96,7 @@ class Test(unittest.TestCase):
                                self.model_list.loss(self.coeffs), delta=1e-10)
 
     def test_model_hawkes_loglik_grad(self):
-        """...Test that ModelHawkesFixedExpKernLeastSq gradient is consistent
+        """...Test that ModelHawkesExpKernLeastSq gradient is consistent
         with loss
         """
         self.assertLess(check_grad(self.model.loss, self.model.grad,
@@ -104,7 +104,7 @@ class Test(unittest.TestCase):
                         1e-5)
 
     def test_model_hawkes_loglik_hessian_norm(self):
-        """...Test that ModelHawkesFixedExpKernLeastSq hessian norm is
+        """...Test that ModelHawkesExpKernLeastSq hessian norm is
         consistent with gradient
         """
         self.assertLess(check_grad(self.model.loss, self.model.grad,
@@ -136,11 +136,11 @@ class Test(unittest.TestCase):
 
     def test_model_hawkes_loglik_change_decays(self):
         """...Test that loss is still consistent after decays modification in
-        ModelHawkesFixedSumExpKernLogLik
+        ModelHawkesSumExpKernLogLik
         """
         decays = np.random.rand(self.n_decays + 1)
 
-        model_change_decay = ModelHawkesFixedSumExpKernLogLik(decays)
+        model_change_decay = ModelHawkesSumExpKernLogLik(decays)
         model_change_decay.fit(self.timestamps_list)
 
         coeffs = np.random.rand(model_change_decay.n_coeffs)
@@ -157,7 +157,7 @@ class Test(unittest.TestCase):
     def test_hawkes_list_n_threads(self):
         """...Test that the number of used threads is as expected
         """
-        model_list = ModelHawkesFixedSumExpKernLogLik(self.decays, n_threads=1)
+        model_list = ModelHawkesSumExpKernLogLik(self.decays, n_threads=1)
 
         # 0 threads yet as no data has been given
         self.assertEqual(model_list._model.get_n_threads(), 0)
@@ -178,7 +178,7 @@ class Test(unittest.TestCase):
         model_list.n_threads = 1
         self.assertEqual(model_list._model.get_n_threads(), 1)
 
-    def test_ModelHawkesFixedSumExpKernLogLik_hessian(self):
+    def test_ModelHawkesSumExpKernLogLik_hessian(self):
         """...Numerical consistency check of hessian for Hawkes loglik
         """
         for model in [self.model]:

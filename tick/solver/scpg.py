@@ -108,7 +108,7 @@ class SCPG(SolverFirstOrder):
     This algorithm is designed to work properly with self-concordant losses
     such as Poisson regression with linear link
     `ModelPoisReg <tick.optim.model.ModelPoisReg>` or Hawkes processes likelihood
-    `ModelHawkesFixedSumExpKernLogLik <tick.optim.model.ModelHawkesFixedSumExpKernLogLik>`
+    `ModelHawkesSumExpKernLogLik <tick.optim.model.ModelHawkesSumExpKernLogLik>`
 
     References
     ----------

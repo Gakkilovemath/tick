@@ -5,7 +5,7 @@ import numpy as np
 from scipy.optimize import check_grad
 import pickle
 
-from tick.hawkes.model import ModelHawkesFixedExpKernLeastSq
+from tick.hawkes.model import ModelHawkesExpKernLeastSq
 
 from tick.hawkes.model.tests.model_hawkes_test_utils import (
     hawkes_exp_kernel_intensities, hawkes_least_square_error
@@ -32,11 +32,11 @@ class Test(unittest.TestCase):
 
         self.realization = 0
         self.model = \
-            ModelHawkesFixedExpKernLeastSq(decays=self.decays)
+            ModelHawkesExpKernLeastSq(decays=self.decays)
         self.model.fit(self.timestamps_list[self.realization])
 
         self.model_list = \
-            ModelHawkesFixedExpKernLeastSq(decays=self.decays)
+            ModelHawkesExpKernLeastSq(decays=self.decays)
         self.model_list.fit(self.timestamps_list)
 
     def test_model_hawkes_losses(self):
@@ -58,7 +58,7 @@ class Test(unittest.TestCase):
                                places=2)
 
     def test_model_hawkes_least_sq_multiple_events(self):
-        """...Test that multiple events list for ModelHawkesFixedExpKernLeastSq
+        """...Test that multiple events list for ModelHawkesExpKernLeastSq
         is consistent with direct integral estimation
         """
         end_times = np.array([max(map(max, e)) for e in self.timestamps_list])
@@ -84,11 +84,11 @@ class Test(unittest.TestCase):
                                places=2)
 
     def test_model_hawkes_least_sq_incremental_fit(self):
-        """...Test that multiple events list for ModelHawkesFixedExpKernLeastSq
+        """...Test that multiple events list for ModelHawkesExpKernLeastSq
         are correctly handle with incremental_fit
         """
         model_incremental_fit = \
-            ModelHawkesFixedExpKernLeastSq(decays=self.decays)
+            ModelHawkesExpKernLeastSq(decays=self.decays)
 
         for timestamps in self.timestamps_list:
             model_incremental_fit.incremental_fit(timestamps)
@@ -97,7 +97,7 @@ class Test(unittest.TestCase):
                          self.model_list.loss(self.coeffs))
 
     def test_model_hawkes_least_sq_grad(self):
-        """...Test that ModelHawkesFixedExpKernLeastSq gradient is consistent
+        """...Test that ModelHawkesExpKernLeastSq gradient is consistent
         with loss
         """
 
@@ -105,7 +105,7 @@ class Test(unittest.TestCase):
             self.assertLess(check_grad(model.loss, model.grad, self.coeffs),
                             1e-5)
 
-    def test_ModelHawkesFixedExpKernLeastSqHess(self):
+    def test_ModelHawkesExpKernLeastSqHess(self):
         """...Numerical consistency check of hessian for Hawkes contrast
         """
         for model in [self.model, self.model_list]:
@@ -130,13 +130,13 @@ class Test(unittest.TestCase):
 
     def test_model_hawkes_least_sq_change_decays(self):
         """...Test that loss is still consistent after decays modification in
-        ModelHawkesFixedExpKernLeastSq
+        ModelHawkesExpKernLeastSq
         """
         decays = np.random.rand(self.n_nodes, self.n_nodes)
 
         self.assertNotEqual(decays[0, 0], self.decays[0, 0])
 
-        model_change_decay = ModelHawkesFixedExpKernLeastSq(decays=decays)
+        model_change_decay = ModelHawkesExpKernLeastSq(decays=decays)
         model_change_decay.fit(self.timestamps_list)
         loss_old_decay = model_change_decay.loss(self.coeffs)
 
@@ -152,7 +152,7 @@ class Test(unittest.TestCase):
         """...Test that the number of used threads is as expected
         """
         model_contrast_list = \
-            ModelHawkesFixedExpKernLeastSq(decays=self.decays, n_threads=1)
+            ModelHawkesExpKernLeastSq(decays=self.decays, n_threads=1)
 
         # 0 threads yet as no data has been given
         self.assertEqual(model_contrast_list._model.get_n_threads(), 0)
@@ -174,7 +174,7 @@ class Test(unittest.TestCase):
         self.assertEqual(model_contrast_list._model.get_n_threads(), 1)
 
     # deprecated test
-    def test_ModelHawkesFixedExpKernLeastSqApprox0(self):
+    def test_ModelHawkesExpKernLeastSqApprox0(self):
         """...Numerical consistency check of lik and grad for Hawkes
         Least-Squares with approx=0
         """
@@ -182,7 +182,7 @@ class Test(unittest.TestCase):
                       np.array([3., 40., 60.])]
         beta = 2.
 
-        model = ModelHawkesFixedExpKernLeastSq(decays=beta).fit(timestamps)
+        model = ModelHawkesExpKernLeastSq(decays=beta).fit(timestamps)
 
         coeffs = np.array([.1, .4, .3, 1., .4, .5])
         grad = np.zeros(6)
@@ -199,7 +199,7 @@ class Test(unittest.TestCase):
         np.testing.assert_almost_equal(grad, test, decimal=7)
         self.assertAlmostEqual(loss, 1.05752053, delta=1e-7)
 
-    def test_ModelHawkesFixedExpKernLeastSqApprox1(self):
+    def test_ModelHawkesExpKernLeastSqApprox1(self):
         """...Numerical consistency check of lik and grad for Hawkes
         Least-Squares with approx=1
         """
@@ -207,8 +207,8 @@ class Test(unittest.TestCase):
                       np.array([3., 40., 60.])]
         beta = 2.
 
-        model = ModelHawkesFixedExpKernLeastSq(decays=beta,
-                                               approx=1).fit(timestamps)
+        model = ModelHawkesExpKernLeastSq(decays=beta,
+                                          approx=1).fit(timestamps)
 
         coeffs = np.array([.1, .4, .3, 1., .4, .5])
         grad = np.zeros(6)
@@ -225,7 +225,7 @@ class Test(unittest.TestCase):
         self.assertAlmostEqual(loss, 1.05752053, delta=1e-4)
 
     def test_model_hawkes_least_sq_serialization(self):
-        """...Test that ModelHawkesFixedExpKernLeastSq can be serialized
+        """...Test that ModelHawkesExpKernLeastSq can be serialized
         """
         for model in [self.model, self.model_list]:
             pickled = pickle.loads(pickle.dumps(model))

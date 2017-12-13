@@ -141,7 +141,7 @@ class ModelHawkes(ModelFirstOrder):
 
         Notes
         -----
-        For `ModelHawkesFixedExpKernLeastSq` the value of the hessian
+        For `ModelHawkesExpKernLeastSq` the value of the hessian
         does not depend on the value at which it is computed.
         """
         if not hasattr(self._model, "hessian"):

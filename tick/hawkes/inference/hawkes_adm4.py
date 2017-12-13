@@ -6,7 +6,7 @@ from tick.hawkes.inference.base import LearnerHawkesNoParam
 from tick.prox.prox_l1 import ProxL1
 from tick.prox import ProxNuclear
 from tick.solver.base.utils import relative_distance
-from tick.hawkes import ModelHawkesFixedExpKernLogLik, SimuHawkesExpKernels
+from tick.hawkes import ModelHawkesExpKernLogLik, SimuHawkesExpKernels
 from tick.hawkes.inference.build.hawkes_inference import (
     HawkesADM4 as _HawkesADM4
 )
@@ -178,8 +178,8 @@ class HawkesADM4(LearnerHawkesNoParam):
         self._learner = _HawkesADM4(decay, rho, n_threads, approx)
 
         # TODO add approx to model
-        self._model = ModelHawkesFixedExpKernLogLik(self.decay,
-                                                    n_threads=self.n_threads)
+        self._model = ModelHawkesExpKernLogLik(self.decay,
+                                               n_threads=self.n_threads)
 
         self.history.print_order += ["rel_baseline", "rel_adjacency"]
 
@@ -506,8 +506,8 @@ class HawkesADM4(LearnerHawkesNoParam):
         if events is None and end_times is None:
             model = self._model
         else:
-            model = ModelHawkesFixedExpKernLogLik(self.decay,
-                                                  n_threads=self.n_threads)
+            model = ModelHawkesExpKernLogLik(self.decay,
+                                             n_threads=self.n_threads)
             model.fit(events, end_times)
 
         return - model.loss(coeffs)

@@ -6,7 +6,7 @@ from tick.base import actual_kwargs
 from tick.hawkes.inference.base import LearnerHawkesParametric
 from tick.prox import ProxElasticNet, ProxL1, ProxL2Sq, ProxPositive
 from tick.hawkes import (
-    ModelHawkesFixedSumExpKernLeastSq, SimuHawkesSumExpKernels
+    ModelHawkesSumExpKernLeastSq, SimuHawkesSumExpKernels
 )
 
 
@@ -161,7 +161,7 @@ class HawkesSumExpKern(LearnerHawkesParametric):
                                          random_state=random_state)
 
     def _construct_model_obj(self):
-        model = ModelHawkesFixedSumExpKernLeastSq(
+        model = ModelHawkesSumExpKernLeastSq(
             self.decays, n_baselines=self.n_baselines,
             period_length=self.period_length)
         return model

@@ -172,10 +172,10 @@ Hawkes
    :toctree: generated/
    :template: class.rst
 
-   optim.model.ModelHawkesFixedExpKernLogLik
-   optim.model.ModelHawkesFixedExpKernLeastSq
-   optim.model.ModelHawkesFixedSumExpKernLogLik
-   optim.model.ModelHawkesFixedSumExpKernLeastSq
+   optim.model.ModelHawkesExpKernLogLik
+   optim.model.ModelHawkesExpKernLeastSq
+   optim.model.ModelHawkesSumExpKernLogLik
+   optim.model.ModelHawkesSumExpKernLeastSq
 
 
 .. _api-prox:
