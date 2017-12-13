@@ -47,8 +47,8 @@ class DLL_PUBLIC ModelHawkesFixedSumExpKernLogLikList : public ModelHawkesFixedK
   }
 
   std::unique_ptr<ModelHawkesFixedKernLogLik> build_model(const int n_threads) override {
-    return std::unique_ptr<ModelHawkesFixedSumExpKernLogLik>(
-      new ModelHawkesFixedSumExpKernLogLik(decays, n_threads));
+    return std::unique_ptr<ModelHawkesSumExpKernLogLikSingle>(
+      new ModelHawkesSumExpKernLogLikSingle(decays, n_threads));
   }
 
   ulong get_n_coeffs() const override;

@@ -4,14 +4,14 @@
 #include "tick/hawkes/model/model_hawkes_expkern_leastsq_single.h"
 
 // Constructor
-ModelHawkesFixedExpKernLeastSq::ModelHawkesFixedExpKernLeastSq(
+ModelHawkesExpKernLeastSqSingle::ModelHawkesExpKernLeastSqSingle(
     const SArrayDouble2dPtr decays,
     const int max_n_threads,
     const unsigned int optimization_level)
     : ModelHawkesSingle(max_n_threads, optimization_level), decays(decays) {}
 
 // Method that computes the value
-double ModelHawkesFixedExpKernLeastSq::loss(const ArrayDouble &coeffs) {
+double ModelHawkesExpKernLeastSqSingle::loss(const ArrayDouble &coeffs) {
   // The initialization should be performed if not performed yet
   if (!weights_computed) compute_weights();
 
@@ -19,7 +19,7 @@ double ModelHawkesFixedExpKernLeastSq::loss(const ArrayDouble &coeffs) {
   // contribution of each component
   const double loss_sum =
       parallel_map_additive_reduce(get_n_threads(), n_nodes,
-                                   &ModelHawkesFixedExpKernLeastSq::loss_i,
+                                   &ModelHawkesExpKernLeastSqSingle::loss_i,
                                    this, coeffs);
 
   // We just need to sum up the contribution
@@ -27,7 +27,7 @@ double ModelHawkesFixedExpKernLeastSq::loss(const ArrayDouble &coeffs) {
 }
 
 // Performs the computation of the contribution of the i component to the value
-double ModelHawkesFixedExpKernLeastSq::loss_i(const ulong i, const ArrayDouble &coeffs) {
+double ModelHawkesExpKernLeastSqSingle::loss_i(const ulong i, const ArrayDouble &coeffs) {
   if (!weights_computed) TICK_ERROR("Please compute weights before calling loss_i");
 
   const ArrayDouble E_i = view_row(E, i);
@@ -59,14 +59,14 @@ double ModelHawkesFixedExpKernLeastSq::loss_i(const ulong i, const ArrayDouble &
 }
 
 // Method that computes the gradient
-void ModelHawkesFixedExpKernLeastSq::grad(const ArrayDouble &coeffs, ArrayDouble &out) {
+void ModelHawkesExpKernLeastSqSingle::grad(const ArrayDouble &coeffs, ArrayDouble &out) {
   // The initialization should be performed if not performed yet
   if (!weights_computed) compute_weights();
 
   // This allows to run in a multithreaded environment the computation of each component
   parallel_run(get_n_threads(),
                n_nodes,
-               &ModelHawkesFixedExpKernLeastSq::grad_i,
+               &ModelHawkesExpKernLeastSqSingle::grad_i,
                this,
                coeffs,
                out);
@@ -74,7 +74,7 @@ void ModelHawkesFixedExpKernLeastSq::grad(const ArrayDouble &coeffs, ArrayDouble
 }
 
 // Method that computes the component i of the gradient
-void ModelHawkesFixedExpKernLeastSq::grad_i(const ulong i, const ArrayDouble &coeffs,
+void ModelHawkesExpKernLeastSqSingle::grad_i(const ulong i, const ArrayDouble &coeffs,
                                             ArrayDouble &out) {
   if (!weights_computed) TICK_ERROR("Please compute weights before calling grad_i");
 
@@ -105,15 +105,15 @@ void ModelHawkesFixedExpKernLeastSq::grad_i(const ulong i, const ArrayDouble &co
   }
 }
 
-void ModelHawkesFixedExpKernLeastSq::hessian(ArrayDouble &out) {
+void ModelHawkesExpKernLeastSqSingle::hessian(ArrayDouble &out) {
   if (!weights_computed) compute_weights();
 
   // This allows to run in a multithreaded environment the computation of each component
-  parallel_run(get_n_threads(), n_nodes, &ModelHawkesFixedExpKernLeastSq::hessian_i, this, out);
+  parallel_run(get_n_threads(), n_nodes, &ModelHawkesExpKernLeastSqSingle::hessian_i, this, out);
   out /= n_total_jumps;
 }
 
-void ModelHawkesFixedExpKernLeastSq::hessian_i(const ulong i, ArrayDouble &out) {
+void ModelHawkesExpKernLeastSqSingle::hessian_i(const ulong i, ArrayDouble &out) {
   if (!weights_computed) TICK_ERROR("Please compute weights before calling hessian_i");
 
   // fill mu line of matrix
@@ -146,13 +146,13 @@ void ModelHawkesFixedExpKernLeastSq::hessian_i(const ulong i, ArrayDouble &out) 
 
 // Computes both gradient and value
 // TODO : optimization !
-double ModelHawkesFixedExpKernLeastSq::loss_and_grad(const ArrayDouble &coeffs,
+double ModelHawkesExpKernLeastSqSingle::loss_and_grad(const ArrayDouble &coeffs,
                                                      ArrayDouble &out) {
   grad(coeffs, out);
   return loss(coeffs);
 }
 
-void ModelHawkesFixedExpKernLeastSq::allocate_weights() {
+void ModelHawkesExpKernLeastSqSingle::allocate_weights() {
   if (n_nodes == 0) {
     TICK_ERROR("Please provide valid timestamps before allocating weights")
   }
@@ -170,15 +170,15 @@ void ModelHawkesFixedExpKernLeastSq::allocate_weights() {
 
 // Full initialization of the arrays H, Dg, Dg2 and C
 // Must be performed just once
-void ModelHawkesFixedExpKernLeastSq::compute_weights() {
+void ModelHawkesExpKernLeastSqSingle::compute_weights() {
   allocate_weights();
-  parallel_run(get_n_threads(), n_nodes, &ModelHawkesFixedExpKernLeastSq::compute_weights_i, this);
+  parallel_run(get_n_threads(), n_nodes, &ModelHawkesExpKernLeastSqSingle::compute_weights_i, this);
   weights_computed = true;
 }
 
 // Contribution of the ith component to the initialization
 // Computation of the arrays H, Dg, Dg2 and C
-void ModelHawkesFixedExpKernLeastSq::compute_weights_i(const ulong i) {
+void ModelHawkesExpKernLeastSqSingle::compute_weights_i(const ulong i) {
   const SArrayDoublePtr timestamps_i = timestamps[i];
   ArrayDouble2d H(n_nodes, n_nodes);
   H.init_to_zero();
@@ -235,6 +235,6 @@ void ModelHawkesFixedExpKernLeastSq::compute_weights_i(const ulong i) {
   }
 }
 
-ulong ModelHawkesFixedExpKernLeastSq::get_n_coeffs() const {
+ulong ModelHawkesExpKernLeastSqSingle::get_n_coeffs() const {
   return n_nodes + n_nodes * n_nodes;
 }

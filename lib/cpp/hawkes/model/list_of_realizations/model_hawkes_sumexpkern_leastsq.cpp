@@ -13,13 +13,13 @@ ModelHawkesFixedSumExpKernLeastSqList::ModelHawkesFixedSumExpKernLeastSqList(
     : ModelHawkesLeastSqList(max_n_threads, optimization_level),
       n_baselines(n_baselines), period_length(period_length),
       decays(decays), n_decays(decays.size()) {
-  aggregated_model = std::unique_ptr<ModelHawkesFixedSumExpKernLeastSq>(
-      new ModelHawkesFixedSumExpKernLeastSq(decays, n_baselines, period_length,
+  aggregated_model = std::unique_ptr<ModelHawkesSumExpKernLeastSqSingle>(
+      new ModelHawkesSumExpKernLeastSqSingle(decays, n_baselines, period_length,
                                             max_n_threads, optimization_level));
 }
 
 void ModelHawkesFixedSumExpKernLeastSqList::compute_weights_i_r(
-    const ulong i_r, std::vector<ModelHawkesFixedSumExpKernLeastSq> &model_list) {
+    const ulong i_r, std::vector<ModelHawkesSumExpKernLeastSqSingle> &model_list) {
   const ulong r = static_cast<const ulong>(i_r / n_nodes);
   const ulong i = i_r % n_nodes;
 
@@ -28,10 +28,10 @@ void ModelHawkesFixedSumExpKernLeastSqList::compute_weights_i_r(
 
 void ModelHawkesFixedSumExpKernLeastSqList::compute_weights_timestamps_list() {
   auto model_list =
-      std::vector<ModelHawkesFixedSumExpKernLeastSq>(n_realizations);
+      std::vector<ModelHawkesSumExpKernLeastSqSingle>(n_realizations);
 
   for (ulong r = 0; r < n_realizations; ++r) {
-    model_list[r] = ModelHawkesFixedSumExpKernLeastSq(decays, n_baselines, period_length,
+    model_list[r] = ModelHawkesSumExpKernLeastSqSingle(decays, n_baselines, period_length,
                                                       1, optimization_level);
     model_list[r].set_data(timestamps_list[r], (*end_times)[r]);
     model_list[r].allocate_weights();
@@ -55,7 +55,7 @@ void ModelHawkesFixedSumExpKernLeastSqList::compute_weights_timestamps_list() {
 
 void ModelHawkesFixedSumExpKernLeastSqList::compute_weights_timestamps(
     const SArrayDoublePtrList1D &timestamps, double end_time) {
-  auto model = ModelHawkesFixedSumExpKernLeastSq(decays, n_baselines, period_length,
+  auto model = ModelHawkesSumExpKernLeastSqSingle(decays, n_baselines, period_length,
                                                  get_n_threads(), optimization_level);
   model.set_data(timestamps, end_time);
   model.compute_weights();
@@ -95,7 +95,7 @@ void ModelHawkesFixedSumExpKernLeastSqList::allocate_weights() {
 }
 
 void ModelHawkesFixedSumExpKernLeastSqList::synchronize_aggregated_model() {
-  auto *casted_model = static_cast<ModelHawkesFixedSumExpKernLeastSq *>(aggregated_model.get());
+  auto *casted_model = static_cast<ModelHawkesSumExpKernLeastSqSingle *>(aggregated_model.get());
 
   casted_model->n_nodes = n_nodes;
   casted_model->n_decays = n_decays;

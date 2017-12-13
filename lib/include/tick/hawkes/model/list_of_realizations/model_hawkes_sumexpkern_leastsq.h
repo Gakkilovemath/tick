@@ -71,7 +71,7 @@ class DLL_PUBLIC ModelHawkesFixedSumExpKernLeastSqList : public ModelHawkesLeast
    * will be modified
    */
   void compute_weights_i_r(const ulong i_r,
-                           std::vector<ModelHawkesFixedSumExpKernLeastSq> &model_list);
+                           std::vector<ModelHawkesSumExpKernLeastSqSingle> &model_list);
 
   //! @brief allocate arrays to store precomputations
   void allocate_weights() override;

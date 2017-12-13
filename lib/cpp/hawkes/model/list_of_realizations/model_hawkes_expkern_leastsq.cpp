@@ -8,18 +8,18 @@ ModelHawkesFixedExpKernLeastSqList::ModelHawkesFixedExpKernLeastSqList(
     const unsigned int optimization_level)
     : ModelHawkesLeastSqList(max_n_threads, optimization_level),
       decays(decays) {
-  aggregated_model = std::unique_ptr<ModelHawkesFixedExpKernLeastSq>(
-      new ModelHawkesFixedExpKernLeastSq(decays, max_n_threads, optimization_level));
+  aggregated_model = std::unique_ptr<ModelHawkesExpKernLeastSqSingle>(
+      new ModelHawkesExpKernLeastSqSingle(decays, max_n_threads, optimization_level));
 }
 
 void ModelHawkesFixedExpKernLeastSqList::hessian(ArrayDouble &out) {
   if (!weights_computed) compute_weights();
-  auto *casted_model = static_cast<ModelHawkesFixedExpKernLeastSq *>(aggregated_model.get());
+  auto *casted_model = static_cast<ModelHawkesExpKernLeastSqSingle *>(aggregated_model.get());
   casted_model->hessian(out);
 }
 
 void ModelHawkesFixedExpKernLeastSqList::compute_weights_i_r(
-    const ulong i_r, std::vector<ModelHawkesFixedExpKernLeastSq> &model_list) {
+    const ulong i_r, std::vector<ModelHawkesExpKernLeastSqSingle> &model_list) {
   const ulong r = static_cast<const ulong>(i_r / n_nodes);
   const ulong i = i_r % n_nodes;
 
@@ -28,10 +28,10 @@ void ModelHawkesFixedExpKernLeastSqList::compute_weights_i_r(
 
 void ModelHawkesFixedExpKernLeastSqList::compute_weights_timestamps_list() {
   auto model_list =
-      std::vector<ModelHawkesFixedExpKernLeastSq>(n_realizations);
+      std::vector<ModelHawkesExpKernLeastSqSingle>(n_realizations);
 
   for (ulong r = 0; r < n_realizations; ++r) {
-    model_list[r] = ModelHawkesFixedExpKernLeastSq(decays, 1, optimization_level);
+    model_list[r] = ModelHawkesExpKernLeastSqSingle(decays, 1, optimization_level);
     model_list[r].set_data(timestamps_list[r], (*end_times)[r]);
     model_list[r].allocate_weights();
   }
@@ -50,7 +50,7 @@ void ModelHawkesFixedExpKernLeastSqList::compute_weights_timestamps_list() {
 
 void ModelHawkesFixedExpKernLeastSqList::compute_weights_timestamps(
     const SArrayDoublePtrList1D &timestamps, double end_time) {
-  auto model = ModelHawkesFixedExpKernLeastSq(decays, get_n_threads(), optimization_level);
+  auto model = ModelHawkesExpKernLeastSqSingle(decays, get_n_threads(), optimization_level);
   model.set_data(timestamps, end_time);
   model.compute_weights();
 
@@ -74,7 +74,7 @@ void ModelHawkesFixedExpKernLeastSqList::allocate_weights() {
 }
 
 void ModelHawkesFixedExpKernLeastSqList::synchronize_aggregated_model() {
-  auto *casted_model = static_cast<ModelHawkesFixedExpKernLeastSq *>(aggregated_model.get());
+  auto *casted_model = static_cast<ModelHawkesExpKernLeastSqSingle *>(aggregated_model.get());
 
   casted_model->set_n_nodes(n_nodes);
   casted_model->max_n_threads = max_n_threads;

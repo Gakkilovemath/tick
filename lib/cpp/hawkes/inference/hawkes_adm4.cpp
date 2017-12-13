@@ -44,7 +44,7 @@ void HawkesADM4::compute_weights() {
   weights_computed = true;
 }
 
-// This code is very similar to ModelHawkesFixedExpKernLogLik
+// This code is very similar to ModelHawkesExpKernLogLikSingle
 void HawkesADM4::compute_weights_ru(const ulong r_u, ArrayDouble2d &map_kernel_integral) {
   // Obtain realization and node index from r_u
   const ulong r = static_cast<const ulong>(r_u / n_nodes);

@@ -10,27 +10,27 @@
 class ModelHawkesFixedSumExpKernLogLikList;
 
 /**
- * \class ModelHawkesFixedSumExpKernLogLik
+ * \class ModelHawkesSumExpKernLogLikSingle
  * \brief Class for computing loglikelihood function and gradient for Hawkes processes with
  * sum exponential kernels with fixed exponent
  * (i.e., \f$ \sum_u \alpha_u \beta_u e^{-\beta_u t} \f$, with fixed decays)
  */
-class DLL_PUBLIC ModelHawkesFixedSumExpKernLogLik : public ModelHawkesFixedKernLogLik {
+class DLL_PUBLIC ModelHawkesSumExpKernLogLikSingle : public ModelHawkesFixedKernLogLik {
  private:
   //! @brief Value of decays array for this model
   ArrayDouble decays;
 
  public:
   //! @brief Default constructor
-  //! @note This constructor is only used to create vectors of ModelHawkesFixedExpKernLeastSq
-  ModelHawkesFixedSumExpKernLogLik();
+  //! @note This constructor is only used to create vectors of ModelHawkesSumExpKernLogLikSingle
+  ModelHawkesSumExpKernLogLikSingle();
 
   /**
    * @brief Constructor
    * \param decays : decays for this model (remember that decay is fixed!)
    * \param n_threads : number of threads that will be used for parallel computations
    */
-  explicit ModelHawkesFixedSumExpKernLogLik(const ArrayDouble &decays, const int max_n_threads = 1);
+  explicit ModelHawkesSumExpKernLogLikSingle(const ArrayDouble &decays, const int max_n_threads = 1);
 
  protected:
   void allocate_weights() override;

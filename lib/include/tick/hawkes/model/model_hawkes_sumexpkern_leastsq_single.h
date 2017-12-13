@@ -6,12 +6,12 @@
 #include "tick/base/base.h"
 #include "tick/hawkes/model/base/model_hawkes_single.h"
 
-/** \class ModelHawkesFixedSumExpKernLeastSq
+/** \class ModelHawkesSumExpKernLeastSqSingle
  * \brief Class for computing L2 Contrast function and gradient for Hawkes processes with
  * sum exponential kernels with fixed exponent (i.e., \sum_u alpha_u*beta_u*e^{-beta_u t},
  * with fixed beta)
  */
-class DLL_PUBLIC ModelHawkesFixedSumExpKernLeastSq : public ModelHawkesSingle {
+class DLL_PUBLIC ModelHawkesSumExpKernLeastSqSingle : public ModelHawkesSingle {
   //! @brief Some arrays used for intermediate computings.
   ArrayDouble2dList1D E, Dgg, C;
 
@@ -31,8 +31,8 @@ class DLL_PUBLIC ModelHawkesFixedSumExpKernLeastSq : public ModelHawkesSingle {
 
  public:
   //! @brief Default constructor
-  //! @note This constructor is only used to create vectors of ModelHawkesFixedExpKernLeastSq and serialization
-  ModelHawkesFixedSumExpKernLeastSq() {}
+  //! @note This constructor is only used to create vectors of ModelHawkesSumExpKernLeastSqSingle and serialization
+  ModelHawkesSumExpKernLeastSqSingle() {}
 
   //! @brief Constructor
   //! \param timestamps : a list of arrays representing the realization
@@ -41,7 +41,7 @@ class DLL_PUBLIC ModelHawkesFixedSumExpKernLeastSq : public ModelHawkesSingle {
   //! \param max_n_threads : maximum number of threads to be used for multithreading
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster
   //! (approximated) exponential function
-  ModelHawkesFixedSumExpKernLeastSq(const ArrayDouble &decays,
+  ModelHawkesSumExpKernLeastSqSingle(const ArrayDouble &decays,
                                     const ulong n_baselines,
                                     const double period_length,
                                     const unsigned int max_n_threads = 1,
@@ -133,6 +133,6 @@ class DLL_PUBLIC ModelHawkesFixedSumExpKernLeastSq : public ModelHawkesSingle {
   }
 };
 
-CEREAL_REGISTER_TYPE(ModelHawkesFixedSumExpKernLeastSq);
+CEREAL_REGISTER_TYPE(ModelHawkesSumExpKernLeastSqSingle);
 
 #endif  // TICK_OPTIM_MODEL_SRC_HAWKES_FIXED_SUMEXPKERN_LEASTSQ_H_

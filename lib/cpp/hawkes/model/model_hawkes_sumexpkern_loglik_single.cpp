@@ -3,15 +3,15 @@
 
 #include "tick/hawkes/model/model_hawkes_sumexpkern_loglik_single.h"
 
-ModelHawkesFixedSumExpKernLogLik::ModelHawkesFixedSumExpKernLogLik() :
+ModelHawkesSumExpKernLogLikSingle::ModelHawkesSumExpKernLogLikSingle() :
   ModelHawkesFixedKernLogLik(), decays(0) {}
 
-ModelHawkesFixedSumExpKernLogLik::ModelHawkesFixedSumExpKernLogLik(
+ModelHawkesSumExpKernLogLikSingle::ModelHawkesSumExpKernLogLikSingle(
   const ArrayDouble &decays, const int max_n_threads) :
   ModelHawkesFixedKernLogLik(max_n_threads),
   decays(decays) {}
 
-void ModelHawkesFixedSumExpKernLogLik::allocate_weights() {
+void ModelHawkesSumExpKernLogLikSingle::allocate_weights() {
   if (n_nodes == 0) {
     TICK_ERROR("Please provide valid timestamps before allocating weights")
   }
@@ -28,7 +28,7 @@ void ModelHawkesFixedSumExpKernLogLik::allocate_weights() {
   }
 }
 
-void ModelHawkesFixedSumExpKernLogLik::compute_weights_dim_i(const ulong i) {
+void ModelHawkesSumExpKernLogLikSingle::compute_weights_dim_i(const ulong i) {
   const ArrayDouble t_i = view(*timestamps[i]);
   ArrayDouble2d g_i = view(g[i]);
   ArrayDouble2d G_i = view(G[i]);
@@ -75,6 +75,6 @@ void ModelHawkesFixedSumExpKernLogLik::compute_weights_dim_i(const ulong i) {
   }
 }
 
-ulong ModelHawkesFixedSumExpKernLogLik::get_n_coeffs() const {
+ulong ModelHawkesSumExpKernLogLikSingle::get_n_coeffs() const {
   return n_nodes + n_nodes * n_nodes * get_n_decays();
 }
