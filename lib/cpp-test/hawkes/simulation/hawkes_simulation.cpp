@@ -13,8 +13,8 @@ TEST(SimuHawkesTest, constant_baseline) {
 }
 
 TEST(SimuHawkesTest, tuple_baseline) {
-  ArrayDouble t_values {1., 2., 4., 5.3};
-  ArrayDouble y_values {1., 3., 2., 0.};
+  ArrayDouble t_values{1., 2., 4., 5.3};
+  ArrayDouble y_values{1., 3., 2., 0.};
   Hawkes hawkes(1);
   hawkes.set_baseline(0, t_values, y_values);
   const double simu_time = 100;

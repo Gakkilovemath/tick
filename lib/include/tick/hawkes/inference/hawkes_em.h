@@ -79,7 +79,6 @@ class HawkesEM : public ModelHawkesList {
   //! @param r_u : r * n_realizations + u, tells which realization and which node
   double loglikelihood_ur(const ulong r_u, const ArrayDouble &mu, ArrayDouble2d &kernels);
 
-
   //! @brief A method called by solve_ur and logliklihood_ur to compute all intensities at
   //! all timestamps occuring in node u of realization r
   //! @param r_u : r * n_realizations + u, tells which realization and which node

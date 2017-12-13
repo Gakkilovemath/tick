@@ -8,8 +8,8 @@ HawkesKernelPowerLaw::HawkesKernelPowerLaw(double multiplier,
                                            double exponent,
                                            double support,
                                            double error)
-    : HawkesKernel(support),
-      multiplier(multiplier), exponent(exponent), cutoff(cutoff) {
+  : HawkesKernel(support),
+    multiplier(multiplier), exponent(exponent), cutoff(cutoff) {
   if (support <= 0) {
     if (error <= 0) {
       throw std::invalid_argument("Either support or error must be non negative");
@@ -19,7 +19,7 @@ HawkesKernelPowerLaw::HawkesKernelPowerLaw(double multiplier,
 }
 
 HawkesKernelPowerLaw::HawkesKernelPowerLaw()
-    : HawkesKernelPowerLaw(0.0, 0.0, 0.0) {
+  : HawkesKernelPowerLaw(0.0, 0.0, 0.0) {
 }
 
 double HawkesKernelPowerLaw::get_value_(double x) {
@@ -29,7 +29,7 @@ double HawkesKernelPowerLaw::get_value_(double x) {
 double HawkesKernelPowerLaw::get_norm(int nsteps) {
   double A = support;
   double norm =
-      (pow(A + cutoff, 1 - exponent) - pow(cutoff, 1 - exponent)) * multiplier / (1 - exponent);
+    (pow(A + cutoff, 1 - exponent) - pow(cutoff, 1 - exponent)) * multiplier / (1 - exponent);
   return norm;
 }
 

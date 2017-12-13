@@ -3,9 +3,8 @@
 
 #include "tick/hawkes/simulation/simu_hawkes.h"
 
-
 Hawkes::Hawkes(unsigned int n_nodes, int seed)
-    : PP(n_nodes, seed), kernels(n_nodes * n_nodes), baselines(n_nodes) {
+  : PP(n_nodes, seed), kernels(n_nodes * n_nodes), baselines(n_nodes) {
   for (unsigned int i = 0; i < n_nodes; i++) {
     baselines[i] = std::make_shared<HawkesConstantBaseline>(0.);
 

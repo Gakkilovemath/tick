@@ -97,8 +97,8 @@ double ModelHawkesLogLik::loss_i(const ulong i, const ArrayDouble &coeffs) {
 }
 
 void ModelHawkesLogLik::grad_i_r(const ulong i_r,
-                                              ArrayDouble &out,
-                                              const ArrayDouble &coeffs) {
+                                 ArrayDouble &out,
+                                 const ArrayDouble &coeffs) {
   ulong r, i;
   std::tie(r, i) = get_realization_node(i_r);
 
@@ -120,14 +120,14 @@ void ModelHawkesLogLik::grad(const ArrayDouble &coeffs, ArrayDouble &out) {
 }
 
 void ModelHawkesLogLik::grad_i(const ulong i, const ArrayDouble &coeffs,
-                                            ArrayDouble &out) {
+                               ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   const auto r_i = sampled_i_to_realization(i);
   model_list[r_i.first]->grad_i(r_i.second, coeffs, out);
 }
 
 double ModelHawkesLogLik::loss_and_grad(const ArrayDouble &coeffs,
-                                                     ArrayDouble &out) {
+                                        ArrayDouble &out) {
   // TODO(svp) create parallel_map_array_reduce_result
   // In order to sum output (losses) and keep reducing gradients
   // This could allow us to use loss_and_grad_dim_i
@@ -136,8 +136,8 @@ double ModelHawkesLogLik::loss_and_grad(const ArrayDouble &coeffs,
 }
 
 double ModelHawkesLogLik::hessian_norm_i_r(const ulong i_r,
-                                                        const ArrayDouble &coeffs,
-                                                        const ArrayDouble &vector) {
+                                           const ArrayDouble &coeffs,
+                                           const ArrayDouble &vector) {
   ulong r, i;
   std::tie(r, i) = get_realization_node(i_r);
 
@@ -145,7 +145,7 @@ double ModelHawkesLogLik::hessian_norm_i_r(const ulong i_r,
 }
 
 double ModelHawkesLogLik::hessian_norm(const ArrayDouble &coeffs,
-                                                    const ArrayDouble &vector) {
+                                       const ArrayDouble &vector) {
   if (!weights_computed) compute_weights();
   return parallel_map_additive_reduce(
     get_n_threads(), n_realizations * n_nodes,
@@ -154,8 +154,8 @@ double ModelHawkesLogLik::hessian_norm(const ArrayDouble &coeffs,
 }
 
 void ModelHawkesLogLik::hessian_i_r(const ulong i_r,
-                                                 const ArrayDouble &coeffs,
-                                                 ArrayDouble &out) {
+                                    const ArrayDouble &coeffs,
+                                    ArrayDouble &out) {
   ulong r, i;
   std::tie(r, i) = get_realization_node(i_r);
 
@@ -163,7 +163,7 @@ void ModelHawkesLogLik::hessian_i_r(const ulong i_r,
 }
 
 void ModelHawkesLogLik::hessian(const ArrayDouble &coeffs,
-                                             ArrayDouble &out) {
+                                ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   parallel_run(
     get_n_threads(), n_realizations * n_nodes,

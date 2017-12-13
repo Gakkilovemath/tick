@@ -25,7 +25,7 @@ class DLL_PUBLIC ModelHawkesLeastSq : public ModelHawkesList {
   //! the number of physical cores will be used
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster (approximated) exponential function
   ModelHawkesLeastSq(const int max_n_threads = 1,
-                  const unsigned int optimization_level = 0);
+                     const unsigned int optimization_level = 0);
 
   void incremental_set_data(const SArrayDoublePtrList1D &timestamps, double end_time);
 

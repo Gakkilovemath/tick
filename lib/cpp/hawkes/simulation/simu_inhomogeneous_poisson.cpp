@@ -8,14 +8,14 @@
 
 InhomogeneousPoisson::InhomogeneousPoisson(const TimeFunction &intensities_function,
                                            int seed)
-    : PP(1, seed), intensities_functions(1) {
+  : PP(1, seed), intensities_functions(1) {
   intensities_functions[0] = intensities_function;
 }
 
 InhomogeneousPoisson::InhomogeneousPoisson(const std::vector<TimeFunction> &intensities_functions,
                                            int seed)
-    : PP(static_cast<unsigned int>(intensities_functions.size()), seed),
-      intensities_functions(intensities_functions) {
+  : PP(static_cast<unsigned int>(intensities_functions.size()), seed),
+    intensities_functions(intensities_functions) {
 }
 
 void InhomogeneousPoisson::init_intensity_(ArrayDouble &intensity, double *total_intensity_bound1) {

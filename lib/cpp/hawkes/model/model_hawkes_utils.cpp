@@ -3,7 +3,6 @@
 
 #include "tick/hawkes/model/model_hawkes_utils.h"
 
-
 TimestampListDescriptor describe_timestamps_list(const SArrayDoublePtrList2D &timestamps_list) {
   // Check the number of realizations
   ulong n_realizations = timestamps_list.size();
@@ -37,8 +36,8 @@ TimestampListDescriptor describe_timestamps_list(const SArrayDoublePtrList2D &ti
     }
   }
 
-  TimestampListDescriptor timestamps_list_descriptor {
-      n_realizations, n_nodes, n_total_jumps_per_realization, n_total_jumps_per_node
+  TimestampListDescriptor timestamps_list_descriptor{
+    n_realizations, n_nodes, n_total_jumps_per_realization, n_total_jumps_per_node
   };
   return timestamps_list_descriptor;
 }
@@ -49,8 +48,8 @@ TimestampListDescriptor describe_timestamps_list(const SArrayDoublePtrList2D &ti
 
   if (timestamps_list_descriptor.n_realizations != end_times->size()) {
     TICK_ERROR(
-        "You must provide as many end_times (" << end_times->size() << ") as realizations ("
-                                               << timestamps_list_descriptor.n_realizations << ")");
+      "You must provide as many end_times (" << end_times->size() << ") as realizations ("
+                                             << timestamps_list_descriptor.n_realizations << ")");
   }
 
   for (ulong r = 0; r < timestamps_list_descriptor.n_realizations; r++) {

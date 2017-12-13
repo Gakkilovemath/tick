@@ -13,7 +13,7 @@ HawkesSumGaussians::HawkesSumGaussians(const ulong n_gaussians, const double max
                                        const double strength_grouplasso,
                                        const ulong em_max_iter, const int max_n_threads,
                                        const unsigned int optimization_level)
-    : ModelHawkesList(max_n_threads, optimization_level) {
+  : ModelHawkesList(max_n_threads, optimization_level) {
   set_n_gaussians(n_gaussians);
   set_em_max_iter(em_max_iter);
   set_max_mean_gaussian(max_mean_gaussian);
@@ -41,7 +41,7 @@ void HawkesSumGaussians::compute_weights() {
   means_gaussians = ArrayDouble(n_gaussians);
   for (ulong m = 0; m < n_gaussians; m++) {
     means_gaussians[m] = static_cast<double>(m) *
-        max_mean_gaussian / static_cast<double>(n_gaussians);
+      max_mean_gaussian / static_cast<double>(n_gaussians);
   }
   std_gaussian = max_mean_gaussian / (n_gaussians * M_PI);
   std_gaussian_sq = std_gaussian * std_gaussian;
@@ -87,10 +87,10 @@ void HawkesSumGaussians::compute_weights_ru(const ulong r_u, ArrayDouble2d &map_
         ulong ij = 0;
         while ((ij < timestamps_rv.size()) && (timestamps_rv[ij] < t_ru_k)) {
           g_ru_k[v * n_gaussians + m] +=
-              cexp(-(t_ru_k - timestamps_rv[ij] - means_gaussians[m])
-                       * (t_ru_k - timestamps_rv[ij] - means_gaussians[m])
-                       / (2. * std_gaussian_sq))
-                  / norm_constant_gauss;
+            cexp(-(t_ru_k - timestamps_rv[ij] - means_gaussians[m])
+                   * (t_ru_k - timestamps_rv[ij] - means_gaussians[m])
+                   / (2. * std_gaussian_sq))
+              / norm_constant_gauss;
           ij++;
         }
       }
@@ -98,8 +98,8 @@ void HawkesSumGaussians::compute_weights_ru(const ulong r_u, ArrayDouble2d &map_
         // We use this pass over the data to fill kernel_integral
         for (ulong m = 0; m < n_gaussians; m++) {
           map_kernel_integral_r[u * n_gaussians + m] +=
-              0.5 * std::erf((end_time_r - t_ru_k - means_gaussians[m]) / norm_constant_erf)
-                  + 0.5 * std::erf(means_gaussians[m] / norm_constant_erf);
+            0.5 * std::erf((end_time_r - t_ru_k - means_gaussians[m]) / norm_constant_erf)
+              + 0.5 * std::erf(means_gaussians[m] / norm_constant_erf);
         }
       }
     }
@@ -164,7 +164,7 @@ void HawkesSumGaussians::estimate_ru(const ulong r_u,
     for (ulong node_v = 0; node_v < n_nodes; node_v++) {
       for (ulong m = 0; m < n_gaussians; m++) {
         const double sum_unnormalized_p_ij =
-            amplitudes_u[node_v * n_gaussians + m] * g_ru_i[node_v * n_gaussians + m];
+          amplitudes_u[node_v * n_gaussians + m] * g_ru_i[node_v * n_gaussians + m];
         unnormalized_next_C_ru[node_v * n_gaussians + m] += sum_unnormalized_p_ij;
         norm += sum_unnormalized_p_ij;
       }
@@ -231,16 +231,16 @@ void HawkesSumGaussians::prox_amplitudes_u(const ulong u,
       }
       // computation of the gradient at (u,v)
       grad_Q[m] +=
-          (amplitudes_u_old[v * n_gaussians + m] != 0. ?
-           kernel_integral[v * n_gaussians + m] + C / amplitudes_u_old[v * n_gaussians + m] :
-           kernel_integral[v * n_gaussians + m]);
+        (amplitudes_u_old[v * n_gaussians + m] != 0. ?
+         kernel_integral[v * n_gaussians + m] + C / amplitudes_u_old[v * n_gaussians + m] :
+         kernel_integral[v * n_gaussians + m]);
     }
     // check is thresholding condition is met
     double diff_norm = 0.;
     double tmp;
     for (ulong m = 0; m < n_gaussians; m++) {
       tmp = soft_thres(amplitudes_u[v * n_gaussians + m]
-                           - step_size * grad_Q[m], step_size * strength_lasso);
+                         - step_size * grad_Q[m], step_size * strength_lasso);
       diff_norm += tmp * tmp;
     }
     diff_norm = std::sqrt(diff_norm);
@@ -253,9 +253,9 @@ void HawkesSumGaussians::prox_amplitudes_u(const ulong u,
     } else {
       for (ulong m = 0; m < n_gaussians; m++) {
         amplitudes_u[v * n_gaussians + m] =
-            std::max(1. - step_size * strength_grouplasso / diff_norm, 0.) *
-                soft_thres(amplitudes_u[v * n_gaussians + m] - step_size * grad_Q[m],
-                           step_size * strength_lasso);
+          std::max(1. - step_size * strength_grouplasso / diff_norm, 0.) *
+            soft_thres(amplitudes_u[v * n_gaussians + m] - step_size * grad_Q[m],
+                       step_size * strength_lasso);
       }
     }
   }

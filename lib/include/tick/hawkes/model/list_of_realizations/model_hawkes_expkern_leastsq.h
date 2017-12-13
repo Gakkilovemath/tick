@@ -22,7 +22,7 @@ class DLL_PUBLIC ModelHawkesExpKernLeastSq : public ModelHawkesLeastSq {
  public:
   //! @brief Empty constructor
   //! This constructor should only be used for serialization
-  ModelHawkesExpKernLeastSq(): ModelHawkesLeastSq(0, 0) {}
+  ModelHawkesExpKernLeastSq() : ModelHawkesLeastSq(0, 0) {}
 
   //! @brief Constructor
   //! \param decays : the 2d array of the decays
@@ -30,8 +30,8 @@ class DLL_PUBLIC ModelHawkesExpKernLeastSq : public ModelHawkesLeastSq {
   //! the number of physical cores will be used
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster (approximated) exponential function
   ModelHawkesExpKernLeastSq(const SArrayDouble2dPtr decays,
-                                     const int max_n_threads = 1,
-                                     const unsigned int optimization_level = 0);
+                            const int max_n_threads = 1,
+                            const unsigned int optimization_level = 0);
 
   /**
    * @brief Compute hessian

@@ -5,7 +5,7 @@
 
 // Constructor
 PP::PP(unsigned int n_nodes, int seed)
-    : rand(seed), n_nodes(n_nodes) {
+  : rand(seed), n_nodes(n_nodes) {
   // Setting the process
   timestamps.resize(n_nodes);
   for (unsigned int i = 0; i < n_nodes; i++) timestamps[i] = VArrayDouble::new_ptr();
@@ -117,7 +117,7 @@ void PP::simulate(double end_time, ulong n_points) {
 
   // We loop till we reach the endTime
   while (time < end_time && n_total_jumps < n_points &&
-    (!flag_negative_intensity || threshold_negative_intensity) ) {
+    (!flag_negative_intensity || threshold_negative_intensity)) {
     // We compute the time of the potential next random jump
     const double time_of_next_jump = time + rand.exponential(total_intensity_bound);
 
@@ -174,8 +174,8 @@ void PP::simulate(double end_time, ulong n_points) {
   // #endif
 
   if (flag_negative_intensity && !threshold_negative_intensity) TICK_ERROR(
-      "Simulation stopped because intensity went negative (you could call "
-        "``threshold_negative_intensity`` to allow it)");
+    "Simulation stopped because intensity went negative (you could call "
+      "``threshold_negative_intensity`` to allow it)");
 }
 
 // Update the process component 'index' with current time

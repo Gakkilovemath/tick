@@ -1,16 +1,15 @@
 // License: BSD 3 clause
 
 #include "tick/hawkes/model/base/model_hawkes_leastsq.h"
-#include "tick/hawkes/model/model_hawkes_utils.h"
 
 ModelHawkesLeastSq::ModelHawkesLeastSq(
-    const int max_n_threads,
-    const unsigned int optimization_level)
-    : ModelHawkesList(max_n_threads, optimization_level),
-      weights_allocated(false) {}
+  const int max_n_threads,
+  const unsigned int optimization_level)
+  : ModelHawkesList(max_n_threads, optimization_level),
+    weights_allocated(false) {}
 
 void ModelHawkesLeastSq::grad_i(const ulong i, const ArrayDouble &coeffs,
-                                    ArrayDouble &out) {
+                                ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   aggregated_model->grad_i(i, coeffs, out);
 }
@@ -42,7 +41,7 @@ void ModelHawkesLeastSq::compute_weights() {
 }
 
 void ModelHawkesLeastSq::incremental_set_data(const SArrayDoublePtrList1D &timestamps,
-                                                  double end_time) {
+                                              double end_time) {
   weights_computed = false;
   if (!weights_allocated) {
     set_n_nodes(timestamps.size());

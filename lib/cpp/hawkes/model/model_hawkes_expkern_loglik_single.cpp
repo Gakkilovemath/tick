@@ -4,9 +4,9 @@
 #include "tick/hawkes/model/model_hawkes_expkern_loglik_single.h"
 
 ModelHawkesExpKernLogLikSingle::ModelHawkesExpKernLogLikSingle(
-    const double decay, const int max_n_threads) :
+  const double decay, const int max_n_threads) :
   ModelHawkesLogLikSingle(max_n_threads),
-    decay(decay) {}
+  decay(decay) {}
 
 void ModelHawkesExpKernLogLikSingle::allocate_weights() {
   if (n_nodes == 0) {

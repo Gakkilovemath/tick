@@ -29,7 +29,6 @@
 #include "hawkes_kernels/hawkes_kernel_sum_exp.h"
 #include "hawkes_kernels/hawkes_kernel_time_func.h"
 
-
 /*! \class Hawkes
  * \brief This class stands for all types of Hawkes
  * processes

@@ -6,7 +6,7 @@
 
 HawkesADM4::HawkesADM4(const double decay, const double rho,
                        const int max_n_threads, const unsigned int optimization_level)
-    : ModelHawkesList(max_n_threads, optimization_level) {
+  : ModelHawkesList(max_n_threads, optimization_level) {
   set_decay(decay);
   set_rho(rho);
 }

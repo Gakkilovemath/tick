@@ -42,11 +42,10 @@ class DLL_PUBLIC ModelHawkesSumExpKernLeastSqSingle : public ModelHawkesSingle {
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster
   //! (approximated) exponential function
   ModelHawkesSumExpKernLeastSqSingle(const ArrayDouble &decays,
-                                    const ulong n_baselines,
-                                    const double period_length,
-                                    const unsigned int max_n_threads = 1,
-                                    const unsigned int optimization_level = 0);
-
+                                     const ulong n_baselines,
+                                     const double period_length,
+                                     const unsigned int max_n_threads = 1,
+                                     const unsigned int optimization_level = 0);
 
   /**
    * @brief Precomputations of intermediate values

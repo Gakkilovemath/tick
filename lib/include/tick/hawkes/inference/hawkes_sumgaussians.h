@@ -24,8 +24,8 @@ class HawkesSumGaussians : public ModelHawkesList {
   double std_gaussian = 1.;
 
   //! @brief Useful constants that appear in weights computation.
-  double std_gaussian_sq = std_gaussian*std_gaussian;
-  double norm_constant_gauss = std_gaussian * std::sqrt(2.*M_PI);
+  double std_gaussian_sq = std_gaussian * std_gaussian;
+  double norm_constant_gauss = std_gaussian * std::sqrt(2. * M_PI);
   double norm_constant_erf = std_gaussian * std::sqrt(2);
 
   //! @brief Step size used in update formulas (7) and (8)
@@ -58,7 +58,8 @@ class HawkesSumGaussians : public ModelHawkesList {
   ArrayDouble2d next_mu;
 
  public:
-  HawkesSumGaussians(const ulong n_gaussians, const double max_mean_gaussian, const double step_size,
+  HawkesSumGaussians(const ulong n_gaussians, const double max_mean_gaussian,
+                     const double step_size,
                      const double strength_lasso, const double strength_grouplasso,
                      const ulong em_max_iter, const int max_n_threads = 1,
                      const unsigned int optimization_level = 0);

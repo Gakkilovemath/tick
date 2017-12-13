@@ -3,13 +3,13 @@
 #include "tick/hawkes/model/list_of_realizations/model_hawkes_expkern_leastsq.h"
 
 ModelHawkesExpKernLeastSq::ModelHawkesExpKernLeastSq(
-    const SArrayDouble2dPtr decays,
-    const int max_n_threads,
-    const unsigned int optimization_level)
-    : ModelHawkesLeastSq(max_n_threads, optimization_level),
-      decays(decays) {
+  const SArrayDouble2dPtr decays,
+  const int max_n_threads,
+  const unsigned int optimization_level)
+  : ModelHawkesLeastSq(max_n_threads, optimization_level),
+    decays(decays) {
   aggregated_model = std::unique_ptr<ModelHawkesExpKernLeastSqSingle>(
-      new ModelHawkesExpKernLeastSqSingle(decays, max_n_threads, optimization_level));
+    new ModelHawkesExpKernLeastSqSingle(decays, max_n_threads, optimization_level));
 }
 
 void ModelHawkesExpKernLeastSq::hessian(ArrayDouble &out) {
@@ -19,7 +19,7 @@ void ModelHawkesExpKernLeastSq::hessian(ArrayDouble &out) {
 }
 
 void ModelHawkesExpKernLeastSq::compute_weights_i_r(
-    const ulong i_r, std::vector<ModelHawkesExpKernLeastSqSingle> &model_list) {
+  const ulong i_r, std::vector<ModelHawkesExpKernLeastSqSingle> &model_list) {
   const ulong r = static_cast<const ulong>(i_r / n_nodes);
   const ulong i = i_r % n_nodes;
 
@@ -28,7 +28,7 @@ void ModelHawkesExpKernLeastSq::compute_weights_i_r(
 
 void ModelHawkesExpKernLeastSq::compute_weights_timestamps_list() {
   auto model_list =
-      std::vector<ModelHawkesExpKernLeastSqSingle>(n_realizations);
+    std::vector<ModelHawkesExpKernLeastSqSingle>(n_realizations);
 
   for (ulong r = 0; r < n_realizations; ++r) {
     model_list[r] = ModelHawkesExpKernLeastSqSingle(decays, 1, optimization_level);
@@ -49,7 +49,7 @@ void ModelHawkesExpKernLeastSq::compute_weights_timestamps_list() {
 }
 
 void ModelHawkesExpKernLeastSq::compute_weights_timestamps(
-    const SArrayDoublePtrList1D &timestamps, double end_time) {
+  const SArrayDoublePtrList1D &timestamps, double end_time) {
   auto model = ModelHawkesExpKernLeastSqSingle(decays, get_n_threads(), optimization_level);
   model.set_data(timestamps, end_time);
   model.compute_weights();

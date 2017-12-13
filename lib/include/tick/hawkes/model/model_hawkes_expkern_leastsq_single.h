@@ -29,8 +29,8 @@ class DLL_PUBLIC ModelHawkesExpKernLeastSqSingle : public ModelHawkesSingle {
   //! \param max_n_threads : maximum number of threads to be used for multithreading
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster (approximated) exponential function
   ModelHawkesExpKernLeastSqSingle(const SArrayDouble2dPtr decays,
-                                 const int max_n_threads = 1,
-                                 const unsigned int optimization_level = 0);
+                                  const int max_n_threads = 1,
+                                  const unsigned int optimization_level = 0);
 
   /**
    * @brief Precomputations of intermediate values

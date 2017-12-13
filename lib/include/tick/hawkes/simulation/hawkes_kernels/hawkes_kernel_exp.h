@@ -114,7 +114,8 @@ class HawkesKernelExp : public HawkesKernel {
     return 3 / decay;
   }
 
-  std::shared_ptr<HawkesKernel> duplicate_if_necessary(const std::shared_ptr<HawkesKernel> &kernel) override {
+  std::shared_ptr<HawkesKernel> duplicate_if_necessary(
+    const std::shared_ptr<HawkesKernel> &kernel) override {
     return std::make_shared<HawkesKernelExp>(*this);
   }
 

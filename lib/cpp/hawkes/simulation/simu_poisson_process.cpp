@@ -16,7 +16,7 @@ Poisson::Poisson(double intensity, int seed) : PP(1, seed) {
 }
 
 Poisson::Poisson(SArrayDoublePtr intensities, int seed) :
-    PP(static_cast<unsigned int>(intensities->size()), seed) {
+  PP(static_cast<unsigned int>(intensities->size()), seed) {
   this->intensities = intensities;
 }
 

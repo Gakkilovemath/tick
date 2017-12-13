@@ -24,7 +24,7 @@ class DLL_PUBLIC ModelHawkesExpKernLogLik : public ModelHawkesLogLik {
    * the number of physical cores will be used
    */
   ModelHawkesExpKernLogLik(const double decay,
-                                    const int max_n_threads = 1);
+                           const int max_n_threads = 1);
 
   /**
    * @brief Set decays and reset weights computing

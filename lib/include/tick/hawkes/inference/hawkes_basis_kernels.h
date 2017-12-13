@@ -39,10 +39,10 @@ class HawkesBasisKernels : public ModelHawkesList {
 
  public :
   HawkesBasisKernels(const double kernel_support,
-                       const ulong kernel_size,
-                       const ulong n_basis,
-                       const double alpha,
-                       const int max_n_threads = 1);
+                     const ulong kernel_size,
+                     const ulong n_basis,
+                     const double alpha,
+                     const int max_n_threads = 1);
 
   double solve(ArrayDouble &mu,
                ArrayDouble2d &gdm,

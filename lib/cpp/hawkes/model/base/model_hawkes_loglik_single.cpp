@@ -31,7 +31,7 @@ double ModelHawkesLogLikSingle::loss(const ArrayDouble &coeffs) {
 }
 
 double ModelHawkesLogLikSingle::loss_i(const ulong sampled_i,
-                                          const ArrayDouble &coeffs) {
+                                       const ArrayDouble &coeffs) {
   if (!weights_computed) compute_weights();
   ulong i;
   ulong k;
@@ -41,7 +41,7 @@ double ModelHawkesLogLikSingle::loss_i(const ulong sampled_i,
 }
 
 void ModelHawkesLogLikSingle::grad(const ArrayDouble &coeffs,
-                                      ArrayDouble &out) {
+                                   ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   out.fill(0);
 
@@ -56,8 +56,8 @@ void ModelHawkesLogLikSingle::grad(const ArrayDouble &coeffs,
 }
 
 void ModelHawkesLogLikSingle::grad_i(const ulong sampled_i,
-                                        const ArrayDouble &coeffs,
-                                        ArrayDouble &out) {
+                                     const ArrayDouble &coeffs,
+                                     ArrayDouble &out) {
   if (!weights_computed) compute_weights();
 
   ulong i;
@@ -71,7 +71,7 @@ void ModelHawkesLogLikSingle::grad_i(const ulong sampled_i,
 }
 
 double ModelHawkesLogLikSingle::loss_and_grad(const ArrayDouble &coeffs,
-                                                 ArrayDouble &out) {
+                                              ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   out.fill(0);
 
@@ -85,7 +85,7 @@ double ModelHawkesLogLikSingle::loss_and_grad(const ArrayDouble &coeffs,
 }
 
 double ModelHawkesLogLikSingle::hessian_norm(const ArrayDouble &coeffs,
-                                                const ArrayDouble &vector) {
+                                             const ArrayDouble &vector) {
   if (!weights_computed) compute_weights();
 
   const double norm_sum =
@@ -113,8 +113,8 @@ void ModelHawkesLogLikSingle::hessian(const ArrayDouble &coeffs, ArrayDouble &ou
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ModelHawkesLogLikSingle::sampled_i_to_index(const ulong sampled_i,
-                                                    ulong *i,
-                                                    ulong *k) {
+                                                 ulong *i,
+                                                 ulong *k) {
   ulong cum_N_i = 0;
   for (ulong d = 0; d < n_nodes; d++) {
     cum_N_i += (*n_jumps_per_node)[d];
@@ -127,11 +127,11 @@ void ModelHawkesLogLikSingle::sampled_i_to_index(const ulong sampled_i,
 }
 
 double ModelHawkesLogLikSingle::loss_dim_i(const ulong i,
-                                              const ArrayDouble &coeffs) {
+                                           const ArrayDouble &coeffs) {
   const double mu_i = coeffs[i];
   const ArrayDouble alpha_i = view(coeffs, get_alpha_i_first_index(i), get_alpha_i_last_index(i));
 
-  double loss = - end_time;
+  double loss = -end_time;
   loss += end_time * mu_i;
 
   for (ulong k = 0; k < (*n_jumps_per_node)[i]; ++k) {
@@ -152,8 +152,8 @@ double ModelHawkesLogLikSingle::loss_dim_i(const ulong i,
 }
 
 double ModelHawkesLogLikSingle::loss_i_k(const ulong i,
-                                            const ulong k,
-                                            const ArrayDouble &coeffs) {
+                                         const ulong k,
+                                         const ArrayDouble &coeffs) {
   const double mu_i = coeffs[i];
   const ArrayDouble alpha_i = view(coeffs, get_alpha_i_first_index(i), get_alpha_i_last_index(i));
   double loss = 0;
@@ -185,8 +185,8 @@ double ModelHawkesLogLikSingle::loss_i_k(const ulong i,
 }
 
 void ModelHawkesLogLikSingle::grad_dim_i(const ulong i,
-                                            const ArrayDouble &coeffs,
-                                            ArrayDouble &out) {
+                                         const ArrayDouble &coeffs,
+                                         ArrayDouble &out) {
   const double mu_i = coeffs[i];
   const ArrayDouble alpha_i = view(coeffs, get_alpha_i_first_index(i), get_alpha_i_last_index(i));
 
@@ -208,8 +208,8 @@ void ModelHawkesLogLikSingle::grad_dim_i(const ulong i,
 }
 
 void ModelHawkesLogLikSingle::grad_i_k(const ulong i, const ulong k,
-                                          const ArrayDouble &coeffs,
-                                          ArrayDouble &out) {
+                                       const ArrayDouble &coeffs,
+                                       ArrayDouble &out) {
   const double mu_i = coeffs[i];
   const ArrayDouble alpha_i = view(coeffs, get_alpha_i_first_index(i), get_alpha_i_last_index(i));
 
@@ -237,8 +237,8 @@ void ModelHawkesLogLikSingle::grad_i_k(const ulong i, const ulong k,
 }
 
 double ModelHawkesLogLikSingle::loss_and_grad_dim_i(const ulong i,
-                                                       const ArrayDouble &coeffs,
-                                                       ArrayDouble &out) {
+                                                    const ArrayDouble &coeffs,
+                                                    ArrayDouble &out) {
   const double mu_i = coeffs[i];
   const ArrayDouble alpha_i = view(coeffs, get_alpha_i_first_index(i), get_alpha_i_last_index(i));
 
@@ -273,8 +273,8 @@ double ModelHawkesLogLikSingle::loss_and_grad_dim_i(const ulong i,
 }
 
 double ModelHawkesLogLikSingle::hessian_norm_dim_i(const ulong i,
-                                                      const ArrayDouble &coeffs,
-                                                      const ArrayDouble &vector) {
+                                                   const ArrayDouble &coeffs,
+                                                   const ArrayDouble &vector) {
   const double mu_i = coeffs[i];
   const ArrayDouble alpha_i = view(coeffs, get_alpha_i_first_index(i), get_alpha_i_last_index(i));
 
@@ -299,8 +299,8 @@ double ModelHawkesLogLikSingle::hessian_norm_dim_i(const ulong i,
 }
 
 void ModelHawkesLogLikSingle::hessian_i(const ulong i,
-                                           const ArrayDouble &coeffs,
-                                           ArrayDouble &out) {
+                                        const ArrayDouble &coeffs,
+                                        ArrayDouble &out) {
   if (!weights_computed) TICK_ERROR("Please compute weights before calling hessian_i");
 
   const double mu_i = coeffs[i];

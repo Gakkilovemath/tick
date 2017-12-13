@@ -4,14 +4,14 @@
 #include "tick/hawkes/model/model_hawkes_sumexpkern_leastsq_single.h"
 
 ModelHawkesSumExpKernLeastSqSingle::ModelHawkesSumExpKernLeastSqSingle(
-    const ArrayDouble &decays,
-    const ulong n_baselines,
-    const double period_length,
-    const unsigned int max_n_threads,
-    const unsigned int optimization_level)
-    : ModelHawkesSingle(max_n_threads, optimization_level),
-      n_baselines(n_baselines), period_length(period_length),
-      decays(decays), n_decays(decays.size()) {}
+  const ArrayDouble &decays,
+  const ulong n_baselines,
+  const double period_length,
+  const unsigned int max_n_threads,
+  const unsigned int optimization_level)
+  : ModelHawkesSingle(max_n_threads, optimization_level),
+    n_baselines(n_baselines), period_length(period_length),
+    decays(decays), n_decays(decays.size()) {}
 
 // Method that computes the value
 double ModelHawkesSumExpKernLeastSqSingle::loss(const ArrayDouble &coeffs) {
@@ -20,11 +20,11 @@ double ModelHawkesSumExpKernLeastSqSingle::loss(const ArrayDouble &coeffs) {
 
   // This allows to run in a multithreaded environment the computation of the contribution of each component
   SArrayDoublePtr values =
-      parallel_map(get_n_threads(),
-                   n_nodes,
-                   &ModelHawkesSumExpKernLeastSqSingle::loss_i,
-                   this,
-                   coeffs);
+    parallel_map(get_n_threads(),
+                 n_nodes,
+                 &ModelHawkesSumExpKernLeastSqSingle::loss_i,
+                 this,
+                 coeffs);
 
   // We just need to sum up the contribution
   return values->sum() / n_total_jumps;
@@ -32,7 +32,7 @@ double ModelHawkesSumExpKernLeastSqSingle::loss(const ArrayDouble &coeffs) {
 
 // Performs the computation of the contribution of the i component to the value
 double ModelHawkesSumExpKernLeastSqSingle::loss_i(const ulong i,
-                                                 const ArrayDouble &coeffs) {
+                                                  const ArrayDouble &coeffs) {
   if (!weights_computed) TICK_ERROR("Please compute weights before calling loss_i");
 
   ArrayDouble mu_i = view(coeffs, i * n_baselines, (i + 1) * n_baselines);
@@ -91,7 +91,7 @@ double ModelHawkesSumExpKernLeastSqSingle::loss_i(const ulong i,
 
 // Method that computes the gradient
 void ModelHawkesSumExpKernLeastSqSingle::grad(const ArrayDouble &coeffs,
-                                             ArrayDouble &out) {
+                                              ArrayDouble &out) {
   // The initialization should be performed if not performed yet
   if (!weights_computed) compute_weights();
 
@@ -107,8 +107,8 @@ void ModelHawkesSumExpKernLeastSqSingle::grad(const ArrayDouble &coeffs,
 
 // Method that computes the component i of the gradient
 void ModelHawkesSumExpKernLeastSqSingle::grad_i(const ulong i,
-                                               const ArrayDouble &coeffs,
-                                               ArrayDouble &out) {
+                                                const ArrayDouble &coeffs,
+                                                ArrayDouble &out) {
   if (!weights_computed) TICK_ERROR("Please compute weights before calling hessian_i");
 
   ArrayDouble mu_i = view(coeffs, i * n_baselines, (i + 1) * n_baselines);
@@ -145,7 +145,7 @@ void ModelHawkesSumExpKernLeastSqSingle::grad_i(const ulong i,
       for (ulong u1 = 0; u1 < n_decays; ++u1) {
         double alpha_i_j_u1 = alpha_i[j * n_decays + u1];
 
-        grad_alpha_i_j_u += 2 * alpha_i_j_u1 * Dgg_j(u , u1);
+        grad_alpha_i_j_u += 2 * alpha_i_j_u1 * Dgg_j(u, u1);
 
         for (ulong j1 = 0; j1 < n_nodes; ++j1) {
           double alpha_i_j1_u1 = alpha_i[j1 * n_decays + u1];
@@ -163,7 +163,7 @@ void ModelHawkesSumExpKernLeastSqSingle::grad_i(const ulong i,
 // Computes both gradient and value
 // TODO : optimization !
 double ModelHawkesSumExpKernLeastSqSingle::loss_and_grad(const ArrayDouble &coeffs,
-                                                        ArrayDouble &out) {
+                                                         ArrayDouble &out) {
   grad(coeffs, out);
   return loss(coeffs);
 }

@@ -24,7 +24,7 @@ class DLL_PUBLIC ModelHawkesSumExpKernLogLik : public ModelHawkesLogLik {
    * the number of physical cores will be used
    */
   ModelHawkesSumExpKernLogLik(const ArrayDouble &decay,
-                                       const int max_n_threads = 1);
+                              const int max_n_threads = 1);
 
   //! @brief Returns decay that was set
   SArrayDoublePtr get_decays() const {

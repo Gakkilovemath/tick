@@ -5,8 +5,8 @@
 
 ModelHawkes::ModelHawkes(const int max_n_threads,
                          const unsigned int optimization_level) :
-    optimization_level(optimization_level),
-    weights_computed(false), n_nodes(0) {
+  optimization_level(optimization_level),
+  weights_computed(false), n_nodes(0) {
   set_n_threads(max_n_threads);
   n_jumps_per_node = SArrayULong::new_ptr(n_nodes);
 }

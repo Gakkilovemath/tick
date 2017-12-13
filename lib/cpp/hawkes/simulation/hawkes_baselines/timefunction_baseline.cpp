@@ -4,10 +4,10 @@
 #include "tick/hawkes/simulation/hawkes_baselines/timefunction_baseline.h"
 
 HawkesTimeFunctionBaseline::HawkesTimeFunctionBaseline()
-    : time_function(0.) {}
+  : time_function(0.) {}
 
 HawkesTimeFunctionBaseline::HawkesTimeFunctionBaseline(TimeFunction time_function)
-    : time_function(time_function) {}
+  : time_function(time_function) {}
 
 HawkesTimeFunctionBaseline::HawkesTimeFunctionBaseline(ArrayDouble &times,
                                                        ArrayDouble &values) {

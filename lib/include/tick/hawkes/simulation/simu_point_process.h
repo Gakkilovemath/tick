@@ -233,7 +233,7 @@ class PP {
   /// @brief Get the process (converted into fixed size array)
   SArrayDoublePtrList1D get_timestamps() {
     SArrayDoublePtrList1D shared_process =
-        std::vector<SArrayDoublePtr>(timestamps.begin(), timestamps.end());
+      std::vector<SArrayDoublePtr>(timestamps.begin(), timestamps.end());
     return shared_process;
   }
 

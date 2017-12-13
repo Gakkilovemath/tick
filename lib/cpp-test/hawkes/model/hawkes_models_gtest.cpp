@@ -10,14 +10,11 @@
 #include "tick/hawkes/model/model_hawkes_sumexpkern_loglik_single.h"
 
 #include <cereal/types/unordered_map.hpp>
-#include <cereal/types/memory.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>
 #include <fstream>
 
-#include "tick/array/array.h"
 #include "tick/hawkes/model/model_hawkes_expkern_loglik_single.h"
-#include "tick/hawkes/model/model_hawkes_sumexpkern_loglik_single.h"
 #include "tick/hawkes/model/model_hawkes_expkern_leastsq_single.h"
 #include "tick/hawkes/model/model_hawkes_sumexpkern_leastsq_single.h"
 
@@ -25,7 +22,6 @@
 #include "tick/hawkes/model/list_of_realizations/model_hawkes_sumexpkern_leastsq.h"
 #include "tick/hawkes/model/list_of_realizations/model_hawkes_expkern_loglik.h"
 #include "tick/hawkes/model/list_of_realizations/model_hawkes_sumexpkern_loglik.h"
-
 
 class HawkesModelTest : public ::testing::Test {
  protected:
@@ -41,13 +37,13 @@ class HawkesModelTest : public ::testing::Test {
   }
 };
 
-TEST_F(HawkesModelTest, compute_weights_loglikelihood){
+TEST_F(HawkesModelTest, compute_weights_loglikelihood) {
   ModelHawkesExpKernLogLikSingle model(2);
   model.set_data(timestamps, 4.25);
   model.compute_weights();
 }
 
-TEST_F(HawkesModelTest, compute_loss_loglikelihood){
+TEST_F(HawkesModelTest, compute_loss_loglikelihood) {
   ModelHawkesExpKernLogLikSingle model(2);
   model.set_data(timestamps, 4.25);
   ArrayDouble coeffs = ArrayDouble {1., 3., 2., 3., 4., 1};
@@ -61,7 +57,7 @@ TEST_F(HawkesModelTest, compute_loss_loglikelihood){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 6);
 }
 
-TEST_F(HawkesModelTest, compute_loss_loglikelihood_sparse){
+TEST_F(HawkesModelTest, compute_loss_loglikelihood_sparse) {
   ModelHawkesExpKernLogLikSingle model(2);
   auto sparse_timestamps = SArrayDoublePtrList1D(0);
   // Test will fail if process array is not sorted
@@ -82,7 +78,7 @@ TEST_F(HawkesModelTest, compute_loss_loglikelihood_sparse){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 6);
 }
 
-TEST_F(HawkesModelTest, check_sto_loglikelihood){
+TEST_F(HawkesModelTest, check_sto_loglikelihood) {
   ModelHawkesExpKernLogLikSingle model(2);
   model.set_data(timestamps, 6.);
   ArrayDouble coeffs = ArrayDouble {1., 3., 2., 3., 4., 1};
@@ -105,14 +101,14 @@ TEST_F(HawkesModelTest, check_sto_loglikelihood){
   }
 
   EXPECT_DOUBLE_EQ(loss, sum_sto_loss);
-  for (ulong i  = 0; i < model.get_n_coeffs(); ++i) {
+  for (ulong i = 0; i < model.get_n_coeffs(); ++i) {
     SCOPED_TRACE(i);
     EXPECT_DOUBLE_EQ(grad[i], sto_grad[i]);
   }
 }
 
-TEST_F(HawkesModelTest, compute_loss_loglikelihood_sum_exp_kern){
-  ArrayDouble decays {1., 2., 3.};
+TEST_F(HawkesModelTest, compute_loss_loglikelihood_sum_exp_kern) {
+  ArrayDouble decays{1., 2., 3.};
 
   const double end_time = 5.65;
   ModelHawkesSumExpKernLogLikSingle model(decays, 1);
@@ -129,7 +125,7 @@ TEST_F(HawkesModelTest, compute_loss_loglikelihood_sum_exp_kern){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 14);
 }
 
-TEST_F(HawkesModelTest, compute_loss_least_squares){
+TEST_F(HawkesModelTest, compute_loss_least_squares) {
   ArrayDouble2d decays(2, 2);
   decays.fill(2);
 
@@ -147,7 +143,7 @@ TEST_F(HawkesModelTest, compute_loss_least_squares){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 6);
 }
 
-TEST_F(HawkesModelTest, hawkes_least_squares_serialization){
+TEST_F(HawkesModelTest, hawkes_least_squares_serialization) {
 
   ArrayDouble2d decays(2, 2);
   decays.fill(2);
@@ -162,14 +158,14 @@ TEST_F(HawkesModelTest, hawkes_least_squares_serialization){
   {
     cereal::JSONOutputArchive outputArchive(os);
 
-    outputArchive( model );
+    outputArchive(model);
   }
 
   {
     cereal::JSONInputArchive inputArchive(os);
 
     ModelHawkesExpKernLeastSqSingle restored_model;
-    inputArchive( restored_model );
+    inputArchive(restored_model);
 
     EXPECT_EQ(restored_model.get_n_nodes(), 2);
     EXPECT_EQ(restored_model.get_end_time(), 5.65);
@@ -179,7 +175,7 @@ TEST_F(HawkesModelTest, hawkes_least_squares_serialization){
   }
 }
 
-TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_kern){
+TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_kern) {
   ArrayDouble decays(2);
   decays.fill(2);
 
@@ -198,7 +194,7 @@ TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_kern){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 10);
 }
 
-TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_varying_baseline){
+TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_varying_baseline) {
   ArrayDouble decays(2);
   decays.fill(2);
 
@@ -217,10 +213,9 @@ TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_varying_baseline){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 14);
 }
 
+TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_serialization) {
 
-TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_serialization){
-
-  ArrayDouble decays {2., 3.};
+  ArrayDouble decays{2., 3.};
 
   ModelHawkesSumExpKernLeastSqSingle model(decays, 2, 3.);
   model.set_data(timestamps, 5.65);
@@ -232,14 +227,14 @@ TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_serialization){
   {
     cereal::JSONOutputArchive outputArchive(os);
 
-    outputArchive( model );
+    outputArchive(model);
   }
 
   {
     cereal::JSONInputArchive inputArchive(os);
 
     ModelHawkesSumExpKernLeastSqSingle restored_model;
-    inputArchive( restored_model );
+    inputArchive(restored_model);
 
     EXPECT_EQ(restored_model.get_n_nodes(), 2);
     EXPECT_EQ(restored_model.get_end_time(), 5.65);
@@ -249,7 +244,7 @@ TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_serialization){
   }
 }
 
-TEST_F(HawkesModelTest, compute_loss_least_square_list){
+TEST_F(HawkesModelTest, compute_loss_least_square_list) {
   ArrayDouble2d decays(2, 2);
   decays.fill(2);
 
@@ -260,7 +255,8 @@ TEST_F(HawkesModelTest, compute_loss_least_square_list){
   timestamps_list.push_back(timestamps);
 
   auto end_times = VArrayDouble::new_ptr(2);
-  (*end_times)[0] = 5.65; (*end_times)[1] = 5.87;
+  (*end_times)[0] = 5.65;
+  (*end_times)[1] = 5.87;
 
   model.set_data(timestamps_list, end_times);
   model.compute_weights();
@@ -275,7 +271,7 @@ TEST_F(HawkesModelTest, compute_loss_least_square_list){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 6);
 }
 
-TEST_F(HawkesModelTest, least_square_list_serialization){
+TEST_F(HawkesModelTest, least_square_list_serialization) {
   ArrayDouble2d decays(2, 2);
   decays.fill(2);
 
@@ -286,7 +282,8 @@ TEST_F(HawkesModelTest, least_square_list_serialization){
   timestamps_list.push_back(timestamps);
 
   auto end_times = VArrayDouble::new_ptr(2);
-  (*end_times)[0] = 5.65; (*end_times)[1] = 5.87;
+  (*end_times)[0] = 5.65;
+  (*end_times)[1] = 5.87;
 
   model.set_data(timestamps_list, end_times);
   model.compute_weights();
@@ -297,14 +294,14 @@ TEST_F(HawkesModelTest, least_square_list_serialization){
   {
     cereal::BinaryOutputArchive outputArchive(os);
 
-    outputArchive( model );
+    outputArchive(model);
   }
 
   {
     cereal::BinaryInputArchive inputArchive(os);
 
     ModelHawkesExpKernLeastSq restored_model(nullptr, 0);
-    inputArchive( restored_model );
+    inputArchive(restored_model);
 
     EXPECT_EQ(restored_model.get_n_nodes(), 2);
     EXPECT_EQ((*restored_model.get_end_times())[1], 5.87);
@@ -314,11 +311,11 @@ TEST_F(HawkesModelTest, least_square_list_serialization){
   }
 }
 
-TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_list){
+TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_list) {
   ArrayDouble decays(2);
   decays.fill(2);
 
-  ArrayDouble end_times {5.65, 5.87};
+  ArrayDouble end_times{5.65, 5.87};
   ModelHawkesSumExpKernLeastSq model(decays, 1, 1e300, 1);
   model.incremental_set_data(timestamps, end_times[0]);
   model.incremental_set_data(timestamps, end_times[1]);
@@ -333,12 +330,11 @@ TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_list){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 10);
 }
 
-
-TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_list_varying_baseline){
+TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_list_varying_baseline) {
   ArrayDouble decays(2);
   decays.fill(2);
 
-  ArrayDouble end_times {5.65, 5.87};
+  ArrayDouble end_times{5.65, 5.87};
   ModelHawkesSumExpKernLeastSq model(decays, 3, 2., 1);
   model.incremental_set_data(timestamps, end_times[0]);
   model.incremental_set_data(timestamps, end_times[1]);
@@ -353,12 +349,11 @@ TEST_F(HawkesModelTest, compute_loss_least_square_sum_exp_list_varying_baseline)
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 14);
 }
 
+TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_list_serialization) {
 
-TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_list_serialization){
+  ArrayDouble decays{0.1, 5.};
 
-  ArrayDouble decays {0.1, 5.};
-
-  ArrayDouble end_times {5.65, 5.87};
+  ArrayDouble end_times{5.65, 5.87};
   ModelHawkesSumExpKernLeastSq model(decays, 1, 1e300, 1);
   model.incremental_set_data(timestamps, end_times[0]);
   model.incremental_set_data(timestamps, end_times[1]);
@@ -369,14 +364,14 @@ TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_list_serialization){
   {
     cereal::JSONOutputArchive outputArchive(os);
 
-    outputArchive( model );
+    outputArchive(model);
   }
 
   {
     cereal::JSONInputArchive inputArchive(os);
 
     ModelHawkesSumExpKernLeastSq restored_model;
-    inputArchive( restored_model );
+    inputArchive(restored_model);
 
     EXPECT_EQ(restored_model.get_n_nodes(), 2);
     EXPECT_EQ((*restored_model.get_end_times())[1], 5.87);
@@ -386,7 +381,7 @@ TEST_F(HawkesModelTest, hawkes_least_squares_sum_exp_list_serialization){
   }
 }
 
-TEST_F(HawkesModelTest, compute_loss_loglik_list){
+TEST_F(HawkesModelTest, compute_loss_loglik_list) {
   const double decay = 2.;
 
   ModelHawkesExpKernLogLik model(decay, 2);
@@ -396,7 +391,8 @@ TEST_F(HawkesModelTest, compute_loss_loglik_list){
   timestamps_list.push_back(timestamps);
 
   auto end_times = VArrayDouble::new_ptr(2);
-  (*end_times)[0] = 5.65; (*end_times)[1] = 5.87;
+  (*end_times)[0] = 5.65;
+  (*end_times)[1] = 5.87;
 
   model.set_data(timestamps_list, end_times);
   model.compute_weights();
@@ -413,7 +409,7 @@ TEST_F(HawkesModelTest, compute_loss_loglik_list){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 6);
 }
 
-TEST_F(HawkesModelTest, check_sto_loglikelihood_list){
+TEST_F(HawkesModelTest, check_sto_loglikelihood_list) {
   const double decay = 2.;
 
   ModelHawkesExpKernLogLik model(decay, 1);
@@ -440,15 +436,14 @@ TEST_F(HawkesModelTest, check_sto_loglikelihood_list){
   }
 
   EXPECT_DOUBLE_EQ(loss, sum_sto_loss);
-  for (ulong i  = 0; i < model.get_n_coeffs(); ++i) {
+  for (ulong i = 0; i < model.get_n_coeffs(); ++i) {
     SCOPED_TRACE(i);
     EXPECT_DOUBLE_EQ(grad[i], sto_grad[i]);
   }
 }
 
-
-TEST_F(HawkesModelTest, compute_loss_loglikelihood_list_sum_exp_kern){
-  ArrayDouble decays {1., 2., 3.};
+TEST_F(HawkesModelTest, compute_loss_loglikelihood_list_sum_exp_kern) {
+  ArrayDouble decays{1., 2., 3.};
 
   ModelHawkesSumExpKernLogLik model(decays, 1);
 
@@ -465,7 +460,7 @@ TEST_F(HawkesModelTest, compute_loss_loglikelihood_list_sum_exp_kern){
   EXPECT_DOUBLE_EQ(model.get_n_coeffs(), 14);
 }
 
-TEST_F(HawkesModelTest, compute_hessian_loglikelihood){
+TEST_F(HawkesModelTest, compute_hessian_loglikelihood) {
   ModelHawkesExpKernLogLikSingle model(2);
   model.set_data(timestamps, 4.25);
   model.compute_weights();
@@ -485,8 +480,8 @@ TEST_F(HawkesModelTest, compute_hessian_loglikelihood){
   EXPECT_DOUBLE_EQ(out[9], 0.01668440042028695);
 }
 
-TEST_F(HawkesModelTest, compute_hessian_sumexp_loglikelihood){
-  ArrayDouble decays {1., 2.};
+TEST_F(HawkesModelTest, compute_hessian_sumexp_loglikelihood) {
+  ArrayDouble decays{1., 2.};
 
   ModelHawkesSumExpKernLogLikSingle model(decays, 1);
   model.set_data(timestamps, 4.25);

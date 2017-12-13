@@ -168,9 +168,9 @@ double compute_gdm(double alpha,
 
 // Constructor for the main class
 HawkesBasisKernels::HawkesBasisKernels(const double kernel_support, const ulong kernel_size,
-                                           const ulong n_basis, const double alpha,
-                                           const int max_n_threads) :
-    ModelHawkesList(max_n_threads, 0) {
+                                       const ulong n_basis, const double alpha,
+                                       const int max_n_threads) :
+  ModelHawkesList(max_n_threads, 0) {
   set_kernel_support(kernel_support);
   set_kernel_size(kernel_size);
   set_n_basis(n_basis);
@@ -193,9 +193,9 @@ void HawkesBasisKernels::allocate_weights() {
 
 // A method called in parallel by the method 'solve' (see below)
 void HawkesBasisKernels::solve_u(ulong u,
-                                   ArrayDouble &mu,
-                                   ArrayDouble2d &gdm,
-                                   ArrayDouble2d &auvd) {
+                                 ArrayDouble &mu,
+                                 ArrayDouble2d &gdm,
+                                 ArrayDouble2d &auvd) {
   const ulong n_basis = get_n_basis();
 
   ArrayDouble rd = view_row(rud, u);
@@ -221,10 +221,10 @@ void HawkesBasisKernels::solve_u(ulong u,
 
 // The main method for performing one iteration
 double HawkesBasisKernels::solve(ArrayDouble &mu,
-                                   ArrayDouble2d &gdm,
-                                   ArrayDouble2d &auvd,
-                                   ulong max_iter_gdm,
-                                   double max_tol_gdm) {
+                                 ArrayDouble2d &gdm,
+                                 ArrayDouble2d &auvd,
+                                 ulong max_iter_gdm,
+                                 double max_tol_gdm) {
   if (!weights_computed) allocate_weights();
 
   if (mu.size() != n_nodes) {
@@ -232,11 +232,11 @@ double HawkesBasisKernels::solve(ArrayDouble &mu,
   }
   if (gdm.n_rows() != n_basis || gdm.n_cols() != kernel_size) {
     TICK_ERROR("basis functions / gdm argument must be an array of shape ("
-                   << n_nodes << ", " << kernel_size << ")");
+                 << n_nodes << ", " << kernel_size << ")");
   }
   if (auvd.n_rows() != n_nodes || auvd.n_cols() != n_nodes * n_basis) {
     TICK_ERROR("amplitudes / auvd argument must be an array of shape ("
-                   << n_nodes << ", " << n_nodes * n_basis << ")");
+                 << n_nodes << ", " << n_nodes * n_basis << ")");
   }
 
   const ulong n_basis = get_n_basis();
@@ -245,7 +245,7 @@ double HawkesBasisKernels::solve(ArrayDouble &mu,
     Gdm[d * kernel_size] = gdm[d * kernel_size] * get_kernel_dt();
     for (ulong m = 1; m < kernel_size; m++)
       Gdm[d * kernel_size + m] =
-          Gdm[d * kernel_size + m - 1] + gdm[d * kernel_size + m] * get_kernel_dt();
+        Gdm[d * kernel_size + m - 1] + gdm[d * kernel_size + m] * get_kernel_dt();
   }
 
   a_sum_vd.init_to_zero();
@@ -280,8 +280,8 @@ double HawkesBasisKernels::solve(ArrayDouble &mu,
     for (ulong v = 0; v < n_nodes; v++) {
       for (ulong d = 0; d < n_basis; d++) {
         auvd[u * n_nodes * n_basis + v * n_basis + d] =
-            sqrt(
-                quvd[u * n_nodes * n_basis + v * n_basis + d] / (rud[v * n_basis + d] + 2 * alpha));
+          sqrt(
+            quvd[u * n_nodes * n_basis + v * n_basis + d] / (rud[v * n_basis + d] + 2 * alpha));
       }
     }
   }
@@ -322,12 +322,12 @@ void HawkesBasisKernels::set_kernel_size(const ulong kernel_size) {
 void HawkesBasisKernels::set_kernel_dt(const double kernel_dt) {
   if (kernel_dt <= 0) {
     TICK_ERROR("Kernel discretization parameter must be positive and you have provided "
-                   << kernel_dt)
+                 << kernel_dt)
   }
   if (kernel_dt > kernel_support) {
     TICK_ERROR("Kernel discretization parameter must be smaller than kernel support."
-                   << "You have provided " << kernel_dt
-                   << " and kernel support is " << kernel_support)
+                 << "You have provided " << kernel_dt
+                 << " and kernel support is " << kernel_support)
   }
   set_kernel_size(static_cast<ulong>(std::ceil(kernel_support / kernel_dt)));
 }

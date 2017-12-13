@@ -30,7 +30,8 @@ class DLL_PUBLIC ModelHawkesSumExpKernLogLikSingle : public ModelHawkesLogLikSin
    * \param decays : decays for this model (remember that decay is fixed!)
    * \param n_threads : number of threads that will be used for parallel computations
    */
-  explicit ModelHawkesSumExpKernLogLikSingle(const ArrayDouble &decays, const int max_n_threads = 1);
+  explicit ModelHawkesSumExpKernLogLikSingle(const ArrayDouble &decays,
+                                             const int max_n_threads = 1);
 
  protected:
   void allocate_weights() override;

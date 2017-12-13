@@ -9,10 +9,10 @@ class HawkesKernelTimeFuncTest : public ::testing::Test {
   std::unique_ptr<HawkesKernelTimeFunc> hawkes_kernel_time_func;
 
   void SetUp() override {
-    ArrayDouble t_axis {1, 2, 3, 4};
-    ArrayDouble y_axis {1, 1, 3, 2};
+    ArrayDouble t_axis{1, 2, 3, 4};
+    ArrayDouble y_axis{1, 1, 3, 2};
     hawkes_kernel_time_func = std::unique_ptr<HawkesKernelTimeFunc>(
-        new HawkesKernelTimeFunc(t_axis, y_axis));
+      new HawkesKernelTimeFunc(t_axis, y_axis));
   }
 };
 
@@ -44,7 +44,6 @@ TEST_F(HawkesKernelTimeFuncTest, get_norm) {
 TEST_F(HawkesKernelTimeFuncTest, get_support) {
   EXPECT_GE(hawkes_kernel_time_func->get_support(), 4);
 }
-
 
 #ifdef ADD_MAIN
 int main(int argc, char** argv) {

@@ -33,7 +33,7 @@ class DLL_PUBLIC ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSq {
  public:
   //! @brief Empty constructor
   //! This constructor should only be used for serialization
-  ModelHawkesSumExpKernLeastSq(): ModelHawkesLeastSq(0, 0) {}
+  ModelHawkesSumExpKernLeastSq() : ModelHawkesLeastSq(0, 0) {}
 
   //! @brief Constructor
   //! \param timestamps : a list of arrays representing the realization
@@ -41,10 +41,10 @@ class DLL_PUBLIC ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSq {
   //! \param n_cores : number of cores to be used for multithreading
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster (approximated) exponential function
   ModelHawkesSumExpKernLeastSq(const ArrayDouble &decays,
-                                        const ulong n_baselines,
-                                        const double period_length,
-                                        const unsigned int max_n_threads = 1,
-                                        const unsigned int optimization_level = 0);
+                               const ulong n_baselines,
+                               const double period_length,
+                               const unsigned int max_n_threads = 1,
+                               const unsigned int optimization_level = 0);
 
   void set_decays(const ArrayDouble &decays) {
     weights_computed = false;
@@ -78,7 +78,6 @@ class DLL_PUBLIC ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSq {
 
   //! @brief synchronize aggregate_model with this instance
   void synchronize_aggregated_model() override;
-
 
   void compute_weights_timestamps_list() override;
   void compute_weights_timestamps(const SArrayDoublePtrList1D &timestamps,

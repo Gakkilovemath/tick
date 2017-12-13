@@ -20,16 +20,16 @@ void HawkesKernelSumExp::rewind() {
 
 HawkesKernelSumExp::HawkesKernelSumExp(const ArrayDouble &intensities,
                                        const ArrayDouble &decays)
-    : HawkesKernel() {
+  : HawkesKernel() {
   n_decays = decays.size();
 
   if (n_decays != intensities.size())
     throw std::invalid_argument("Intensities and decays arrays of HawkesKernelSumExp "
-                                    "must have the same length");
+                                  "must have the same length");
 
   if (n_decays == 0)
     throw std::invalid_argument("Intensities and decays arrays of HawkesKernelSumExp "
-                                    "must contain at least one value");
+                                  "must contain at least one value");
 
   support = std::numeric_limits<double>::max();
   this->intensities = intensities;
@@ -42,7 +42,7 @@ HawkesKernelSumExp::HawkesKernelSumExp(const ArrayDouble &intensities,
 }
 
 HawkesKernelSumExp::HawkesKernelSumExp(const HawkesKernelSumExp &kernel)
-    : HawkesKernel(kernel) {
+  : HawkesKernel(kernel) {
   n_decays = kernel.n_decays;
   intensities = kernel.intensities;
   decays = kernel.decays;
@@ -50,7 +50,7 @@ HawkesKernelSumExp::HawkesKernelSumExp(const HawkesKernelSumExp &kernel)
 }
 
 HawkesKernelSumExp::HawkesKernelSumExp()
-    : HawkesKernelSumExp(ArrayDouble{1}, ArrayDouble{1}) {
+  : HawkesKernelSumExp(ArrayDouble{1}, ArrayDouble{1}) {
 }
 
 // kernel value for one part of the sum
@@ -75,12 +75,12 @@ double HawkesKernelSumExp::get_convolution(const double time, const ArrayDouble 
                                            double *const bound) {
   if (timestamps.size() < convolution_restart_index) {
     throw std::runtime_error("HawkesKernelSumExp cannot get convolution on an "
-                                 "another process unless it has been rewound");
+                               "another process unless it has been rewound");
   }
   double delay = time - last_convolution_time;
   if (delay < 0) {
     throw std::runtime_error("HawkesKernelSumExp cannot get convolution on an "
-                                 "older time unless it has been rewound");
+                               "older time unless it has been rewound");
   }
 
   double value{0.};

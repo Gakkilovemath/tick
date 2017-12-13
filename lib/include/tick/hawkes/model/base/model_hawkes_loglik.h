@@ -32,8 +32,8 @@ class DLL_PUBLIC ModelHawkesLogLik : public ModelHawkesList {
    *  Visual studio seems to get confused and tries to copy this class, and it 
    *   errors as unique_ptrs are not copy-able
    */
-  ModelHawkesLogLik(const ModelHawkesLogLik& model) = delete;
-  ModelHawkesLogLik& operator=(const ModelHawkesLogLik& model) = delete;
+  ModelHawkesLogLik(const ModelHawkesLogLik &model) = delete;
+  ModelHawkesLogLik &operator=(const ModelHawkesLogLik &model) = delete;
 
   void incremental_set_data(const SArrayDoublePtrList1D &timestamps, double end_time);
 

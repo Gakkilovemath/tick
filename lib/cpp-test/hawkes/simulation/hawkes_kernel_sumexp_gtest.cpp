@@ -54,12 +54,12 @@ class HawkesKernelSumExpTest : public ::testing::Test {
 
   // Test will fail if test_times array is not sorted
   std::array<double, 8> test_times{{0.93, 1., 2., 2.32, 3.5, 5., 8., 100.}};
-  
+
   void SetUp() override {
     intensities = ArrayDouble {0.15, 0.45, 1.3};
     decays = ArrayDouble {0.75, 4.2, 2.3};
     hawkes_kernel_sum_exp = std::unique_ptr<HawkesKernelSumExp>(
-        new HawkesKernelSumExp(intensities, decays));
+      new HawkesKernelSumExp(intensities, decays));
 
     // Test will fail if process array is not sorted
     timestamps = ArrayDouble {0.31, 0.93, 1.29, 2.32, 4.25};
@@ -98,7 +98,7 @@ TEST_F(HawkesKernelSumExpTest, get_value) {
 TEST_F(HawkesKernelSumExpTest, get_future_max) {
   EXPECT_DOUBLE_EQ(hawkes_kernel_sum_exp->get_future_max(-3, 0), 0);
   EXPECT_DOUBLE_EQ(hawkes_kernel_sum_exp->get_future_max(0, intensities.dot(decays)),
-                                                        intensities.dot(decays));
+                   intensities.dot(decays));
   for (double test_time : test_times) {
     double value_at_test_time = compute_sumexpkernel_get_value(decays, intensities, test_time);
     EXPECT_DOUBLE_EQ(hawkes_kernel_sum_exp->get_future_max(test_time, value_at_test_time),
@@ -165,9 +165,12 @@ TEST_F(HawkesKernelSumExpTest, get_convolution_other_timestamps_rewind) {
   hawkes_kernel_sum_exp->get_convolution(test_time, timestamps, nullptr);
   hawkes_kernel_sum_exp->rewind();
 
-  ArrayDouble other_timestamps {0.23, 1.34, 2.17};
+  ArrayDouble other_timestamps{0.23, 1.34, 2.17};
   EXPECT_DOUBLE_EQ(hawkes_kernel_sum_exp->get_convolution(test_time, other_timestamps, nullptr),
-                   compute_sumexpkernel_convolution(decays, intensities, other_timestamps, test_time));
+                   compute_sumexpkernel_convolution(decays,
+                                                    intensities,
+                                                    other_timestamps,
+                                                    test_time));
 }
 
 TEST_F(HawkesKernelSumExpTest, get_convolution_bound) {
@@ -210,10 +213,12 @@ TEST_F(HawkesKernelSumExpTest, get_convolution_after_duplicate_if_necessary) {
   shared_hawkes_kernel_sum_exp->get_convolution(4., timestamps, nullptr);
 
   auto shared_hawkes_kernel_sum_exp_copy =
-      shared_hawkes_kernel_sum_exp->duplicate_if_necessary(shared_hawkes_kernel_sum_exp);
+    shared_hawkes_kernel_sum_exp->duplicate_if_necessary(shared_hawkes_kernel_sum_exp);
 
   double time0 = timestamps[0];
-  EXPECT_DOUBLE_EQ(shared_hawkes_kernel_sum_exp_copy->get_convolution(time0 - 0.1, timestamps, nullptr),
+  EXPECT_DOUBLE_EQ(shared_hawkes_kernel_sum_exp_copy->get_convolution(time0 - 0.1,
+                                                                      timestamps,
+                                                                      nullptr),
                    0);
   EXPECT_DOUBLE_EQ(shared_hawkes_kernel_sum_exp_copy->get_convolution(time0, timestamps, nullptr),
                    intensities.dot(decays));
@@ -231,10 +236,12 @@ TEST_F(HawkesKernelSumExpTest, get_convolution_after_duplicate_if_necessary2) {
   shared_hawkes_kernel_sum_exp->get_convolution(4., timestamps, nullptr);
 
   auto shared_hawkes_kernel_sum_exp_copy =
-      shared_hawkes_kernel_sum_exp->duplicate_if_necessary();
+    shared_hawkes_kernel_sum_exp->duplicate_if_necessary();
 
   double time0 = timestamps[0];
-  EXPECT_DOUBLE_EQ(shared_hawkes_kernel_sum_exp_copy->get_convolution(time0 - 0.1, timestamps, nullptr),
+  EXPECT_DOUBLE_EQ(shared_hawkes_kernel_sum_exp_copy->get_convolution(time0 - 0.1,
+                                                                      timestamps,
+                                                                      nullptr),
                    0);
   EXPECT_DOUBLE_EQ(shared_hawkes_kernel_sum_exp_copy->get_convolution(time0, timestamps, nullptr),
                    intensities.dot(decays));
@@ -245,7 +252,6 @@ TEST_F(HawkesKernelSumExpTest, get_convolution_after_duplicate_if_necessary2) {
                      compute_sumexpkernel_convolution(decays, intensities, timestamps, test_time));
   }
 }
-
 
 #ifdef ADD_MAIN
 int main(int argc, char** argv) {

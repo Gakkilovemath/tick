@@ -47,7 +47,8 @@ class HawkesKernel {
 
   // Some kernels cannot be shared, so this function is called before a kernel is used
   // TODO(martin) change function
-  virtual std::shared_ptr<HawkesKernel> duplicate_if_necessary(const std::shared_ptr<HawkesKernel> &kernel) {
+  virtual std::shared_ptr<HawkesKernel> duplicate_if_necessary(
+    const std::shared_ptr<HawkesKernel> &kernel) {
     return kernel;
   }
 
