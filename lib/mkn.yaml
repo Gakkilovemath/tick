@@ -4,9 +4,12 @@ name: tick
 
 self: 
   preprocessing
-  array_test 
-  hawkes
+  array_test
+  hawkes/simulation
+  hawkes/inference
   solver
+  robust
+  survival
 
 property:
     postfix: x86_64-linux-gnu
@@ -91,14 +94,32 @@ profile:
     install: ${lib_path}/base_model/build
     out: _base_model${lib_name}
 
-  - name: hawkes
+  - name: hawkes/model
     parent: arg
-    self: base_model random
+    self: base_model
     src:
-      ./cpp/hawkes
-      ./swig/hawkes
-    install: ${lib_path}/hawkes/build
-    out: _hawkes${lib_name}
+      ./cpp/hawkes/model
+      ./swig/hawkes/model
+    install: ${lib_path}/hawkes/model/build
+    out: _hawkes_model${lib_name}
+
+  - name: hawkes/simulation
+    parent: arg
+    self: random
+    src:
+      ./cpp/hawkes/simulation
+      ./swig/hawkes/simulation
+    install: ${lib_path}/hawkes/simulation/build
+    out: _hawkes_simulation${lib_name}
+
+  - name: hawkes/inference
+    parent: arg
+    self: hawkes/model
+    src:
+      ./cpp/hawkes/inference
+      ./swig/hawkes/inference
+    install: ${lib_path}/hawkes/inference/build
+    out: _hawkes_inference${lib_name}
 
   - name: linear_model
     parent: arg
@@ -166,7 +187,7 @@ profile:
 ### See file ./sh/gtest/sh 
   - name: gtest_nodep
     parent: arg
-    main: cpp-test/linear_model/hawkes_models_gtest.cpp
+    main: cpp-test/hawkes/model/hawkes_models_gtest.cpp
     arg: -DADD_MAIN
     mode: none
     if_arg:
@@ -181,4 +202,4 @@ profile:
 
   - name: gtest
     parent: gtest_nodep
-    self: solver hawkes
+    self: solver hawkes/model hawkes/simulation

@@ -185,7 +185,9 @@ PROFILES=(
     linear_model
     prox
     solver
-    hawkes
+    hawkes/simulation
+    hawkes/model
+    hawkes/inference
     preprocessing
     robust
     survival
@@ -193,18 +195,20 @@ PROFILES=(
 )
 function hash_index() {
     case $1 in
-        'array')         echo 0;;
-        'base')          echo 1;;
-        'base_model')    echo 2;;
-        'random')        echo 3;;
-        'linear_model')  echo 4;;
-        'prox')          echo 5;;
-        'solver')        echo 6;;
-        'hawkes')        echo 7;;
-        'preprocessing') echo 8;;
-        'robust')        echo 9;;
-        'survival')      echo 10;;
-        'array_test')    echo 11;;
+        'array')              echo 0;;
+        'base')               echo 1;;
+        'base_model')         echo 2;;
+        'random')             echo 3;;
+        'linear_model')       echo 4;;
+        'prox')               echo 5;;
+        'solver')             echo 6;;
+        'hawkes/simulation')  echo 7;;
+        'hawkes/model')       echo 8;;
+        'hawkes/inference')   echo 9;;
+        'preprocessing')      echo 10;;
+        'robust')             echo 11;;
+        'survival')           echo 12;;
+        'array_test')         echo 13;;
     esac
 }
 LIBRARIES=(
@@ -215,7 +219,9 @@ LIBRARIES=(
     "tick/linear_model/build/_linear_model$LIB_POSTFIX"
     "tick/prox/build/_prox$LIB_POSTFIX"
     "tick/solver/build/_solver$LIB_POSTFIX"
-    "tick/hawkes/build/_hawkes$LIB_POSTFIX"
+    "tick/hawkes/simulation/build/_hawkes_simulation$LIB_POSTFIX"
+    "tick/hawkes/model/build/_hawkes_model$LIB_POSTFIX"
+    "tick/hawkes/inference/build/_hawkes_inference$LIB_POSTFIX"
     "tick/preprocessing/build/_preprocessing$LIB_POSTFIX"
     "tick/robust/build/_robust$LIB_POSTFIX"
     "tick/survival/build/_survival$LIB_POSTFIX"
