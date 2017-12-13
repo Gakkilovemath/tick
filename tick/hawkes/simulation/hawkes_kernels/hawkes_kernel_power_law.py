@@ -1,7 +1,9 @@
 # License: BSD 3 clause
 
 from .hawkes_kernel import HawkesKernel
-from tick.hawkes.build.hawkes import HawkesKernelPowerLaw as _HawkesKernelPowerLaw
+from tick.hawkes.simulation.build.hawkes_simulation import (
+    HawkesKernelPowerLaw as _HawkesKernelPowerLaw
+)
 
 
 class HawkesKernelPowerLaw(HawkesKernel):

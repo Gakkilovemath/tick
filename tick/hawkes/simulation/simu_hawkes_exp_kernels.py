@@ -4,7 +4,7 @@ from itertools import product
 import numpy as np
 
 from tick.hawkes.simulation import SimuHawkes
-from .hawkes_kernels import HawkesKernelExp, HawkesKernel0, HawkesKernelSumExp
+from .hawkes_kernels import HawkesKernelExp, HawkesKernel0
 
 
 class SimuHawkesExpKernels(SimuHawkes):

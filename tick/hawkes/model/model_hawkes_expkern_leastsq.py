@@ -4,8 +4,9 @@ import numpy as np
 
 from tick.base_model import LOSS_AND_GRAD
 from .base import ModelHawkes
-from tick.hawkes.build.hawkes import ModelHawkesFixedExpKernLeastSqList as \
-    _ModelHawkesFixedExpKernLeastSq
+from tick.hawkes.model.build.hawkes_model import (
+    ModelHawkesFixedExpKernLeastSqList as _ModelHawkesFixedExpKernLeastSq
+)
 
 
 class ModelHawkesFixedExpKernLeastSq(ModelHawkes):

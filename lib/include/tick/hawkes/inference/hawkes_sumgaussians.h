@@ -21,7 +21,7 @@ class HawkesSumGaussians : public ModelHawkesList {
 
   //! @brief Standard deviation of the gaussian functions. This bandlimit
   //! is computed using Silverman's rule of thumb.
-  double std_gaussian;
+  double std_gaussian = 1.;
 
   //! @brief Useful constants that appear in weights computation.
   double std_gaussian_sq = std_gaussian*std_gaussian;

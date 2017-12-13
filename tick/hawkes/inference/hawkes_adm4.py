@@ -7,7 +7,9 @@ from tick.prox.prox_l1 import ProxL1
 from tick.prox import ProxNuclear
 from tick.solver.base.utils import relative_distance
 from tick.hawkes import ModelHawkesFixedExpKernLogLik, SimuHawkesExpKernels
-from tick.hawkes.build.hawkes import HawkesADM4 as _HawkesADM4
+from tick.hawkes.inference.build.hawkes_inference import (
+    HawkesADM4 as _HawkesADM4
+)
 
 
 class HawkesADM4(LearnerHawkesNoParam):

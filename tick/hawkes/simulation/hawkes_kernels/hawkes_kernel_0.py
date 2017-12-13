@@ -1,7 +1,9 @@
 # License: BSD 3 clause
 
 from .hawkes_kernel import HawkesKernel
-from tick.hawkes.build.hawkes import HawkesKernel0 as _HawkesKernel0
+from tick.hawkes.simulation.build.hawkes_simulation import (
+    HawkesKernel0 as _HawkesKernel0
+)
 
 
 class HawkesKernel0(HawkesKernel):

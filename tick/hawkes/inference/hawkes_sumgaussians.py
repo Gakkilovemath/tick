@@ -5,7 +5,9 @@ import numpy as np
 from scipy.stats import norm
 from tick.hawkes.inference.base import LearnerHawkesNoParam
 from tick.solver.base.utils import relative_distance
-from tick.hawkes.build.hawkes import HawkesSumGaussians as _HawkesSumGaussians
+from tick.hawkes.inference.build.hawkes_inference import (
+    HawkesSumGaussians as _HawkesSumGaussians
+)
 
 
 class HawkesSumGaussians(LearnerHawkesNoParam):

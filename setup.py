@@ -194,8 +194,6 @@ class SwigPath:
                                   .replace('/', '.') \
                               + '.' + self.private_extension_name
 
-        self._check_configuration()
-
         # Filename of the produced .so file (e.g. _array.so)
         self.lib_filename = '{}{}'.format(self.private_extension_name,
                                           sysconfig.get_config_var('SO'))
@@ -373,8 +371,6 @@ def create_extension(extension_name, module_dir,
         implib += os.path.splitext(sysconfig.get_config_var("SO"))[0]
         extra_link_args.append(implib + ".lib")
 
-    print("extension_path ", extension_path)
-
     core_module = SwigExtension(extension_path, module_ref=swig_path,
                                 sources=swig_files + cpp_files,
                                 extra_compile_args=extra_compile_args,
@@ -476,31 +472,62 @@ linear_model_core_info = {
 }
 linear_model_core = create_extension(**linear_model_core_info)
 
-hawkes_extension_info = {
+hawkes_simulation_extension_info = {
+    "cpp_files": [],
+    "h_files": [],
+    "folders": [
+        "lib/cpp/hawkes/simulation",
+        "lib/cpp/hawkes/simulation/hawkes_baselines", 
+        "lib/cpp/hawkes/simulation/hawkes_kernels"
+    ],
+    "swig_files": [
+      "hawkes_simulation_module.i"
+    ],
+    "swig_opts": ["-Ilib/swig/hawkes/simulation"],
+    "module_dir": "./tick/hawkes/simulation/",
+    "extension_name": "hawkes_simulation",
+    "include_modules": base_array_modules + [random_extension.module_ref]
+}
+hawkes_simulation_extension = \
+    create_extension(**hawkes_simulation_extension_info)
+
+hawkes_model_extension_info = {
     "cpp_files": [],
     "h_files": [],
     "folders": [
         "lib/cpp/hawkes/model",
         "lib/cpp/hawkes/model/base",
         "lib/cpp/hawkes/model/variants",
-        "lib/cpp/hawkes/inference",
-        "lib/cpp/hawkes/simulation", 
-        "lib/cpp/hawkes/simulation/hawkes_baselines", 
-        "lib/cpp/hawkes/simulation/hawkes_kernels"
     ],
     "swig_files": [
-      "hawkes_module.i"
+      "hawkes_model_module.i"
     ],
-    "swig_opts": ["-Ilib/swig/hawkes"],
-    "module_dir": "./tick/hawkes/",
-    "extension_name": "hawkes",
-    "include_modules": base_array_modules + 
+    "swig_opts": ["-Ilib/swig/hawkes/model"],
+    "module_dir": "./tick/hawkes/model/",
+    "extension_name": "hawkes_model",
+    "include_modules": base_array_modules + [base_model_core.module_ref]
+}
+hawkes_model_extension = create_extension(**hawkes_model_extension_info)
+
+hawkes_inference_extension_info = {
+    "cpp_files": [],
+    "h_files": [],
+    "folders": [
+        "lib/cpp/hawkes/inference",
+    ],
+    "swig_files": [
+      "hawkes_inference_module.i"
+    ],
+    "swig_opts": ["-Ilib/swig/hawkes/inference"],
+    "module_dir": "./tick/hawkes/inference/",
+    "extension_name": "hawkes_inference",
+    "include_modules": base_array_modules +
     [
-      base_model_core.module_ref,
-      random_extension.module_ref
+        base_model_core.module_ref,
+        hawkes_model_extension.module_ref,
     ]
 }
-hawkes_extension = create_extension(**hawkes_extension_info)
+hawkes_inference_extension = create_extension(**hawkes_inference_extension_info)
 
 prox_core_info = {
     "cpp_files": [],
@@ -573,10 +600,12 @@ survival_extension_info = {
 survival_extension = create_extension(**survival_extension_info)
 
 tick_modules = [
-  array_extension, base_extension, test_extension, 
-  random_extension, base_model_core, linear_model_core,
-  hawkes_extension, prox_core, solver_core, preprocessing_core, 
-  robust_extension,  survival_extension 
+    array_extension, base_extension, test_extension,
+    random_extension, base_model_core, linear_model_core,
+    hawkes_simulation_extension, hawkes_model_extension,
+    hawkes_inference_extension,
+    prox_core, solver_core, preprocessing_core,
+    robust_extension, survival_extension
 ]
 
 # Abstract class for tick-specific commands that need access to common build
@@ -794,8 +823,7 @@ class CleanTick(clean):
                     path.rmdir()
                 else:
                     path.unlink()
-from pprint import pprint
-pprint(tick_modules)
+
 
 setup(name="tick",
       version='0.3.0.0',

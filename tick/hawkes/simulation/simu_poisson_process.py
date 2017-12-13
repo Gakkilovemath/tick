@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 
 from tick.hawkes.simulation.base import SimuPointProcess
-from tick.hawkes.build.hawkes import Poisson as _Poisson
+from tick.hawkes.simulation.build.hawkes_simulation import Poisson as _Poisson
 
 
 class SimuPoissonProcess(SimuPointProcess):

@@ -6,8 +6,10 @@ from warnings import warn
 
 from tick.base_model import LOSS_AND_GRAD
 from .base import ModelHawkes
-from tick.hawkes.build.hawkes import ModelHawkesFixedSumExpKernLeastSqList as \
+from tick.hawkes.model.build.hawkes_model import (
+    ModelHawkesFixedSumExpKernLeastSqList as
     _ModelHawkesFixedSumExpKernLeastSqList
+)
 
 
 class ModelHawkesFixedSumExpKernLeastSq(ModelHawkes):

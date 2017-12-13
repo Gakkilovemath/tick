@@ -4,7 +4,9 @@ import numpy as np
 
 from . import HawkesKernelExp
 from .hawkes_kernel import HawkesKernel
-from tick.hawkes.build.hawkes import HawkesKernelSumExp as _HawkesKernelSumExp
+from tick.hawkes.simulation.build.hawkes_simulation import (
+    HawkesKernelSumExp as _HawkesKernelSumExp
+)
 
 
 class HawkesKernelSumExp(HawkesKernel):

@@ -4,10 +4,12 @@ import numpy as np
 from scipy.sparse import sputils, csr_matrix
 
 from tick.base_model.model_first_order import ModelFirstOrder
-from tick.hawkes.build.hawkes import (ModelHawkesFixedSumExpKernLeastSqList,
-                                          ModelHawkesFixedExpKernLeastSqList,
-                                          ModelHawkesFixedSumExpKernLogLik,
-                                          ModelHawkesFixedSumExpKernLogLikList)
+from tick.hawkes.model.build.hawkes_model import (
+    ModelHawkesFixedSumExpKernLeastSqList,
+    ModelHawkesFixedExpKernLeastSqList,
+    ModelHawkesFixedSumExpKernLogLik,
+    ModelHawkesFixedSumExpKernLogLikList
+)
 from tick.base_model import N_CALLS_LOSS, PASS_OVER_DATA
 
 
@@ -90,7 +92,7 @@ class ModelHawkes(ModelFirstOrder):
         if end_times is None:
             non_empty_events = [[r for r in e if len(r) > 0] for e in events]
             end_times = np.array([max(map(max, e)) for e in non_empty_events])
-        
+
         if isinstance(end_times, (int, float)):
             end_times = np.array([end_times], dtype=float)
 
