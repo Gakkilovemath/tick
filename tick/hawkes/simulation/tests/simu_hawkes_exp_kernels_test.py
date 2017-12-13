@@ -2,6 +2,7 @@
 
 import unittest
 from itertools import product
+
 import numpy as np
 
 from tick.hawkes import SimuHawkesExpKernels, HawkesKernelExp, HawkesKernel0

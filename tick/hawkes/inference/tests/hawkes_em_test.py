@@ -1,7 +1,9 @@
 # License: BSD 3 clause
 
 import unittest
+
 import numpy as np
+
 from tick.hawkes.inference import HawkesEM
 from tick.hawkes.model.tests.model_hawkes_test_utils import (
     hawkes_intensities, hawkes_log_likelihood

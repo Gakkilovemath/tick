@@ -1,9 +1,9 @@
 # License: BSD 3 clause
 
-from .hawkes_kernel import HawkesKernel
 from tick.hawkes.simulation.build.hawkes_simulation import (
     HawkesKernelTimeFunc as _HawkesKernelTimeFunc
 )
+from .hawkes_kernel import HawkesKernel
 
 
 class HawkesKernelTimeFunc(HawkesKernel):
@@ -22,6 +22,7 @@ class HawkesKernelTimeFunc(HawkesKernel):
         values array used to build the time function. Might be given together 
         with `t_values` instead of `time_function`.
     """
+
     def __init__(self, time_function=None, t_values=None, y_values=None):
         HawkesKernel.__init__(self)
         if (t_values is None and time_function is None) \

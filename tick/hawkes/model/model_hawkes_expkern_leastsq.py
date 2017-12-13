@@ -3,10 +3,10 @@
 import numpy as np
 
 from tick.base_model import LOSS_AND_GRAD
-from .base import ModelHawkes
 from tick.hawkes.model.build.hawkes_model import (
     ModelHawkesExpKernLeastSq as _ModelHawkesExpKernLeastSq
 )
+from .base import ModelHawkes
 
 
 class ModelHawkesExpKernLeastSq(ModelHawkes):

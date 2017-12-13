@@ -1,9 +1,11 @@
 # License: BSD 3 clause
 
 import unittest
+
 import numpy as np
-from tick.hawkes import SimuPoissonProcess
 from scipy.stats import norm
+
+from tick.hawkes import SimuPoissonProcess
 
 
 class Test(unittest.TestCase):

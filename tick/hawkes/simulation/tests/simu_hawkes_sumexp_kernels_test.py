@@ -2,10 +2,11 @@
 
 import unittest
 from itertools import product
+
 import numpy as np
 
-from tick.hawkes import SimuHawkesSumExpKernels, HawkesKernelExp, \
-    HawkesKernel0, HawkesKernelSumExp
+from tick.hawkes import SimuHawkesSumExpKernels, HawkesKernel0, \
+    HawkesKernelSumExp
 
 
 class Test(unittest.TestCase):

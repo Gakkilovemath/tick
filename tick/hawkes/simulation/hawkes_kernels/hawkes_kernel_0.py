@@ -1,9 +1,9 @@
 # License: BSD 3 clause
 
-from .hawkes_kernel import HawkesKernel
 from tick.hawkes.simulation.build.hawkes_simulation import (
     HawkesKernel0 as _HawkesKernel0
 )
+from .hawkes_kernel import HawkesKernel
 
 
 class HawkesKernel0(HawkesKernel):
@@ -12,6 +12,7 @@ class HawkesKernel0(HawkesKernel):
     .. math::
         \phi(t) = 0
     """
+
     def __init__(self):
         HawkesKernel.__init__(self)
         self._kernel = _HawkesKernel0()

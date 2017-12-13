@@ -1,6 +1,7 @@
 # License: BSD 3 clause
 
 from itertools import product
+
 import numpy as np
 
 from tick.hawkes.simulation import SimuHawkes

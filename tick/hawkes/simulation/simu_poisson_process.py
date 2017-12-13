@@ -1,7 +1,6 @@
 # License: BSD 3 clause
 
 import numpy as np
-from scipy import stats
 
 from tick.hawkes.simulation.base import SimuPointProcess
 from tick.hawkes.simulation.build.hawkes_simulation import Poisson as _Poisson

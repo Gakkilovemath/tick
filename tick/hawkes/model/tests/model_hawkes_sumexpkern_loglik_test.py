@@ -1,6 +1,7 @@
 # License: BSD 3 clause
 
 import unittest
+
 import numpy as np
 from scipy.optimize import check_grad
 

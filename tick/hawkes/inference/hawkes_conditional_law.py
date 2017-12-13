@@ -5,10 +5,10 @@ import sys
 import warnings
 
 import numpy as np
-from tick.base import Base, ThreadPool
 from numpy.polynomial.legendre import leggauss
 from scipy.linalg import solve
 
+from tick.base import Base, ThreadPool
 from tick.hawkes.inference.build.hawkes_inference import (
     PointProcessCondLaw
 )
@@ -721,7 +721,7 @@ class HawkesConditionalLaw(Base):
             for i in range(1, len(xe)):
                 while j < len(xs2) and xs2[j] < xe[i]:
                     ys2[j] = (ye[i - 1]) + ((ye[i]) - (ye[i - 1])) * (
-                        xs2[j] - xe[i - 1]) / (xe[i] - xe[i - 1])
+                            xs2[j] - xe[i - 1]) / (xe[i] - xe[i - 1])
                     j += 1
             sc = (xs2, ys2)
             self._int_claw[index] = sc
@@ -806,8 +806,8 @@ class HawkesConditionalLaw(Base):
         # We raise an exception if a claw component had no input to be computed
         if any(self._n_events[0, :] == 0):
             k = np.where(self._n_events[0, :] == 0)[0]
-            msg = "Cannot run estimation : not enough events for components {}"\
-                  .format(k)
+            msg = "Cannot run estimation : not enough events for components {}" \
+                .format(k)
             raise ValueError(msg)
 
         # Here we compute the quadrature points and the corresponding weights
@@ -954,7 +954,7 @@ class HawkesConditionalLaw(Base):
         mark_probability = self._mark_probabilities[j1][l1]
 
         ratio_dig = lambda n_q: (
-            (self._quad_x[n] - self._quad_x[n_q]) / self._quad_w[n_q]
+                (self._quad_x[n] - self._quad_x[n_q]) / self._quad_w[n_q]
         )
 
         ratio_dig2 = lambda n_q: 1. / self._quad_w[n_q]
@@ -1036,7 +1036,7 @@ class HawkesConditionalLaw(Base):
         # Here we get phi^ij_l and the corresponding norms
         for index in range(index_first, index_last + 1):
             y = res[(index - index_first) * n_quad:
-            (index - index_first + 1) * n_quad][:, 0]
+                    (index - index_first + 1) * n_quad][:, 0]
 
             self._phi_ijl.append((self._quad_x, y))
 

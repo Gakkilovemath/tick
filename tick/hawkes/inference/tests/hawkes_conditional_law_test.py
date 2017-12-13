@@ -111,6 +111,5 @@ class Test(InferenceTest):
             new_model.incremental_fit(self.timestamps, compute=True)
 
 
-
 if __name__ == "__main__":
     unittest.main()

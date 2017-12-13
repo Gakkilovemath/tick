@@ -5,12 +5,12 @@ import unittest
 import numpy as np
 
 from tick.base.inference import InferenceTest
+from tick.hawkes import SimuHawkesExpKernels
 from tick.hawkes.inference import HawkesExpKern
 from tick.hawkes.model.model_hawkes_expkern_leastsq import \
     ModelHawkesExpKernLeastSq
 from tick.hawkes.model.model_hawkes_expkern_loglik import \
     ModelHawkesExpKernLogLik
-from tick.hawkes import SimuHawkesExpKernels
 from tick.prox import ProxNuclear
 from tick.prox import ProxPositive, ProxL1, ProxL2Sq, ProxElasticNet
 from tick.solver import AGD, GD, BFGS, SGD, SVRG

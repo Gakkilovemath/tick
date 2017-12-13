@@ -1,9 +1,11 @@
 # License: BSD 3 clause
 
 import unittest
+
 import numpy as np
-from tick.hawkes.inference import HawkesADM4
+
 from tick.hawkes import SimuHawkesExpKernels, SimuHawkesMulti
+from tick.hawkes.inference import HawkesADM4
 
 
 class Test(unittest.TestCase):

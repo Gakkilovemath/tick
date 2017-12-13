@@ -1,9 +1,9 @@
 # License: BSD 3 clause
 
-from .hawkes_kernel import HawkesKernel
 from tick.hawkes.simulation.build.hawkes_simulation import (
     HawkesKernelExp as _HawkesKernelExp
 )
+from .hawkes_kernel import HawkesKernel
 
 
 class HawkesKernelExp(HawkesKernel):
@@ -23,6 +23,7 @@ class HawkesKernelExp(HawkesKernel):
     decay : `float`
         Decay of the kernel, also noted :math:`\\beta`
     """
+
     def __init__(self, intensity, decay):
         HawkesKernel.__init__(self)
         self._kernel = _HawkesKernelExp(intensity, decay)

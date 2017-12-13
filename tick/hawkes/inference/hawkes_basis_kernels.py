@@ -3,10 +3,10 @@
 import numpy as np
 
 from tick.hawkes.inference.base import LearnerHawkesNoParam
-from tick.solver.base.utils import relative_distance
 from tick.hawkes.inference.build.hawkes_inference import (
     HawkesBasisKernels as _HawkesBasisKernels
 )
+from tick.solver.base.utils import relative_distance
 
 
 class HawkesBasisKernels(LearnerHawkesNoParam):
@@ -131,9 +131,8 @@ class HawkesBasisKernels(LearnerHawkesNoParam):
     .. _ICML (3) (pp. 1301-1309): http://jmlr.org/proceedings/papers/v28/zhou13.html
     """
 
-
     _attrinfos = {
-        'baseline':  {'writable': False},
+        'baseline': {'writable': False},
         'amplitudes': {'writable': False},
         'basis_kernels': {'writable': False},
         '_amplitudes_2d': {'writable': False},
@@ -250,13 +249,14 @@ class HawkesBasisKernels(LearnerHawkesNoParam):
             prev_basis_kernels = self.basis_kernels.copy()
 
             rel_ode = self._learner.solve(self.baseline, self.basis_kernels,
-                                          self._amplitudes_2d, self.ode_max_iter,
+                                          self._amplitudes_2d,
+                                          self.ode_max_iter,
                                           self.ode_tol)
 
             rel_baseline = relative_distance(self.baseline, prev_baseline)
             rel_amplitudes = relative_distance(self.amplitudes, prev_amplitudes)
             rel_basis_kernels = relative_distance(self.basis_kernels,
-                                                    prev_basis_kernels)
+                                                  prev_basis_kernels)
 
             converged = max(rel_baseline, rel_amplitudes,
                             rel_basis_kernels) <= self.tol

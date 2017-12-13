@@ -3,11 +3,12 @@
 import math
 import numpy as np
 from scipy.stats import norm
+
 from tick.hawkes.inference.base import LearnerHawkesNoParam
-from tick.solver.base.utils import relative_distance
 from tick.hawkes.inference.build.hawkes_inference import (
     HawkesSumGaussians as _HawkesSumGaussians
 )
+from tick.solver.base.utils import relative_distance
 
 
 class HawkesSumGaussians(LearnerHawkesNoParam):
@@ -249,7 +250,7 @@ class HawkesSumGaussians(LearnerHawkesNoParam):
                 0.5, 0.9, (self.n_nodes, self.n_nodes, self.n_gaussians))
         else:
             if amplitudes_start.shape != (
-            self.n_nodes, self.n_nodes, self.n_gaussians):
+                    self.n_nodes, self.n_nodes, self.n_gaussians):
                 raise ValueError(
                     'amplitudes_start has shape {} but should have '
                     'shape {}'.format(

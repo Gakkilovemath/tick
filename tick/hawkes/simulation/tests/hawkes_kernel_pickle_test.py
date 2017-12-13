@@ -1,10 +1,10 @@
 # License: BSD 3 clause
 
+import pickle
 import unittest
 
-import pickle
-
 import numpy as np
+
 from tick.base import TimeFunction
 from tick.hawkes import (
     HawkesKernel0, HawkesKernelExp, HawkesKernelSumExp,

@@ -1,9 +1,9 @@
 # License: BSD 3 clause
 
 import numpy as np
-from tick.hawkes.simulation.base import SimuPointProcess
 
 from tick.base import TimeFunction
+from tick.hawkes.simulation.base import SimuPointProcess
 from tick.hawkes.simulation.build.hawkes_simulation import (
     InhomogeneousPoisson as _InhomogeneousPoisson
 )

@@ -2,10 +2,9 @@
 
 import copy
 import multiprocessing
+from multiprocessing import Pool
 
 import numpy as np
-
-from multiprocessing import Pool
 
 from tick.hawkes.simulation.base import Simu
 
@@ -82,7 +81,7 @@ class SimuHawkesMulti(Simu):
 
         self._simulations = [
             copy.deepcopy(hawkes_simu) for _ in range(n_simulations)
-            ]
+        ]
 
         Simu.__init__(self, seed=self.seed, verbose=hawkes_simu.verbose)
 

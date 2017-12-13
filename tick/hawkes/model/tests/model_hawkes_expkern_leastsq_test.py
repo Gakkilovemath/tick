@@ -1,12 +1,12 @@
 # License: BSD 3 clause
 
+import pickle
 import unittest
+
 import numpy as np
 from scipy.optimize import check_grad
-import pickle
 
 from tick.hawkes.model import ModelHawkesExpKernLeastSq
-
 from tick.hawkes.model.tests.model_hawkes_test_utils import (
     hawkes_exp_kernel_intensities, hawkes_least_square_error
 )

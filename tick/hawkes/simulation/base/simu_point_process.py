@@ -1,6 +1,7 @@
 # License: BSD 3 clause
 
 import warnings
+
 from tick.hawkes.simulation.base import Simu
 
 

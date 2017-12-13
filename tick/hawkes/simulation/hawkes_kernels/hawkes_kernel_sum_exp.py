@@ -2,11 +2,11 @@
 
 import numpy as np
 
-from . import HawkesKernelExp
-from .hawkes_kernel import HawkesKernel
 from tick.hawkes.simulation.build.hawkes_simulation import (
     HawkesKernelSumExp as _HawkesKernelSumExp
 )
+from . import HawkesKernelExp
+from .hawkes_kernel import HawkesKernel
 
 
 class HawkesKernelSumExp(HawkesKernel):
@@ -32,6 +32,7 @@ class HawkesKernelSumExp(HawkesKernel):
     n_decays : `int`
         Number of decays of the kernel, also noted :math:`U`
     """
+
     def __init__(self, intensities, decays):
         HawkesKernel.__init__(self)
 

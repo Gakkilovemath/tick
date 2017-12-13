@@ -1,14 +1,15 @@
 # License: BSD 3 clause
 
-import numpy as np
 import sys
 from warnings import warn
 
+import numpy as np
+
 from tick.base_model import LOSS_AND_GRAD
-from .base import ModelHawkes
 from tick.hawkes.model.build.hawkes_model import (
     ModelHawkesSumExpKernLeastSq as _ModelHawkesSumExpKernLeastSq
 )
+from .base import ModelHawkes
 
 
 class ModelHawkesSumExpKernLeastSq(ModelHawkes):
@@ -173,4 +174,4 @@ class ModelHawkesSumExpKernLeastSq(ModelHawkes):
     @property
     def baseline_intervals(self):
         return np.arange(self.n_baselines) * (
-            self._model.get_period_length() / self.n_baselines)
+                self._model.get_period_length() / self.n_baselines)

@@ -5,8 +5,8 @@ import unittest
 import numpy as np
 
 from tick.base.inference import InferenceTest
-from tick.hawkes.inference import HawkesSumExpKern
 from tick.hawkes import SimuHawkesSumExpKernels, SimuHawkesMulti
+from tick.hawkes.inference import HawkesSumExpKern
 from tick.prox import ProxNuclear
 from tick.prox import ProxPositive, ProxL1, ProxL2Sq, ProxElasticNet
 from tick.solver import AGD, GD, BFGS, SGD, SVRG

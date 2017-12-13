@@ -1,11 +1,13 @@
 # License: BSD 3 clause
 
 import unittest
+
 import numpy as np
 from scipy.optimize import check_grad
 
 from tick.hawkes.model import ModelHawkesExpKernLogLik
-from tick.hawkes.model.tests.model_hawkes_test_utils import hawkes_log_likelihood, \
+from tick.hawkes.model.tests.model_hawkes_test_utils import \
+    hawkes_log_likelihood, \
     hawkes_exp_kernel_intensities
 
 
@@ -68,7 +70,7 @@ class Test(unittest.TestCase):
             hawkes_exp_kernel_intensities(self.baseline, decays,
                                           self.adjacency, timestamps)
             for timestamps in self.timestamps_list
-            ]
+        ]
 
         integral_approx = sum([hawkes_log_likelihood(intensities,
                                                      timestamps, end_time)
@@ -194,6 +196,7 @@ class Test(unittest.TestCase):
                     return np.asarray(h)[i, :]
 
                 self.assertLess(check_grad(g_i, h_i, self.coeffs), 1e-5)
+
 
 if __name__ == '__main__':
     unittest.main()

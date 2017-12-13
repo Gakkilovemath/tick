@@ -270,11 +270,11 @@ class Test(InferenceTest):
 
             with open(file_name, 'rb') as read_file:
                 pickled = pickle.load(read_file)
-    
+
             self.assertEqual(model.n_nodes, pickled.n_nodes)
             np.testing.assert_equal(model.decays, pickled.decays)
             self.assertEqual(model.n_jumps, pickled.n_jumps)
-    
+
             self.assertEqual(model.n_coeffs, pickled.n_coeffs)
             self.assertEqual(model.n_threads, pickled.n_threads)
             np.testing.assert_equal(model.data, pickled.data)

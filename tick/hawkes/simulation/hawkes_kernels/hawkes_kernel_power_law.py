@@ -1,9 +1,9 @@
 # License: BSD 3 clause
 
-from .hawkes_kernel import HawkesKernel
 from tick.hawkes.simulation.build.hawkes_simulation import (
     HawkesKernelPowerLaw as _HawkesKernelPowerLaw
 )
+from .hawkes_kernel import HawkesKernel
 
 
 class HawkesKernelPowerLaw(HawkesKernel):
@@ -26,6 +26,7 @@ class HawkesKernelPowerLaw(HawkesKernel):
     exponent : `float`
         Exponent of the kernel, also noted :math:`\\beta`
     """
+
     def __init__(self, multiplier, cutoff, exponent, support=-1, error=1e-5):
         HawkesKernel.__init__(self)
         self._kernel = _HawkesKernelPowerLaw(multiplier, cutoff, exponent,
