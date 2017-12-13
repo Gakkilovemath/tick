@@ -10,6 +10,7 @@ from tick.base_model import ModelLipschitz
 from tick.prox import ProxElasticNet, ProxL1, ProxL2Sq, ProxPositive
 from tick.hawkes import SimuHawkes
 from tick.solver import AGD, GD, SGD, SVRG, BFGS
+from tick.plot import plot_point_process
 
 
 class LearnerHawkesParametric(LearnerOptim):
