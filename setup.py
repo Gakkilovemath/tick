@@ -718,7 +718,7 @@ class RunCPPLint(TickCommand):
     description = 'run cpplint on tick C++ source files'
 
     CPPLINT_DIRS = [
-        'src/cpp',
+        'lib/cpp', 'lib/include/tick',
     ]
 
     def run(self):
