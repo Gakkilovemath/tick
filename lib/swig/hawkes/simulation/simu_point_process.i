@@ -1,7 +1,7 @@
 // License: BSD 3 clause
 
 %{
-#include "tick/hawkes/simulation/pp.h"
+#include "tick/hawkes/simulation/simu_point_process.h"
 %}
 
 class PP {

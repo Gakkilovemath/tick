@@ -16,7 +16,7 @@
 
 #include "tick/base/time_func.h"
 #include "tick/array/varray.h"
-#include "pp.h"
+#include "simu_point_process.h"
 
 #include "hawkes_baselines/baseline.h"
 #include "hawkes_baselines/constant_baseline.h"

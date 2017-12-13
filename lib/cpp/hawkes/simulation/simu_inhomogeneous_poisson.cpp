@@ -4,7 +4,7 @@
 // Created by Martin Bompaire on 24/11/15.
 //
 
-#include "tick/hawkes/simulation/inhomogeneous_poisson.h"
+#include "tick/hawkes/simulation/simu_inhomogeneous_poisson.h"
 
 InhomogeneousPoisson::InhomogeneousPoisson(const TimeFunction &intensities_function,
                                            int seed)

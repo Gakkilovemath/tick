@@ -8,7 +8,7 @@
 // License: BSD 3 clause
 
 #include "tick/base/time_func.h"
-#include "pp.h"
+#include "simu_point_process.h"
 
 /*! \class InhomogeneousPoisson
  * \brief This is the class for Poisson processes with variable intensities

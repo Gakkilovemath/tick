@@ -8,7 +8,7 @@
 //  Copyright (c) 2015 bacry. All rights reserved.
 //
 
-#include "tick/hawkes/simulation/poisson.h"
+#include "tick/hawkes/simulation/simu_poisson_process.h"
 
 Poisson::Poisson(double intensity, int seed) : PP(1, seed) {
   intensities = SArrayDouble::new_ptr(1);

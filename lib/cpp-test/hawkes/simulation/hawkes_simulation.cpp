@@ -1,7 +1,7 @@
 // License: BSD 3 clause
 
 #include <gtest/gtest.h>
-#include "tick/hawkes/simulation/hawkes.h"
+#include "tick/hawkes/simulation/simu_hawkes.h"
 
 TEST(SimuHawkesTest, constant_baseline) {
   Hawkes hawkes(1);

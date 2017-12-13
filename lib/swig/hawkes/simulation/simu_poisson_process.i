@@ -4,7 +4,7 @@
 %include defs.i
 
 %{
-#include "tick/hawkes/simulation/poisson.h"
+#include "tick/hawkes/simulation/simu_poisson_process.h"
 %}
 
 class Poisson : public PP {

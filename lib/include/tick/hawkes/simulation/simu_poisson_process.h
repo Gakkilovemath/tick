@@ -12,7 +12,7 @@
 // License: BSD 3 clause
 
 #include "tick/base/time_func.h"
-#include "pp.h"
+#include "simu_point_process.h"
 #include <numeric>
 
 /*! \class Poisson

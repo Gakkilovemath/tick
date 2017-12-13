@@ -1,7 +1,7 @@
 // License: BSD 3 clause
 
 #include <float.h>
-#include "tick/hawkes/simulation/pp.h"
+#include "tick/hawkes/simulation/simu_point_process.h"
 
 // Constructor
 PP::PP(unsigned int n_nodes, int seed)

@@ -1,7 +1,7 @@
 // License: BSD 3 clause
 
 %{
-#include "tick/hawkes/simulation/inhomogeneous_poisson.h"
+#include "tick/hawkes/simulation/simu_inhomogeneous_poisson.h"
 %}
 
 %include "std_vector.i"
