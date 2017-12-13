@@ -5,7 +5,7 @@
 // License: BSD 3 clause
 
 #include "tick/base/base.h"
-#include "tick/hawkes/model/base/hawkes_list.h"
+#include "tick/hawkes/model/base/model_hawkes_list.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////

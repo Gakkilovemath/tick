@@ -2,7 +2,7 @@
 
 
 %{
-#include "tick/hawkes/simulation/hawkes.h"
+#include "tick/hawkes/simulation/simu_hawkes.h"
 %}
 
 

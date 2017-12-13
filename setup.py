@@ -497,7 +497,7 @@ hawkes_model_extension_info = {
     "folders": [
         "lib/cpp/hawkes/model",
         "lib/cpp/hawkes/model/base",
-        "lib/cpp/hawkes/model/variants",
+        "lib/cpp/hawkes/model/list_of_realizations",
     ],
     "swig_files": [
       "hawkes_model_module.i"

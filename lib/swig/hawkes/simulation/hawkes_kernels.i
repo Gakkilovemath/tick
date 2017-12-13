@@ -1,9 +1,5 @@
 // License: BSD 3 clause
 
-%{
-#include "tick/hawkes/simulation/hawkes.h"
-%}
-
 %include <std_shared_ptr.i>
 %shared_ptr(HawkesKernel);
 %shared_ptr(HawkesKernelExp);

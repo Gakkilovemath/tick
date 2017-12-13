@@ -7,7 +7,7 @@
 #define DEBUG_COSTLY_THROW 1
 
 #include <gtest/gtest.h>
-#include "tick/hawkes/model/hawkes_fixed_sumexpkern_loglik.h"
+#include "tick/hawkes/model/model_hawkes_sumexpkern_loglik_single.h"
 
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/memory.hpp>
@@ -16,15 +16,15 @@
 #include <fstream>
 
 #include "tick/array/array.h"
-#include "tick/hawkes/model/hawkes_fixed_expkern_loglik.h"
-#include "tick/hawkes/model/hawkes_fixed_sumexpkern_loglik.h"
-#include "tick/hawkes/model/hawkes_fixed_expkern_leastsq.h"
-#include "tick/hawkes/model/hawkes_fixed_sumexpkern_leastsq.h"
+#include "tick/hawkes/model/model_hawkes_expkern_loglik_single.h"
+#include "tick/hawkes/model/model_hawkes_sumexpkern_loglik_single.h"
+#include "tick/hawkes/model/model_hawkes_expkern_leastsq_single.h"
+#include "tick/hawkes/model/model_hawkes_sumexpkern_leastsq_single.h"
 
-#include "tick/hawkes/model/variants/hawkes_fixed_expkern_leastsq_list.h"
-#include "tick/hawkes/model/variants/hawkes_fixed_sumexpkern_leastsq_list.h"
-#include "tick/hawkes/model/variants/hawkes_fixed_expkern_loglik_list.h"
-#include "tick/hawkes/model/variants/hawkes_fixed_sumexpkern_loglik_list.h"
+#include "tick/hawkes/model/list_of_realizations/model_hawkes_expkern_leastsq.h"
+#include "tick/hawkes/model/list_of_realizations/model_hawkes_sumexpkern_leastsq.h"
+#include "tick/hawkes/model/list_of_realizations/model_hawkes_expkern_loglik.h"
+#include "tick/hawkes/model/list_of_realizations/model_hawkes_sumexpkern_loglik.h"
 
 
 class HawkesModelTest : public ::testing::Test {

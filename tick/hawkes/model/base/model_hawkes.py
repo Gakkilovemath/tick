@@ -7,7 +7,6 @@ from tick.base_model.model_first_order import ModelFirstOrder
 from tick.hawkes.model.build.hawkes_model import (
     ModelHawkesFixedSumExpKernLeastSqList,
     ModelHawkesFixedExpKernLeastSqList,
-    ModelHawkesFixedSumExpKernLogLik,
     ModelHawkesFixedSumExpKernLogLikList
 )
 from tick.base_model import N_CALLS_LOSS, PASS_OVER_DATA

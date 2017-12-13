@@ -12,7 +12,7 @@
 %import(module="tick.base") base_module.i
 
 %{
-#include "tick/hawkes/model/base/hawkes_list.h"
+#include "tick/hawkes/model/base/model_hawkes_list.h"
 %}
 
 // Is there a cleaner way to make our learners inherit from ModelHawkesList ?
