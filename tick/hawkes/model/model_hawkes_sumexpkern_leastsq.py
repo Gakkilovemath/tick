@@ -7,8 +7,7 @@ from warnings import warn
 from tick.base_model import LOSS_AND_GRAD
 from .base import ModelHawkes
 from tick.hawkes.model.build.hawkes_model import (
-    ModelHawkesFixedSumExpKernLeastSqList as
-    _ModelHawkesFixedSumExpKernLeastSqList
+    ModelHawkesSumExpKernLeastSq as _ModelHawkesSumExpKernLeastSq
 )
 
 
@@ -134,7 +133,7 @@ class ModelHawkesFixedSumExpKernLeastSq(ModelHawkes):
         self.n_baselines = n_baselines
         self.period_length = period_length
 
-        self._model = _ModelHawkesFixedSumExpKernLeastSqList(
+        self._model = _ModelHawkesSumExpKernLeastSq(
             self.decays, self.n_baselines, self.cast_period_length(),
             self.n_threads, self.approx
         )

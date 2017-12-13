@@ -3,10 +3,10 @@
 
 #include "tick/hawkes/model/base/model_hawkes_loglik.h"
 
-ModelHawkesFixedKernLogLikList::ModelHawkesFixedKernLogLikList(const int max_n_threads) :
+ModelHawkesLogLik::ModelHawkesLogLik(const int max_n_threads) :
   ModelHawkesList(max_n_threads, 0) {}
 
-void ModelHawkesFixedKernLogLikList::incremental_set_data(
+void ModelHawkesLogLik::incremental_set_data(
   const SArrayDoublePtrList1D &timestamps, double end_time) {
   weights_computed = false;
   if (model_list.empty()) {
@@ -42,12 +42,12 @@ void ModelHawkesFixedKernLogLikList::incremental_set_data(
   weights_computed = true;
 }
 
-void ModelHawkesFixedKernLogLikList::compute_weights() {
+void ModelHawkesLogLik::compute_weights() {
   if (!model_list.empty() && timestamps_list.size() != model_list.size()) {
     TICK_ERROR("Cannot compute weights as timestamps have not been stored. "
                  "Did you use incremental_fit?");
   }
-  model_list = std::vector<std::unique_ptr<ModelHawkesFixedKernLogLik> >(n_realizations);
+  model_list = std::vector<std::unique_ptr<ModelHawkesLogLikSingle> >(n_realizations);
 
   for (ulong r = 0; r < n_realizations; ++r) {
     model_list[r] = build_model(1);
@@ -56,7 +56,7 @@ void ModelHawkesFixedKernLogLikList::compute_weights() {
   }
 
   parallel_run(get_n_threads(), n_realizations * n_nodes,
-               &ModelHawkesFixedKernLogLikList::compute_weights_i_r, this);
+               &ModelHawkesLogLik::compute_weights_i_r, this);
 
   for (auto &model : model_list) {
     model->weights_computed = true;
@@ -64,39 +64,39 @@ void ModelHawkesFixedKernLogLikList::compute_weights() {
   weights_computed = true;
 }
 
-std::tuple<ulong, ulong> ModelHawkesFixedKernLogLikList::get_realization_node(ulong i_r) {
+std::tuple<ulong, ulong> ModelHawkesLogLik::get_realization_node(ulong i_r) {
   const ulong r = static_cast<const ulong>(i_r / n_nodes);
   const ulong i = i_r % n_nodes;
   return std::make_tuple(r, i);
 }
 
-void ModelHawkesFixedKernLogLikList::compute_weights_i_r(const ulong i_r) {
+void ModelHawkesLogLik::compute_weights_i_r(const ulong i_r) {
   ulong r, i;
   std::tie(r, i) = get_realization_node(i_r);
   model_list[r]->compute_weights_dim_i(i);
 }
 
-double ModelHawkesFixedKernLogLikList::loss_i_r(const ulong i_r, const ArrayDouble &coeffs) {
+double ModelHawkesLogLik::loss_i_r(const ulong i_r, const ArrayDouble &coeffs) {
   ulong r, i;
   std::tie(r, i) = get_realization_node(i_r);
 
   return model_list[r]->loss_dim_i(i, coeffs);
 }
 
-double ModelHawkesFixedKernLogLikList::loss(const ArrayDouble &coeffs) {
+double ModelHawkesLogLik::loss(const ArrayDouble &coeffs) {
   if (!weights_computed) compute_weights();
   return parallel_map_additive_reduce(
     get_n_threads(), n_realizations * n_nodes,
-    &ModelHawkesFixedKernLogLikList::loss_i_r, this, coeffs) / get_n_total_jumps();
+    &ModelHawkesLogLik::loss_i_r, this, coeffs) / get_n_total_jumps();
 }
 
-double ModelHawkesFixedKernLogLikList::loss_i(const ulong i, const ArrayDouble &coeffs) {
+double ModelHawkesLogLik::loss_i(const ulong i, const ArrayDouble &coeffs) {
   if (!weights_computed) compute_weights();
   const auto r_i = sampled_i_to_realization(i);
   return model_list[r_i.first]->loss_i(r_i.second, coeffs);
 }
 
-void ModelHawkesFixedKernLogLikList::grad_i_r(const ulong i_r,
+void ModelHawkesLogLik::grad_i_r(const ulong i_r,
                                               ArrayDouble &out,
                                               const ArrayDouble &coeffs) {
   ulong r, i;
@@ -108,25 +108,25 @@ void ModelHawkesFixedKernLogLikList::grad_i_r(const ulong i_r,
   out.mult_incr(tmp_grad_i, 1.);
 }
 
-void ModelHawkesFixedKernLogLikList::grad(const ArrayDouble &coeffs, ArrayDouble &out) {
+void ModelHawkesLogLik::grad(const ArrayDouble &coeffs, ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   out.init_to_zero();
   parallel_map_array<ArrayDouble>(
     get_n_threads(), n_realizations * n_nodes,
     [](ArrayDouble &r, const ArrayDouble &s) { r.mult_incr(s, 1.0); },
-    &ModelHawkesFixedKernLogLikList::grad_i_r,
+    &ModelHawkesLogLik::grad_i_r,
     this, out, coeffs);
   out /= get_n_total_jumps();
 }
 
-void ModelHawkesFixedKernLogLikList::grad_i(const ulong i, const ArrayDouble &coeffs,
+void ModelHawkesLogLik::grad_i(const ulong i, const ArrayDouble &coeffs,
                                             ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   const auto r_i = sampled_i_to_realization(i);
   model_list[r_i.first]->grad_i(r_i.second, coeffs, out);
 }
 
-double ModelHawkesFixedKernLogLikList::loss_and_grad(const ArrayDouble &coeffs,
+double ModelHawkesLogLik::loss_and_grad(const ArrayDouble &coeffs,
                                                      ArrayDouble &out) {
   // TODO(svp) create parallel_map_array_reduce_result
   // In order to sum output (losses) and keep reducing gradients
@@ -135,7 +135,7 @@ double ModelHawkesFixedKernLogLikList::loss_and_grad(const ArrayDouble &coeffs,
   return loss(coeffs);
 }
 
-double ModelHawkesFixedKernLogLikList::hessian_norm_i_r(const ulong i_r,
+double ModelHawkesLogLik::hessian_norm_i_r(const ulong i_r,
                                                         const ArrayDouble &coeffs,
                                                         const ArrayDouble &vector) {
   ulong r, i;
@@ -144,16 +144,16 @@ double ModelHawkesFixedKernLogLikList::hessian_norm_i_r(const ulong i_r,
   return model_list[r]->hessian_norm_dim_i(i, coeffs, vector);
 }
 
-double ModelHawkesFixedKernLogLikList::hessian_norm(const ArrayDouble &coeffs,
+double ModelHawkesLogLik::hessian_norm(const ArrayDouble &coeffs,
                                                     const ArrayDouble &vector) {
   if (!weights_computed) compute_weights();
   return parallel_map_additive_reduce(
     get_n_threads(), n_realizations * n_nodes,
-    &ModelHawkesFixedKernLogLikList::hessian_norm_i_r, this, coeffs, vector)
+    &ModelHawkesLogLik::hessian_norm_i_r, this, coeffs, vector)
     / get_n_total_jumps();
 }
 
-void ModelHawkesFixedKernLogLikList::hessian_i_r(const ulong i_r,
+void ModelHawkesLogLik::hessian_i_r(const ulong i_r,
                                                  const ArrayDouble &coeffs,
                                                  ArrayDouble &out) {
   ulong r, i;
@@ -162,16 +162,16 @@ void ModelHawkesFixedKernLogLikList::hessian_i_r(const ulong i_r,
   model_list[r]->hessian_i(i, coeffs, out);
 }
 
-void ModelHawkesFixedKernLogLikList::hessian(const ArrayDouble &coeffs,
+void ModelHawkesLogLik::hessian(const ArrayDouble &coeffs,
                                              ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   parallel_run(
     get_n_threads(), n_realizations * n_nodes,
-    &ModelHawkesFixedKernLogLikList::hessian_i_r, this, coeffs, out);
+    &ModelHawkesLogLik::hessian_i_r, this, coeffs, out);
   out /= get_n_total_jumps();
 }
 
-std::pair<ulong, ulong> ModelHawkesFixedKernLogLikList::sampled_i_to_realization(
+std::pair<ulong, ulong> ModelHawkesLogLik::sampled_i_to_realization(
   const ulong sampled_i) {
   ulong cum_n_jumps = 0;
   for (ulong r = 0; r < n_realizations; r++) {
@@ -184,6 +184,6 @@ std::pair<ulong, ulong> ModelHawkesFixedKernLogLikList::sampled_i_to_realization
   TICK_ERROR("sampled_i out of range");
 }
 
-ulong ModelHawkesFixedKernLogLikList::get_n_coeffs() const {
+ulong ModelHawkesLogLik::get_n_coeffs() const {
   return n_nodes + n_nodes * n_nodes;
 }

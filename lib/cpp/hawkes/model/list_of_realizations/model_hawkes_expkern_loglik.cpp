@@ -5,7 +5,7 @@
 
 ModelHawkesExpKernLogLik::ModelHawkesExpKernLogLik(
   const double decay, const int max_n_threads) :
-  ModelHawkesFixedKernLogLikList(max_n_threads), decay(decay) {}
+  ModelHawkesLogLik(max_n_threads), decay(decay) {}
 
 ulong ModelHawkesExpKernLogLik::get_n_coeffs() const {
   return n_nodes + n_nodes * n_nodes;

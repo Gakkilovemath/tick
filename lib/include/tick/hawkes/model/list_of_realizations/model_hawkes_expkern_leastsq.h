@@ -12,7 +12,7 @@
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  * on a list of realizations
  */
-class DLL_PUBLIC ModelHawkesExpKernLeastSq : public ModelHawkesLeastSqList {
+class DLL_PUBLIC ModelHawkesExpKernLeastSq : public ModelHawkesLeastSq {
   //! @brief Some arrays used for intermediate computings. They are initialized in init()
   ArrayDouble2d E, Dg, Dg2, C;
 
@@ -22,7 +22,7 @@ class DLL_PUBLIC ModelHawkesExpKernLeastSq : public ModelHawkesLeastSqList {
  public:
   //! @brief Empty constructor
   //! This constructor should only be used for serialization
-  ModelHawkesExpKernLeastSq(): ModelHawkesLeastSqList(0, 0) {}
+  ModelHawkesExpKernLeastSq(): ModelHawkesLeastSq(0, 0) {}
 
   //! @brief Constructor
   //! \param decays : the 2d array of the decays
@@ -80,7 +80,7 @@ class DLL_PUBLIC ModelHawkesExpKernLeastSq : public ModelHawkesLeastSqList {
  public:
   template<class Archive>
   void serialize(Archive &ar) {
-    ar(cereal::make_nvp("ModelHawkesLeastSqList", cereal::base_class<ModelHawkesLeastSqList>(this)));
+    ar(cereal::make_nvp("ModelHawkesLeastSq", cereal::base_class<ModelHawkesLeastSq>(this)));
 
     ar(CEREAL_NVP(E));
     ar(CEREAL_NVP(Dg));

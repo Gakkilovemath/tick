@@ -4,11 +4,11 @@
 #include "tick/hawkes/model/model_hawkes_sumexpkern_loglik_single.h"
 
 ModelHawkesSumExpKernLogLikSingle::ModelHawkesSumExpKernLogLikSingle() :
-  ModelHawkesFixedKernLogLik(), decays(0) {}
+  ModelHawkesLogLikSingle(), decays(0) {}
 
 ModelHawkesSumExpKernLogLikSingle::ModelHawkesSumExpKernLogLikSingle(
   const ArrayDouble &decays, const int max_n_threads) :
-  ModelHawkesFixedKernLogLik(max_n_threads),
+  ModelHawkesLogLikSingle(max_n_threads),
   decays(decays) {}
 
 void ModelHawkesSumExpKernLogLikSingle::allocate_weights() {

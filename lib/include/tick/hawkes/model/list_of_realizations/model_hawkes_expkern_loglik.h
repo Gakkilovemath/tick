@@ -12,7 +12,7 @@
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  * on a list of realizations
  */
-class DLL_PUBLIC ModelHawkesExpKernLogLik : public ModelHawkesFixedKernLogLikList {
+class DLL_PUBLIC ModelHawkesExpKernLogLik : public ModelHawkesLogLik {
   //! @brief Value of decay for this model. Shared by all kernels
   double decay;
 
@@ -39,7 +39,7 @@ class DLL_PUBLIC ModelHawkesExpKernLogLik : public ModelHawkesFixedKernLogLikLis
     return decay;
   }
 
-  std::unique_ptr<ModelHawkesFixedKernLogLik> build_model(const int n_threads) override {
+  std::unique_ptr<ModelHawkesLogLikSingle> build_model(const int n_threads) override {
     return std::unique_ptr<ModelHawkesExpKernLogLikSingle>(
       new ModelHawkesExpKernLogLikSingle(decay, n_threads));
   }

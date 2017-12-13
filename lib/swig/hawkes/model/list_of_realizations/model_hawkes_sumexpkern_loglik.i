@@ -6,7 +6,7 @@
 %}
 
 
-class ModelHawkesSumExpKernLogLik : public ModelHawkesFixedKernLogLikList {
+class ModelHawkesSumExpKernLogLik : public ModelHawkesLogLik {
     
 public:
     

@@ -7,15 +7,15 @@
 #include "tick/hawkes/model/base/model_hawkes_list.h"
 #include "tick/hawkes/model/base/model_hawkes_loglik_single.h"
 
-/** \class ModelHawkesFixedKernLogLikList
+/** \class ModelHawkesLogLik
  * \brief Class for computing L2 Contrast function and gradient for Hawkes processes with
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  * on a list of realizations
  */
-class DLL_PUBLIC ModelHawkesFixedKernLogLikList : public ModelHawkesList {
+class DLL_PUBLIC ModelHawkesLogLik : public ModelHawkesList {
   //! @brief Value of decay for this model. Shared by all kernels
 
-  std::vector<std::unique_ptr<ModelHawkesFixedKernLogLik> > model_list;
+  std::vector<std::unique_ptr<ModelHawkesLogLikSingle> > model_list;
 
  public:
   /**
@@ -24,7 +24,7 @@ class DLL_PUBLIC ModelHawkesFixedKernLogLikList : public ModelHawkesList {
    * \param max_n_threads : number of cores to be used for multithreading. If negative,
    * the number of physical cores will be used
    */
-  explicit ModelHawkesFixedKernLogLikList(const int max_n_threads = 1);
+  explicit ModelHawkesLogLik(const int max_n_threads = 1);
 
   /**
    * These lines are required for visual studio but are suggested in general
@@ -32,8 +32,8 @@ class DLL_PUBLIC ModelHawkesFixedKernLogLikList : public ModelHawkesList {
    *  Visual studio seems to get confused and tries to copy this class, and it 
    *   errors as unique_ptrs are not copy-able
    */
-  ModelHawkesFixedKernLogLikList(const ModelHawkesFixedKernLogLikList& model) = delete;
-  ModelHawkesFixedKernLogLikList& operator=(const ModelHawkesFixedKernLogLikList& model) = delete;
+  ModelHawkesLogLik(const ModelHawkesLogLik& model) = delete;
+  ModelHawkesLogLik& operator=(const ModelHawkesLogLik& model) = delete;
 
   void incremental_set_data(const SArrayDoublePtrList1D &timestamps, double end_time);
 
@@ -103,7 +103,7 @@ class DLL_PUBLIC ModelHawkesFixedKernLogLikList : public ModelHawkesList {
   ulong get_n_coeffs() const override;
 
  protected:
-  virtual std::unique_ptr<ModelHawkesFixedKernLogLik> build_model(const int n_threads) {
+  virtual std::unique_ptr<ModelHawkesLogLikSingle> build_model(const int n_threads) {
     TICK_CLASS_DOES_NOT_IMPLEMENT("");
   }
 

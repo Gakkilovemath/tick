@@ -12,7 +12,7 @@
  * \brief Class for computing L2 Contrast function and gradient for Hawkes processes with
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  */
-class DLL_PUBLIC ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSqList {
+class DLL_PUBLIC ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSq {
   //! @brief Some arrays used for intermediate computings.
   std::vector<ArrayDouble2d> E, Dgg, C;
   ArrayDouble2dList1D Dg;
@@ -33,7 +33,7 @@ class DLL_PUBLIC ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSqList {
  public:
   //! @brief Empty constructor
   //! This constructor should only be used for serialization
-  ModelHawkesSumExpKernLeastSq(): ModelHawkesLeastSqList(0, 0) {}
+  ModelHawkesSumExpKernLeastSq(): ModelHawkesLeastSq(0, 0) {}
 
   //! @brief Constructor
   //! \param timestamps : a list of arrays representing the realization
@@ -87,7 +87,7 @@ class DLL_PUBLIC ModelHawkesSumExpKernLeastSq : public ModelHawkesLeastSqList {
  public:
   template<class Archive>
   void serialize(Archive &ar) {
-    ar(cereal::make_nvp("ModelHawkesLeastSqList", cereal::base_class<ModelHawkesLeastSqList>(this)));
+    ar(cereal::make_nvp("ModelHawkesLeastSq", cereal::base_class<ModelHawkesLeastSq>(this)));
 
     ar(CEREAL_NVP(E));
     ar(CEREAL_NVP(Dgg));

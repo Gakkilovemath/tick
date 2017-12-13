@@ -19,7 +19,7 @@ class ModelHawkesExpKernLogLik;
  * exponential kernels with fixed exponent (i.e., \f$ \alpha \beta e^{-\beta t} \f$, with fixed
  * decay)
  */
-class DLL_PUBLIC ModelHawkesExpKernLogLikSingle : public ModelHawkesFixedKernLogLik {
+class DLL_PUBLIC ModelHawkesExpKernLogLikSingle : public ModelHawkesLogLikSingle {
  private:
   //! @brief Value of decay for this model
   double decay;
@@ -27,7 +27,7 @@ class DLL_PUBLIC ModelHawkesExpKernLogLikSingle : public ModelHawkesFixedKernLog
  public:
   //! @brief Default constructor
   //! @note This constructor is only used to create vectors of ModelHawkesExpKernLogLikSingle
-  ModelHawkesExpKernLogLikSingle() : ModelHawkesFixedKernLogLik() {}
+  ModelHawkesExpKernLogLikSingle() : ModelHawkesLogLikSingle() {}
 
   /**
    * @brief Constructor

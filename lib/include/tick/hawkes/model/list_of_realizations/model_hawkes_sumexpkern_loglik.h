@@ -12,7 +12,7 @@
  * exponential kernels with fixed exponent (i.e., alpha*beta*e^{-beta t}, with fixed beta)
  * on a list of realizations
  */
-class DLL_PUBLIC ModelHawkesSumExpKernLogLik : public ModelHawkesFixedKernLogLikList {
+class DLL_PUBLIC ModelHawkesSumExpKernLogLik : public ModelHawkesLogLik {
   //! @brief Value of decays array for this model
   ArrayDouble decays;
 
@@ -46,7 +46,7 @@ class DLL_PUBLIC ModelHawkesSumExpKernLogLik : public ModelHawkesFixedKernLogLik
     return decays.size();
   }
 
-  std::unique_ptr<ModelHawkesFixedKernLogLik> build_model(const int n_threads) override {
+  std::unique_ptr<ModelHawkesLogLikSingle> build_model(const int n_threads) override {
     return std::unique_ptr<ModelHawkesSumExpKernLogLikSingle>(
       new ModelHawkesSumExpKernLogLikSingle(decays, n_threads));
   }

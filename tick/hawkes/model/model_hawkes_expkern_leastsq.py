@@ -5,7 +5,7 @@ import numpy as np
 from tick.base_model import LOSS_AND_GRAD
 from .base import ModelHawkes
 from tick.hawkes.model.build.hawkes_model import (
-    ModelHawkesFixedExpKernLeastSqList as _ModelHawkesFixedExpKernLeastSq
+    ModelHawkesExpKernLeastSq as _ModelHawkesExpKernLeastSq
 )
 
 
@@ -99,9 +99,9 @@ class ModelHawkesFixedExpKernLeastSq(ModelHawkes):
         elif decays.dtype != float:
             decays = decays.astype(float)
 
-        self._model = _ModelHawkesFixedExpKernLeastSq(decays.copy(),
-                                                      self.n_threads,
-                                                      self.approx)
+        self._model = _ModelHawkesExpKernLeastSq(decays.copy(),
+                                                 self.n_threads,
+                                                 self.approx)
 
     def _set_data(self, events: list):
         """Set the corresponding realization(s) of the process.

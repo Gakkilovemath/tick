@@ -5,7 +5,7 @@
 
 ModelHawkesExpKernLogLikSingle::ModelHawkesExpKernLogLikSingle(
     const double decay, const int max_n_threads) :
-  ModelHawkesFixedKernLogLik(max_n_threads),
+  ModelHawkesLogLikSingle(max_n_threads),
     decay(decay) {}
 
 void ModelHawkesExpKernLogLikSingle::allocate_weights() {

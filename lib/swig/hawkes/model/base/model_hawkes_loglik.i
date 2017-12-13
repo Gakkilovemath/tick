@@ -6,11 +6,11 @@
 %}
 
 
-class ModelHawkesFixedKernLogLikList : public ModelHawkesList {
+class ModelHawkesLogLik : public ModelHawkesList {
 
 public:
 
-  ModelHawkesFixedKernLogLikList(const int max_n_threads = 1);
+  ModelHawkesLogLik(const int max_n_threads = 1);
 
   double loss_and_grad(const ArrayDouble &coeffs, ArrayDouble &out);
   double hessian_norm(const ArrayDouble &coeffs, const ArrayDouble &vector);

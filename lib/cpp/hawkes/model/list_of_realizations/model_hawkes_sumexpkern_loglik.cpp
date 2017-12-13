@@ -5,7 +5,7 @@
 
 ModelHawkesSumExpKernLogLik::ModelHawkesSumExpKernLogLik(
   const ArrayDouble &decays, const int max_n_threads) :
-  ModelHawkesFixedKernLogLikList(max_n_threads), decays(decays) {}
+  ModelHawkesLogLik(max_n_threads), decays(decays) {}
 
 ulong ModelHawkesSumExpKernLogLik::get_n_coeffs() const {
   return n_nodes + n_nodes * n_nodes * get_n_decays();

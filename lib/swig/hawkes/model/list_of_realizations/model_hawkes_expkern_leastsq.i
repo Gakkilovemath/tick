@@ -6,7 +6,7 @@
 %}
 
 
-class ModelHawkesExpKernLeastSq : public ModelHawkesLeastSqList {
+class ModelHawkesExpKernLeastSq : public ModelHawkesLeastSq {
     
 public:
   ModelHawkesExpKernLeastSq();

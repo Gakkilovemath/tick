@@ -6,7 +6,7 @@ ModelHawkesExpKernLeastSq::ModelHawkesExpKernLeastSq(
     const SArrayDouble2dPtr decays,
     const int max_n_threads,
     const unsigned int optimization_level)
-    : ModelHawkesLeastSqList(max_n_threads, optimization_level),
+    : ModelHawkesLeastSq(max_n_threads, optimization_level),
       decays(decays) {
   aggregated_model = std::unique_ptr<ModelHawkesExpKernLeastSqSingle>(
       new ModelHawkesExpKernLeastSqSingle(decays, max_n_threads, optimization_level));

@@ -9,15 +9,15 @@
 
 #include "tick/hawkes/model/base/model_hawkes_single.h"
 
-class ModelHawkesFixedKernLogLikList;
+class ModelHawkesLogLik;
 
 /**
- * \class ModelHawkesFixedKernLogLik
+ * \class ModelHawkesLogLikSingle
  * \brief Class for computing loglikelihood function and gradient for Hawkes processes with
  * exponential kernels with fixed exponent (i.e., \f$ \alpha \beta e^{-\beta t} \f$, with fixed
  * decay)
  */
-class DLL_PUBLIC ModelHawkesFixedKernLogLik : public ModelHawkesSingle {
+class DLL_PUBLIC ModelHawkesLogLikSingle : public ModelHawkesSingle {
  protected:
   // Some arrays used for intermediate computings. They are initialized in init()
   //! @brief kernel intensity of node j on node i at time t_i_k
@@ -34,7 +34,7 @@ class DLL_PUBLIC ModelHawkesFixedKernLogLik : public ModelHawkesSingle {
    * @brief Constructor
    * \param n_threads : number of threads that will be used for parallel computations
    */
-  explicit ModelHawkesFixedKernLogLik(const int max_n_threads = 1);
+  explicit ModelHawkesLogLikSingle(const int max_n_threads = 1);
 
   /**
    * @brief Precomputations of intermediate values
@@ -204,7 +204,7 @@ class DLL_PUBLIC ModelHawkesFixedKernLogLik : public ModelHawkesSingle {
     return n_total_jumps;
   }
 
-  friend ModelHawkesFixedKernLogLikList;
+  friend ModelHawkesLogLik;
 };
 
 #endif  // TICK_OPTIM_MODEL_SRC_BASE_HAWKES_FIXED_KERN_LOGLIK_H_

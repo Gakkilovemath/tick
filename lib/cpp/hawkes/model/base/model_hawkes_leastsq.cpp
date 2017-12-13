@@ -3,36 +3,36 @@
 #include "tick/hawkes/model/base/model_hawkes_leastsq.h"
 #include "tick/hawkes/model/model_hawkes_utils.h"
 
-ModelHawkesLeastSqList::ModelHawkesLeastSqList(
+ModelHawkesLeastSq::ModelHawkesLeastSq(
     const int max_n_threads,
     const unsigned int optimization_level)
     : ModelHawkesList(max_n_threads, optimization_level),
       weights_allocated(false) {}
 
-void ModelHawkesLeastSqList::grad_i(const ulong i, const ArrayDouble &coeffs,
+void ModelHawkesLeastSq::grad_i(const ulong i, const ArrayDouble &coeffs,
                                     ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   aggregated_model->grad_i(i, coeffs, out);
 }
 
-void ModelHawkesLeastSqList::grad(const ArrayDouble &coeffs, ArrayDouble &out) {
+void ModelHawkesLeastSq::grad(const ArrayDouble &coeffs, ArrayDouble &out) {
   if (!weights_computed) compute_weights();
   aggregated_model->grad(coeffs, out);
 }
 
-double ModelHawkesLeastSqList::loss_i(const ulong i, const ArrayDouble &coeffs) {
+double ModelHawkesLeastSq::loss_i(const ulong i, const ArrayDouble &coeffs) {
   if (!weights_computed) compute_weights();
   return aggregated_model->loss_i(i, coeffs);
 }
 
-double ModelHawkesLeastSqList::loss(const ArrayDouble &coeffs) {
+double ModelHawkesLeastSq::loss(const ArrayDouble &coeffs) {
   if (!weights_computed) compute_weights();
   return aggregated_model->loss(coeffs);
 }
 
 // Full initialization of the arrays H, Dg, Dg2 and C
 // Must be performed just once
-void ModelHawkesLeastSqList::compute_weights() {
+void ModelHawkesLeastSq::compute_weights() {
   allocate_weights();
 
   compute_weights_timestamps_list();
@@ -41,7 +41,7 @@ void ModelHawkesLeastSqList::compute_weights() {
   synchronize_aggregated_model();
 }
 
-void ModelHawkesLeastSqList::incremental_set_data(const SArrayDoublePtrList1D &timestamps,
+void ModelHawkesLeastSq::incremental_set_data(const SArrayDoublePtrList1D &timestamps,
                                                   double end_time) {
   weights_computed = false;
   if (!weights_allocated) {

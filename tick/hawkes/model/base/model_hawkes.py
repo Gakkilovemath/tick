@@ -5,9 +5,8 @@ from scipy.sparse import sputils, csr_matrix
 
 from tick.base_model.model_first_order import ModelFirstOrder
 from tick.hawkes.model.build.hawkes_model import (
-    ModelHawkesFixedSumExpKernLeastSqList,
-    ModelHawkesFixedExpKernLeastSqList,
-    ModelHawkesFixedSumExpKernLogLikList
+    ModelHawkesSumExpKernLeastSq, ModelHawkesExpKernLeastSq,
+    ModelHawkesSumExpKernLogLik,
 )
 from tick.base_model import N_CALLS_LOSS, PASS_OVER_DATA
 
@@ -157,8 +156,8 @@ class ModelHawkes(ModelFirstOrder):
 
         n_baselines = self.n_nodes
         # number of alphas per dimension
-        if isinstance(self._model, (ModelHawkesFixedSumExpKernLeastSqList,
-                                    ModelHawkesFixedSumExpKernLogLikList)):
+        if isinstance(self._model, (ModelHawkesSumExpKernLeastSq,
+                                    ModelHawkesSumExpKernLogLik)):
             n_alphas_i = self.n_nodes * len(self.decays)
         else:
             n_alphas_i = self.n_nodes
@@ -193,8 +192,8 @@ class ModelHawkes(ModelFirstOrder):
         data = np.zeros(data_size, dtype=float)
 
         # In these two models, hessian does not depend on x
-        if isinstance(self._model, (ModelHawkesFixedSumExpKernLeastSqList,
-                                    ModelHawkesFixedExpKernLeastSqList)):
+        if isinstance(self._model, (ModelHawkesSumExpKernLeastSq,
+                                    ModelHawkesExpKernLeastSq)):
             self._model.hessian(data)
         else:
             self._model.hessian(x, data)

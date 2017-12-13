@@ -6,7 +6,7 @@ from tick.base_model import ModelSecondOrder, ModelSelfConcordant, \
     LOSS_AND_GRAD
 from .base import ModelHawkes
 from tick.hawkes.model.build.hawkes_model import (
-    ModelHawkesFixedExpKernLogLikList as _ModelHawkesFixedExpKernLogLik
+    ModelHawkesExpKernLogLik as _ModelHawkesExpKernLogLik
 )
 
 
@@ -87,7 +87,7 @@ class ModelHawkesFixedExpKernLogLik(ModelHawkes,
         ModelSecondOrder.__init__(self)
         ModelSelfConcordant.__init__(self)
         self.decay = decay
-        self._model = _ModelHawkesFixedExpKernLogLik(decay, n_threads)
+        self._model = _ModelHawkesExpKernLogLik(decay, n_threads)
 
     def fit(self, events, end_times=None):
         """Set the corresponding realization(s) of the process.

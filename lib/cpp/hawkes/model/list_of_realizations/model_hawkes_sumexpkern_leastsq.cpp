@@ -10,7 +10,7 @@ ModelHawkesSumExpKernLeastSq::ModelHawkesSumExpKernLeastSq(
     const double period_length,
     const unsigned int max_n_threads,
     const unsigned int optimization_level)
-    : ModelHawkesLeastSqList(max_n_threads, optimization_level),
+    : ModelHawkesLeastSq(max_n_threads, optimization_level),
       n_baselines(n_baselines), period_length(period_length),
       decays(decays), n_decays(decays.size()) {
   aggregated_model = std::unique_ptr<ModelHawkesSumExpKernLeastSqSingle>(

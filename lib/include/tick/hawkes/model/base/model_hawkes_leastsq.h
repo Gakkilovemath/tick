@@ -8,10 +8,10 @@
 #include "tick/hawkes/model/base/model_hawkes_list.h"
 #include "tick/hawkes/model/base/model_hawkes_single.h"
 
-/** \class ModelHawkesLeastSqList
+/** \class ModelHawkesLeastSq
  * \brief Base class of Hawkes models handling several realizations
  */
-class DLL_PUBLIC ModelHawkesLeastSqList : public ModelHawkesList {
+class DLL_PUBLIC ModelHawkesLeastSq : public ModelHawkesList {
  protected:
   //! @brief Flag telling if precompations arrays have been allocated or not
   bool weights_allocated;
@@ -24,7 +24,7 @@ class DLL_PUBLIC ModelHawkesLeastSqList : public ModelHawkesList {
   //! \param max_n_threads : number of cores to be used for multithreading. If negative,
   //! the number of physical cores will be used
   //! \param optimization_level : 0 corresponds to no optimization and 1 to use of faster (approximated) exponential function
-  ModelHawkesLeastSqList(const int max_n_threads = 1,
+  ModelHawkesLeastSq(const int max_n_threads = 1,
                   const unsigned int optimization_level = 0);
 
   void incremental_set_data(const SArrayDoublePtrList1D &timestamps, double end_time);
