@@ -483,7 +483,6 @@ hawkes_simulation_extension_info = {
     "swig_files": [
       "hawkes_simulation_module.i"
     ],
-    "swig_opts": ["-Ilib/swig/hawkes/simulation"],
     "module_dir": "./tick/hawkes/simulation/",
     "extension_name": "hawkes_simulation",
     "include_modules": base_array_modules + [random_extension.module_ref]
@@ -502,7 +501,6 @@ hawkes_model_extension_info = {
     "swig_files": [
       "hawkes_model_module.i"
     ],
-    "swig_opts": ["-Ilib/swig/hawkes/model"],
     "module_dir": "./tick/hawkes/model/",
     "extension_name": "hawkes_model",
     "include_modules": base_array_modules + [base_model_core.module_ref]
@@ -518,7 +516,6 @@ hawkes_inference_extension_info = {
     "swig_files": [
       "hawkes_inference_module.i"
     ],
-    "swig_opts": ["-Ilib/swig/hawkes/inference"],
     "module_dir": "./tick/hawkes/inference/",
     "extension_name": "hawkes_inference",
     "include_modules": base_array_modules +
