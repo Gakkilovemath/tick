@@ -10,7 +10,9 @@ add_library(tick_inference EXCLUDE_FROM_ALL
         hawkes_basis_kernels.cpp 
         ${TICK_INFERENCE_INCLUDE_DIR}/hawkes_basis_kernels.h
         ${TICK_INFERENCE_INCLUDE_DIR}/hawkes_sumgaussians.h
-        hawkes_sumgaussians.cpp)
+        hawkes_sumgaussians.cpp
+        ${TICK_INFERENCE_INCLUDE_DIR}/hawkes_non_param_cumulant.h
+        hawkes_non_param_cumulant.cpp)
 
 target_link_libraries(tick_inference
 

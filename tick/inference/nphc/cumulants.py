@@ -7,6 +7,9 @@ from math import erf
 from numpy import sqrt, pi, exp
 from scipy.stats import norm
 
+from tick.inference.build.inference import (
+    HawkesNonParamCumulant as _HawkesNonParamCumulant
+)
 
 class Cumulants(object):
 
@@ -47,6 +50,9 @@ class Cumulants(object):
         self.K_c_th = None
         self.R_true = None
         self.mu_true = None
+
+        self._cumulant = _HawkesNonParamCumulant(self.half_width, self.sigma)
+        self._cumulant.set_data(realizations, self.time)
 
     def compute_cumulants(self):
         self.compute_L()
