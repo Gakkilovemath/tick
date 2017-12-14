@@ -1,7 +1,6 @@
-import sys
 import matplotlib.pyplot as plt
 
-from tick.inference.nphc.main import NPHC
+from tick.inference.hawkes_non_param_cumulant import NPHC
 import numpy as np
 from scipy.linalg import inv
 import tick.simulation as hk

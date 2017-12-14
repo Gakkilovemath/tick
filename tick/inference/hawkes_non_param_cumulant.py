@@ -1,8 +1,8 @@
-from tick.inference.nphc.cumulants import Cumulants
-from scipy.linalg import inv, qr, sqrtm, norm
-from itertools import product
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
+from scipy.linalg import qr, sqrtm, norm
+
+from tick.inference.nphc.cumulants import Cumulants
 
 
 def starting_point(cumulants_list,random=False):
@@ -61,7 +61,8 @@ class NPHC(object):
         # we will store here the optimal cost reached
         self.optcost = None
 
-    def fit(self, realizations=[], half_width=100., filtr='rectangular', method="parallel", mu_true=None, R_true=None):
+    def fit(self, realizations=[], half_width=100., filtr='rectangular',
+            method="parallel", mu_true=None, R_true=None):
         """
         Set the corresponding realization(s) of the process.
         Compute the cumulants.
