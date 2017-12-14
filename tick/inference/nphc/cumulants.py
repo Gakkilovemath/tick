@@ -94,7 +94,11 @@ class Cumulants(object):
                 C = np.zeros((d,d))
                 J = np.zeros((d, d))
                 for i, j in product(range(d), repeat=2):
-                    z = A_and_I_ij(realization[i], realization[j], h_w, self.time[day], self.L[day][j], self.sigma)
+                    if self.filtr == "rectangular":
+                        res = self._cumulant.compute_A_and_I_ij_rect(day, i, j, self.L[day][j])
+                        z = res[0] + res[1] * 1.j
+                    else:
+                        z = A_and_I_ij(realization[i], realization[j], h_w, self.time[day], self.L[day][j], self.sigma)
                     C[i,j] = z.real
                     J[i,j] = z.imag
                 # we keep the symmetric part to remove edge effects
