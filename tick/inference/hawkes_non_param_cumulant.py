@@ -61,7 +61,7 @@ class NPHC(object):
         # we will store here the optimal cost reached
         self.optcost = None
 
-    def fit(self, realizations=[], half_width=100., filtr='rectangular',
+    def fit(self, realizations, half_width=100., filtr='rectangular',
             method="parallel", mu_true=None, R_true=None):
         """
         Set the corresponding realization(s) of the process.
@@ -81,10 +81,9 @@ class NPHC(object):
         else:
             self.realizations = [realizations]
 
-        cumul = Cumulants(realizations, half_width=half_width)
-        cumul.mu_true = mu_true
-        cumul.R_true = R_true
-        cumul.compute_cumulants(half_width,filtr=filtr,method=method,sigma=half_width/5.)
+        cumul = Cumulants(realizations, half_width=half_width, filtr=filtr,
+                          method=method, mu_true=mu_true, R_true=R_true)
+        cumul.compute_cumulants()
 
         self.L = cumul.L.copy()
         self.C = cumul.C.copy()
