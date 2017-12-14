@@ -2,7 +2,8 @@ from itertools import product
 
 import numpy as np
 from joblib import Parallel, delayed
-from numba import autojit
+from numba import jit
+from math import erf
 from numpy import sqrt, pi, exp
 from scipy.stats import norm
 
@@ -186,7 +187,7 @@ class Cumulants(object):
 ## Empirical cumulants with formula from the paper
 ###########
 
-@autojit
+@jit
 def get_K_c(E_c):
     K_c = np.zeros_like(E_c[:, :, 0])
     K_c += 2 * E_c[:, :, 0]
@@ -199,17 +200,17 @@ def get_K_c(E_c):
 ## Theoretical cumulants L, C, K, K_c
 ##########
 
-@autojit
+@jit
 def get_L_th(mu, R):
     return np.dot(R, mu)
 
 
-@autojit
+@jit
 def get_C_th(L, R):
     return np.dot(R, np.dot(np.diag(L), R.T))
 
 
-@autojit
+@jit
 def get_K_c_th(L, C, R):
     d = len(L)
     if R.shape[0] == d ** 2:
@@ -226,7 +227,7 @@ def get_K_c_th(L, C, R):
 ## Useful fonctions to set_ empirical integrated cumulants
 ##########
 
-#@autojit
+#@jit
 #def filtr_fun(X, sigma, filtr='rectangular'):
 #    if filtr == 'rectangular':
 #        return np.ones_like(X)
@@ -238,7 +239,7 @@ def get_K_c_th(L, C, R):
 
 # @jit(double(double[:],double[:],int32,int32,double,double,double), nogil=True, nopython=True)
 # @jit(float64(float64[:],float64[:],int64,int64,int64,float64,float64), nogil=True, nopython=True)
-@autojit
+@jit
 def A_ij_rect(realization_i, realization_j, a, b, T, L_j):
     """
     Computes the mean centered number of jumps of N^j between \tau + a and \tau + b, that is
@@ -273,7 +274,7 @@ def A_ij_rect(realization_i, realization_j, a, b, T, L_j):
     return res
 
 
-@autojit
+@jit
 def A_ij_gauss(realization_i, realization_j, a, b, T, L_j, sigma=1.0):
     """
     Computes the mean centered number of jumps of N^j between \tau + a and \tau + b, that is
@@ -308,7 +309,7 @@ def A_ij_gauss(realization_i, realization_j, a, b, T, L_j, sigma=1.0):
     res /= T
     return res
 
-@autojit
+@jit
 def E_ijk_rect(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, J_ij, sigma=1.0):
     """
     Computes the mean of the centered product of i's and j's jumps between \tau + a and \tau + b, that is
@@ -364,7 +365,7 @@ def E_ijk_rect(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, J
     return res
 
 
-@autojit
+@jit(nopython=True)
 def E_ijk_gauss(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, J_ij, sigma=1.0):
     """
     Computes the mean of the centered product of i's and j's jumps between \tau + a and \tau + b, that is
@@ -378,8 +379,8 @@ def E_ijk_gauss(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, 
     n_j = realization_j.shape[0]
     n_k = realization_k.shape[0]
 
-    trend_i = L_i * sigma * sqrt(2 * pi) * (norm.cdf(b/sigma) - norm.cdf(a/sigma))
-    trend_j = L_j * sigma * sqrt(2 * pi) * (norm.cdf(b/sigma) - norm.cdf(a/sigma))
+    trend_i = L_i * sigma * sqrt(2 * pi) * (norm_cdf(b/sigma) - norm_cdf(a/sigma))
+    trend_j = L_j * sigma * sqrt(2 * pi) * (norm_cdf(b/sigma) - norm_cdf(a/sigma))
 
     for t in range(n_k):
         tau = realization_k[t]
@@ -420,7 +421,11 @@ def E_ijk_gauss(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, 
     res /= T
     return res
 
-@autojit
+@jit
+def norm_cdf(x):
+    return 0.5 * (1 + erf(x / sqrt(2)))
+
+@jit
 def A_and_I_ij_rect(realization_i, realization_j, half_width, T, L_j, sigma=1.0):
     """
     Computes the integral \int_{(0,H)} t c^{ij} (t) dt. This integral equals
@@ -476,7 +481,7 @@ def A_and_I_ij_rect(realization_i, realization_j, half_width, T, L_j, sigma=1.0)
     return res_C + res_J * 1j
 
 
-@autojit
+@jit
 def A_and_I_ij_gauss(realization_i, realization_j, half_width, T, L_j, sigma=1.0):
     """
     Computes the integral \int_{(0,H)} t c^{ij} (t) dt. This integral equals
@@ -488,8 +493,8 @@ def A_and_I_ij_gauss(realization_i, realization_j, half_width, T, L_j, sigma=1.0
     res_J = 0
     u = 0
     width = sqrt(2) * half_width
-    trend_C_j = L_j * sigma * sqrt(2 * pi) * (norm.cdf(half_width/sigma) - norm.cdf(-half_width/sigma))
-    trend_J_j = L_j * sigma**2 * 2 * pi * (norm.cdf(half_width/(sqrt(2)*sigma)) - norm.cdf(-half_width/(sqrt(2)*sigma)))
+    trend_C_j = L_j * sigma * sqrt(2 * pi) * (norm_cdf(half_width/sigma) - norm_cdf(-half_width/sigma))
+    trend_J_j = L_j * sigma**2 * 2 * pi * (norm_cdf(half_width/(sqrt(2)*sigma)) - norm_cdf(-half_width/(sqrt(2)*sigma)))
 
     for t in range(n_i):
         tau = realization_i[t]
