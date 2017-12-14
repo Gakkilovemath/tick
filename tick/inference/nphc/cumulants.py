@@ -59,10 +59,7 @@ class Cumulants(object):
             L = np.zeros(self.dim)
             for i in range(self.dim):
                 process = realization[i]
-                if process is None:
-                    L[i] = -1.
-                else:
-                    L[i] = len(process) / self.time[day]
+                L[i] = len(process) / self.time[day]
             self.L[day] = L.copy()
 
     def compute_C_and_J(self, half_width=0., method='parallel_by_day', filtr='rectangular', sigma=1.0):
