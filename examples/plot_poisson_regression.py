@@ -33,8 +33,8 @@ iterations, on a logarithmic scale.
 import numpy as np
 import matplotlib.pyplot as plt
 
-from tick.simulation import SimuPoisReg, weights_sparse_gauss
-from tick.inference import PoissonRegression
+from tick.simulation import weights_sparse_gauss
+from tick.linear_model import SimuPoisReg, PoissonRegression
 from tick.plot import plot_history
 
 

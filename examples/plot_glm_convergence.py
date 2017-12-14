@@ -20,10 +20,10 @@ import matplotlib.pyplot as plt
 from tick.plot import plot_history
 import numpy as np
 from itertools import product
-from tick.optim.model import ModelLinReg, ModelLogReg, ModelPoisReg
+from tick.linear_model import SimuLinReg, SimuLogReg, SimuPoisReg, \
+    ModelLinReg, ModelLogReg, ModelPoisReg
 from tick.solver import SDCA, SVRG, BFGS, GD, AGD
 from tick.prox import ProxZero, ProxL2Sq
-from tick.simulation import SimuLinReg, SimuLogReg, SimuPoisReg
 
 seed = 1398
 np.random.seed(seed)

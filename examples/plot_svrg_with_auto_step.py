@@ -20,9 +20,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from cycler import cycler
 
-from tick.simulation import SimuLogReg, weights_sparse_gauss
+from tick.simulation import weights_sparse_gauss
 from tick.solver import SVRG
-from tick.optim.model import ModelLogReg
+from tick.linear_model import SimuLogReg, ModelLogReg
 from tick.prox import ProxElasticNet
 from tick.plot import plot_history
 
