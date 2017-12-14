@@ -14,8 +14,6 @@ class Test(InferenceTest):
         self.dim = 2
         np.random.seed(320982)
 
-        self.model = NPHC()
-
     @staticmethod
     def get_train_data(n_nodes=3, decay=1.):
         np.random.seed(130947)
@@ -34,14 +32,12 @@ class Test(InferenceTest):
         multi.simulate()
         return multi.timestamps, baseline, adjacency
 
-    def test_hawkes_nphc(self):
+    def test_hawkes_nphc_rectangular(self):
         timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
-        self.model.fit(timestamps, method='classic')
 
         expected_L = [[2.18111273, 2.86045931, 4.46027548],
                       [1.99473086, 2.65329275, 4.17891103],
                       [2.27958416, 2.89401114, 4.76631226]]
-        np.testing.assert_array_almost_equal(self.model.L, expected_L)
 
         expected_C = [[[13.0930694, 9.810038, 13.98120564],
                        [9.810038, 10.43193551, 7.32150065],
@@ -55,8 +51,6 @@ class Test(InferenceTest):
                        [-1.61459159, 3.77494657, 13.42391358],
                        [10.69659146, 13.42391358, 57.13355973]]]
 
-        np.testing.assert_array_almost_equal(self.model.C, expected_C)
-
         expected_K = [
             np.array([[3302.26643679, 3109.40412929, 20679.52098654],
                       [3221.39899239, 2948.21588706, 24809.32377033],
@@ -68,7 +62,51 @@ class Test(InferenceTest):
                       [3371.94869819, 5067.88151348, 2282.03495219],
                       [3067.82859246, 4863.97068752, -4667.24341696]])]
 
-        np.testing.assert_array_almost_equal(self.model.K_c, expected_K)
+        for method in ['classic', 'parallel_by_day', 'parallel_by_component']:
+            model = NPHC()
+            model.fit(timestamps, method=method, filtr='rectangular')
+
+            np.testing.assert_array_almost_equal(model.L, expected_L)
+            np.testing.assert_array_almost_equal(model.C, expected_C)
+            np.testing.assert_array_almost_equal(model.K_c, expected_K)
+
+    def test_hawkes_nphc_gaussian(self):
+        timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
+
+        expected_L = [[2.18111273, 2.86045931, 4.46027548],
+                      [1.99473086, 2.65329275, 4.17891103],
+                      [2.27958416, 2.89401114, 4.76631226]]
+
+        expected_C = [[[13.40973172, 12.72343891, 23.26299118],
+                       [12.72343891, 16.31727924, 25.34636396],
+                       [23.26299118, 25.34636396, 47.23032538]],
+
+                      [[17.94047753, 19.91772422, 36.38105748],
+                       [19.91772422, 25.39641497, 42.31134567],
+                       [36.38105748, 42.31134567, 80.08839132]],
+
+                      [[7.63870224, 4.47006984, 13.5557646],
+                       [4.47006984, 9.90993685, 13.98480317],
+                       [13.5557646, 13.98480317, 36.94734504]]]
+
+        expected_K = [
+            np.array([[272.87738976, -8.37906733, 609.52324631],
+                      [140.31117416, -174.33459879, 234.10699262],
+                      [408.34350693, -92.03289127, 1165.14812564]]),
+            np.array([[76.70724028, -70.527509, 712.45835703],
+                      [10.05629688, -174.52644617, 573.18990427],
+                      [233.26512233, -21.07683388, 2056.29391411]]),
+            np.array([[290.9400127, 284.75867571, 462.11035356],
+                      [301.94149592, 323.05005103, 217.47940958],
+                      [401.03337433, 273.76524566, 471.87953342]])]
+
+        for method in ['classic']:
+            model = NPHC()
+            model.fit(timestamps, method=method, filtr='gaussian')
+
+            np.testing.assert_array_almost_equal(model.L, expected_L)
+            np.testing.assert_array_almost_equal(model.C, expected_C)
+            np.testing.assert_array_almost_equal(model.K_c, expected_K)
 
 
 if __name__ == "__main__":
