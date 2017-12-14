@@ -1,24 +1,24 @@
-from numba import autojit, jit, double, int32, int64, float64
-from scipy.linalg import inv, pinv, eigh
+from itertools import product
+
+import numpy as np
 from joblib import Parallel, delayed
+from numba import autojit
 from numpy import sqrt, pi, exp
 from scipy.stats import norm
-from itertools import product
-import numpy as np
 
 
 class Cumulants(object):
 
-    def __init__(self, realizations=[], half_width=100.):
-        if all(isinstance(x, list) for x in realizations):
-            self.realizations = realizations
-        else:
-            self.realizations = [realizations]
+    def __init__(self, realizations, half_width=100.):
+        self.realizations = realizations
+
         self.dim = len(self.realizations[0])
         self.n_realizations = len(self.realizations)
         self.time = np.zeros(self.n_realizations)
         for day, realization in enumerate(self.realizations):
-            T_day = float(max(x[-1] for x in realization if len(x) > 0)) - float(min(x[0] for x in realization if len(x) > 0))
+            T_day = float(
+                max(x[-1] for x in realization if len(x) > 0)) - float(
+                min(x[0] for x in realization if len(x) > 0))
             self.time[day] = T_day
         self.L = np.zeros((self.n_realizations, self.dim))
         self.C = np.zeros((self.n_realizations, self.dim, self.dim))
@@ -32,30 +32,27 @@ class Cumulants(object):
         self.mu_true = None
         self.half_width = half_width
 
-    # ###########
-    # ## Decorator to compute the cumulants on each day, and average
-    # ###########
-    #
-    # def average_if_list_of_multivariate_processes(func):
-    #     def average_cumulants(self, *args, **kwargs):
-    #         if getattr(self, 'N_is_list_of_multivariate_processes', False):
-    #             # if self.realizations_is_list_of_multivariate_processes:
-    #             for n, multivar_process in enumerate(self.realizations):
-    #                 cumul = Cumulants(N=multivar_process)
-    #                 res_one_process = func(cumul, *args, **kwargs)
-    #                 if n == 0:
-    #                     res = np.zeros_like(res_one_process)
-    #                 res += res_one_process
-    #             res /= n + 1
-    #         else:
-    #             res = func(self, *args, **kwargs)
-    #         return res
-    #
-    #     return average_cumulants
+    def compute_cumulants(self, half_width=0., method="parallel_by_day",
+                          filtr='rectangular', sigma=0.):
+        self.compute_L()
+        print("L is computed")
+        if filtr == "gaussian" and sigma == 0.:
+            sigma = half_width / 5.
 
-    #########
-    ## Functions to compute third order cumulant
-    #########
+        self.compute_C_and_J(half_width=half_width, method=method, filtr=filtr,
+                             sigma=sigma)
+        print("C is computed")
+
+        self.compute_E_c(half_width=half_width, method=method, filtr=filtr,
+                         sigma=sigma)
+        self.K_c = [get_K_c(self._E_c[day]) for day in
+                    range(self.n_realizations)]
+        print("K_c is computed")
+
+        if self.R_true is not None and self.mu_true is not None:
+            self.set_L_th()
+            self.set_C_th()
+            self.set_K_c_th()
 
     def compute_L(self):
         for day, realization in enumerate(self.realizations):
@@ -67,32 +64,6 @@ class Cumulants(object):
                 else:
                     L[i] = len(process) / self.time[day]
             self.L[day] = L.copy()
-
-    # def compute_C(self, half_width=0., method='parallel', filtr='rectangular', sigma=1.0):
-    #     if half_width == 0.:
-    #         h_w = self.half_width
-    #     else:
-    #         h_w = half_width
-    #     d = self.dim
-    #
-    #     for day in range(len(self.realizations)):
-    #         realization = self.realizations[day]
-    #         if method == 'classic':
-    #             C = np.zeros((d, d))
-    #             for i in range(d):
-    #                 for j in range(d):
-    #                     C[i, j] = A_ij_rect(realization[i], realization[j], -h_w, h_w, self.time[day], self.L[day][j],
-    #                                    filtr=filtr, sigma=sigma)
-    #         elif method == 'parallel':
-    #             l = Parallel(-1)(
-    #                     delayed(A_ij_rect)(realization[i], realization[j], -h_w, h_w, self.time[day], self.L[day][j],
-    #                                   filtr=filtr, sigma=sigma)
-    #                     for i in range(d) for j in range(d))
-    #             C = np.array(l).reshape(d, d)
-    #         # we keep the symmetric part to remove edge effects
-    #         C[:] = 0.5 * (C + C.T)
-    #         self.C[day] = C.copy()
-
 
     def compute_C_and_J(self, half_width=0., method='parallel_by_day', filtr='rectangular', sigma=1.0):
         if half_width == 0.:
@@ -146,7 +117,6 @@ class Cumulants(object):
         else:
             raise ValueError("In `compute_C_and_J`: `method` should either equal `parallel_by_day`, `parallel_by_component` or `classic`.")
 
-
     def compute_E_c(self, half_width=0., method='parallel_by_day', filtr='rectangular', sigma=1.0):
         if half_width == 0.:
             h_w = self.half_width
@@ -191,7 +161,6 @@ class Cumulants(object):
                 self._E_c[day] = E_c.copy()
 
         else:
-
             raise ValueError("In `compute_E_c`: the filtering function should be either `rectangular` or `gaussian`.")
 
     def set_R_true(self, R_true):
@@ -212,20 +181,6 @@ class Cumulants(object):
     def set_K_c_th(self):
         assert self.R_true is not None, "You should provide R_true."
         self.K_c_th = get_K_c_th(self.L_th, self.C_th, self.R_true)
-
-    def compute_cumulants(self, half_width=0., method="parallel_by_day", filtr='rectangular', sigma=0.):
-        self.compute_L()
-        print("L is computed")
-        if filtr == "gaussian" and sigma == 0.: sigma = half_width/5.
-        self.compute_C_and_J(half_width=half_width, method=method, filtr=filtr, sigma=sigma)
-        print("C is computed")
-        self.compute_E_c(half_width=half_width, method=method, filtr=filtr, sigma=sigma)
-        self.K_c = [get_K_c(self._E_c[day]) for day in range(self.n_realizations)]
-        print("K_c is computed")
-        if self.R_true is not None and self.mu_true is not None:
-            self.set_L_th()
-            self.set_C_th()
-            self.set_K_c_th()
 
 
 ###########
@@ -465,46 +420,6 @@ def E_ijk_gauss(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, 
         res += (sub_res_i - trend_i) * (sub_res_j - trend_j) - J_ij
     res /= T
     return res
-
-#
-# @autojit
-# def I_ij(realization_i, realization_j, half_width, T, L_j, filtr='rectangular', sigma=1.0):
-    # """
-    # Computes the integral \int_{(0,H)} t c^{ij} (t) dt. This integral equals
-    # \frac{1}{T} \sum_{\tau \in Z^i} \sum_{\tau' \in Z^j} [ (\tau - \tau') 1_{ \tau - H < \tau' < \tau } - H^2 / 2 \Lambda^j ]
-    # """
-    # n_i = realization_i.shape[0]
-    # n_j = realization_j.shape[0]
-    # res = 0
-    # u = 0
-    # if filtr == 'rectangular':
-        # trend_j = .5 * (half_width ** 2) * L_j
-    # elif filtr == 'gaussian':
-        # trend_j = sigma ** 2 * (1 - exp(-.5 * (half_width / sigma) ** 2)) * L_j
-#
-    # for t in range(n_i):
-        # tau = realization_i[t]
-        # tau_minus_half_width = tau - half_width
-        # if tau_minus_half_width < 0: continue
-        # while u < n_j:
-            # if realization_j[u] <= tau_minus_half_width:
-                # u += 1
-            # else:
-                # break
-        # v = u
-        # sub_res = 0.
-        # while v < n_j:
-            # tau_minus_tau_p = tau - realization_j[v]
-            # if tau_minus_tau_p > 0:
-                # sub_res += tau_minus_tau_p
-                # v += 1
-            # else:
-                # break
-        # if v == n_j: continue
-        # res += sub_res - trend_j
-    # res /= T
-    # return res
-
 
 @autojit
 def A_and_I_ij_rect(realization_i, realization_j, half_width, T, L_j, sigma=1.0):
