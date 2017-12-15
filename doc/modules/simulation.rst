@@ -103,36 +103,6 @@ A Hawkes process is defined through its kernels which are functions defined on
    simulation.HawkesKernelPowerLaw
    simulation.HawkesKernelTimeFunc
 
-.. _simulation-linear-model:
-
-2. Linear model simulation
-==========================
-
-Simulation of several linear models can be done using the following classes.
-All simulation classes simulates a features matrix :math:`\boldsymbol X` with rows :math:`x_i`
-and a labels vector :math:`y` with coordinates :math:`y_i` for :math:`i=1, \ldots, n`, that
-are i.i.d realizations of a random vector :math:`X` and a scalar random variable :math:`Y`.
-
-The conditional distribution of :math:`Y | X` is :math:`\mathbb P(Y=y | X=x)`,
-where :math:`\mathbb P` depends on the considered model.
-
-=====================================  =============================================  ============================
-Model                                  Distribution :math:`\mathbb P(Y=y | X=x)`      Class
-=====================================  =============================================  ============================
-Linear regression                      :math:`\text{Normal}(w^\top x + b, \sigma^2)`  :class:`tick.simulation.SimuLinReg`
-Logistic regression                    :math:`\text{Binomial}(w^\top x + b)`          :class:`tick.simulation.SimuLogReg`
-Poisson regression (identity link)     :math:`\text{Poisson}(w^\top x + b)`           :class:`tick.simulation.SimuPoisReg` with ``link="identity"``
-Poisson regression (exponential link)  :math:`\text{Poisson}(e^{w^\top x + b})`       :class:`tick.simulation.SimuPoisReg` with ``link="exponential"``
-=====================================  =============================================  ============================
-
-**Example**
-
-.. plot:: ../examples/plot_simulation_linear_model.py
-    :include-source:
-
-.. todo::
-
-    Give more details on these classes abilities
 
 
 3. Survival analysis simulation

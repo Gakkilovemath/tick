@@ -10,172 +10,210 @@ This is the full class and function references of tick. Please look at
 the modules documentation cited below for more examples and use cases,
 since direct class and function API is not enough for understanding their uses.
 
-.. _api-inference:
 
-:mod:`tick.inference`: Inference classes
-========================================
+.. _api-linear_model:
 
-This module contains all classes giving inference tools, intended for end-users.
+:mod:`tick.linear_model`
+========================
+**User guide:** :ref:`linear_model`
 
-**User guide:** See the :ref:`inference` section for further details.
+This modules provides tools for inference and simulation of generalized linear models.
 
-.. automodule:: tick.inference
-   :no-members:
-   :no-inherited-members:
 
-Generalized linear models
--------------------------
-.. currentmodule:: tick
+
+Inference
+---------
+
+.. currentmodule:: tick.linear_model
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   inference.LinearRegression
-   inference.LogisticRegression
-   inference.PoissonRegression
+   LinearRegression
+   LogisticRegression
+   PoissonRegression
 
-Robust Analysis
----------------
-.. currentmodule:: tick
+Models
+------
+
+.. currentmodule:: tick.linear_model
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   ModelLinReg
+   ModelLogReg
+   ModelPoisReg
+   ModelHinge
+   ModelSmoothedHinge
+   ModelQuadraticHinge
+
+Simulation
+----------
+
+.. currentmodule:: tick.linear_model
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   SimuLinReg
+   SimuLogReg
+   SimuPoisReg
+
+
+.. _api-robust:
+
+:mod:`tick.robust`
+==================
+**User guide:** :ref:`robust`
+
+This module provides tools for robust inference of generalized linear models
+and outliers detection.
+
+Inference
+---------
+
+.. currentmodule:: tick.robust
 
 .. autosummary::
    :toctree: generated/
    :template: function.rst
 
-   inference.std_mad
-   inference.std_iqr
+   RobustLinearRegression
+   std_mad
+   std_iqr
+
+Models
+------
+
+.. currentmodule:: tick.robust
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   inference.RobustLinearRegression
+   ModelHuber
+   ModelModifiedHuber
+   ModelAbsoluteRegression
+   ModelEpsilonInsensitive
+   ModelLinRegWithIntercepts
 
 
-Survival Analysis
------------------
-.. currentmodule:: tick
+.. _api-survival:
+
+:mod:`tick.survival`:
+====================================================================
+
+**User guide:** :ref:`survival`
+
+This module provides tools for inference and simulation for survival analysis.
+
+Inference
+---------
+
+.. currentmodule:: tick.survival
 
 .. autosummary::
    :toctree: generated/
    :template: function.rst
 
-   inference.nelson_aalen
-   inference.kaplan_meier
+   CoxRegression
+   nelson_aalen
+   kaplan_meier
 
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   inference.CoxRegression
-
-Hawkes
+Models
 ------
-.. currentmodule:: tick
+
+.. currentmodule:: tick.survival
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   inference.HawkesExpKern
-   inference.HawkesSumExpKern
-   inference.HawkesEM
-   inference.HawkesADM4
-   inference.HawkesBasisKernels
-   inference.HawkesSumGaussians
-   inference.HawkesConditionalLaw
+   ModelCoxRegPartialLik
+   ModelSCCS
 
-.. _api-optim-model:
+Simulation
+----------
 
-:mod:`tick.optim.model`: Models classes
-=======================================
-
-This module contains classes giving computational informations about the models available
-in tick.
-
-**User guide:** See the :ref:`optim-model` section for further details.
-
-.. automodule:: tick.optim.model
-   :no-members:
-   :no-inherited-members:
-
-
-Linear models for regression
-----------------------------
-.. currentmodule:: tick
+.. currentmodule:: tick.survival
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   optim.model.ModelLinReg
-   optim.model.ModelHuber
-   optim.model.ModelAbsoluteRegression
-   optim.model.ModelEpsilonInsensitive
+   SimuCoxReg
 
 
-Linear models for binary classification
----------------------------------------
-.. currentmodule:: tick
+.. _api-hawkes:
 
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
+:mod:`tick.hawkes`
+==================
+**User guide:** :ref:`hawkes`
 
-   optim.model.ModelLogReg
-   optim.model.ModelHinge
-   optim.model.ModelSmoothedHinge
-   optim.model.ModelQuadraticHinge
-   optim.model.ModelModifiedHuber
+This module provides tools for inference and simulation of Hawkes processes.
 
-
-Linear models for count data
-----------------------------
-.. currentmodule:: tick
+.. currentmodule:: tick.hawkes
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   optim.model.ModelPoisReg
+   HawkesExpKern
+   HawkesSumExpKern
+   HawkesEM
+   HawkesADM4
+   HawkesBasisKernels
+   HawkesSumGaussians
+   HawkesConditionalLaw
 
 
-Linear models with individual intercepts (outliers detection)
--------------------------------------------------------------
-.. currentmodule:: tick
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   optim.model.ModelLinRegWithIntercepts
-
-
-Survival analysis
------------------
-.. currentmodule:: tick
+.. currentmodule:: tick.hawkes
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   optim.model.ModelCoxRegPartialLik
-   optim.model.ModelSCCS
+   ModelHawkesExpKernLogLik
+   ModelHawkesExpKernLeastSq
+   ModelHawkesSumExpKernLogLik
+   ModelHawkesSumExpKernLeastSq
 
-
-Hawkes
-------
-.. currentmodule:: tick
+Simulation
+----------
+.. currentmodule:: tick.hawkes
 
 .. autosummary::
    :toctree: generated/
    :template: class.rst
 
-   optim.model.ModelHawkesExpKernLogLik
-   optim.model.ModelHawkesExpKernLeastSq
-   optim.model.ModelHawkesSumExpKernLogLik
-   optim.model.ModelHawkesSumExpKernLeastSq
+
+   SimuPoissonProcess
+   SimuInhomogeneousPoisson
+   SimuHawkes
+   SimuHawkesExpKernels
+   SimuHawkesSumExpKernels
+   SimuHawkesMulti
+
+Hawkes kernels
+--------------
+.. currentmodule:: tick.hawkes
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   HawkesKernelExp
+   HawkesKernelSumExp
+   HawkesKernelPowerLaw
+   HawkesKernelTimeFunc
+
+
+
+base.TimeFunction
 
 
 .. _api-prox:
@@ -211,6 +249,7 @@ This module contains all the proximal operators available in tick.
    prox.ProxTV
    prox.ProxBinarsity
    prox.ProxGroupL1
+
 
 .. _api-solver:
 
@@ -333,57 +372,15 @@ Functions
 
 .. _api-simulation:
 
-:mod:`tick.simulation`: Simulation classes and functions
-========================================================
+:mod:`tick.simulation`: basic tools for simulation
+==================================================
 
-This module contains all simulation tools available in tick.
-
+This module contains basic tools from simulation.
 **User guide:** See the :ref:`simulation` section for further details.
 
-Generalized linear models
--------------------------
-.. currentmodule:: tick
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   simulation.SimuLinReg
-   simulation.SimuLogReg
-   simulation.SimuPoisReg
-
-Point processes
----------------
-.. currentmodule:: tick
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   simulation.SimuCoxReg
-   simulation.SimuPoissonProcess
-   simulation.SimuInhomogeneousPoisson
-   simulation.SimuHawkes
-   simulation.SimuHawkesExpKernels
-   simulation.SimuHawkesSumExpKernels
-   simulation.SimuHawkesMulti
-
-Hawkes kernels
---------------
-.. currentmodule:: tick
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   simulation.HawkesKernelExp
-   simulation.HawkesKernelSumExp
-   simulation.HawkesKernelPowerLaw
-   simulation.HawkesKernelTimeFunc
-   base.TimeFunction
-
-Features generators
+Features simulation
 -------------------
+
 .. currentmodule:: tick
 
 .. autosummary::
@@ -392,6 +389,16 @@ Features generators
 
    simulation.features_normal_cov_uniform
    simulation.features_normal_cov_toeplitz
+
+Weights simulation
+------------------
+
+.. currentmodule:: tick
+
+.. autosummary::
+   :toctree: generated/
+   :template: function.rst
+
    simulation.weights_sparse_exp
    simulation.weights_sparse_gauss
 

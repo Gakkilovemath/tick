@@ -16,46 +16,7 @@ method.
     :depth: 3
     :backlinks: none
 
-.. _inference-glm:
 
-1. Generalized linear models
-----------------------------
-
-The first learner types concern linear models presented in
-
-:ref:`linear-models`
-
-Theses learners are essentially a combination of
-
-* :ref:`optim-model`
-* :ref:`prox`
-* :ref:`solver`
-
-which are described in depth in :ref:`optim`.
-
-Classes
-^^^^^^^
-
-.. currentmodule:: tick
-
-.. autosummary::
-   :toctree: generated/
-   :template: class.rst
-
-   inference.LinearRegression
-   inference.LogisticRegression
-   inference.PoissonRegression
-
-Example
-^^^^^^^
-
-These learners can be easily applied on real world datasets
-
-.. plot:: ../examples/plot_logistic_adult.py
-    :include-source:
-
-
-.. _inference-hawkes:
 
 2. Hawkes
 ---------

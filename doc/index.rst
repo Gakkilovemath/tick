@@ -37,17 +37,17 @@
            <h2>Examples</h2>
         </a>
         <p>
-           Examples of how to simulate models, use the optimization toolbox, or
-           use user-friendly inference tools.
+           Examples of how to use tick for inference of a bunch of models, for
+           simulations and so much more !
         </p>
      </div>
 
      <div class="col-sm-4 col-sm-offset-1">
         <a class="reference internal" href="modules/inference.html">
-           <h2>Inference</h2>
+           <h2>tick.hawkes</h2>
         </a>
         <p>
-           User-friendly classes for inference of models
+           A comprehensive module for inference and simulation Hawkes processes.
         </p>
      </div>
   </div>
@@ -55,21 +55,62 @@
   <div class="row">
      <div class="col-sm-4 col-sm-offset-1">
         <a class="reference internal" href="modules/simulation.html">
-           <h2>Simulation</h2>
+           <h2>tick.linear_model</h2>
         </a>
         <p>
-            User-friendly classes for simulation of data
+            A scikit-learn compatible module that proposes tools for inference
+            and simulation of linear models, including among others linear,
+            logistic and Poisson regression. This module propose a large
+            number of combinations of models and penalizations from the
+            tick.prox module, and uses state-of-the-art
+            stochastic optimization solvers proposed in the tick.solver module.
         </p>
      </div>
 
      <div class="col-sm-4 col-sm-offset-1">
         <a class="reference internal" href="modules/optim.html">
-           <h2>Optimization</h2>
+           <h2>tick.robust</h2>
         </a>
         <p>
-           The core module of the library: an optimization toolbox
-           consisting of models, solvers and prox (penalization) classes.
-           Almost all of them can be combined together.
+            A scikit-learn compatible module that proposes tools for robust
+            inference. It features models such as Huber regression, among a
+            bunch of others.
+        </p>
+     </div>
+  </div>
+
+  <div class="row">
+     <div class="col-sm-4 col-sm-offset-1">
+        <a class="reference internal" href="modules/simulation.html">
+           <h2>tick.survival</h2>
+        </a>
+        <p>
+        </p>
+     </div>
+
+     <div class="col-sm-4 col-sm-offset-1">
+        <a class="reference internal" href="modules/optim.html">
+           <h2>tick.dataset</h2>
+        </a>
+        <p>
+        </p>
+     </div>
+  </div>
+
+  <div class="row">
+     <div class="col-sm-4 col-sm-offset-1">
+        <a class="reference internal" href="modules/simulation.html">
+           <h2>tick.simulation</h2>
+        </a>
+        <p>
+        </p>
+     </div>
+
+     <div class="col-sm-4 col-sm-offset-1">
+        <a class="reference internal" href="modules/optim.html">
+           <h2>tick.preprocessing</h2>
+        </a>
+        <p>
         </p>
      </div>
   </div>

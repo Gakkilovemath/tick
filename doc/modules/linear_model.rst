@@ -1,12 +1,38 @@
 
 .. _linear_model:
 
-=======================================
-:mod:`tick.linear_model`: linear models
-=======================================
+========================
+:mod:`tick.linear_model`
+========================
 
 This module provides tools for the inference and simulation for (generalized)
 linear models for supervised learning.
+Classes supporting inference for linear, logistic and Poisson regression, are
+listed below.
+
+
+.. currentmodule:: tick
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   linear_model.LinearRegression
+   linear_model.LogisticRegression
+   linear_model.PoissonRegression
+
+1. Example
+==========
+
+These learners can be easily applied on real world datasets
+
+.. plot:: ../examples/plot_logistic_adult.py
+    :include-source:
+
+
+Note that, however, `tick` support a larger number of models, see ????
+
+
 Given training data :math:`(x_i, y_i) \in \mathbb R^d \times \mathbb R`
 for :math:`i=1, \ldots, n`, we consider goodness-of-fit that writes
 
@@ -24,6 +50,24 @@ are explained in the documentation of the classes themselves.
 The following table lists the different losses implemented for now in `tick`,
 its associated class and label type.
 
+.. _inference-glm:
+
+2. Generalized linear models
+============================
+
+The first learner types concern linear models presented in
+
+:ref:`linear-models`
+
+Theses learners are essentially a combination of
+
+* :ref:`optim-model`
+* :ref:`prox`
+* :ref:`solver`
+
+which are described in depth in :ref:`optim`.
+
+
 Note that models for robust supervised learning are available in the
 `tick.robust` module ????
 
@@ -40,23 +84,6 @@ Smoothed hinge loss                       Classification  Binary      :class:`Mo
 Modified Huber loss                       Classification  Binary      :class:`ModelModifiedHuber <tick.linear_model.ModelModifiedHuber>`
 ========================================  ==============  ==========  ==========================================
 
-The optimization problems
-
-========================================  ==============  ==========  ==========================================
-Model                                     Type            Label type  Class
-========================================  ==============  ==========  ==========================================
-Linear regression                         Regression      Continuous  :class:`ModelLinReg <tick.optim.model.ModelLinReg>`
-Huber regression                          Regression      Continuous  :class:`ModelHuber <tick.optim.model.ModelHuber>`
-Epsilon-insensitive regression            Regression      Continuous  :class:`ModelEpsilonInsensitive <tick.optim.model.ModelEpsilonInsensitive>`
-Absolute regression                       Regression      Continuous  :class:`ModelAbsoluteRegression <tick.optim.model.ModelAbsoluteRegression>`
-Logistic regression                       Classification  Binary      :class:`ModelLogReg <tick.optim.model.ModelLogReg>`
-Hinge loss                                Classification  Binary      :class:`ModelHinge <tick.optim.model.ModelHinge>`
-Quadratic hinge loss                      Classification  Binary      :class:`ModelQuadraticHinge <tick.optim.model.ModelQuadraticHinge>`
-Smoothed hinge loss                       Classification  Binary      :class:`ModelSmoothedHinge <tick.optim.model.ModelSmoothedHinge>`
-Modified Huber loss                       Classification  Binary      :class:`ModelModifiedHuber <tick.optim.model.ModelModifiedHuber>`
-Poisson regression (identity link)        Count data      Integer     :class:`ModelPoisReg <tick.optim.model.ModelPoisReg>`
-Poisson regression (exponential link)     Count data      Integer     :class:`ModelPoisReg <tick.optim.model.ModelPoisReg>`
-========================================  ==============  ==========  ==========================================
 
 
 This is the core module of ``tick`` : an optimization toolbox, that allows
@@ -72,19 +99,11 @@ where :math:`f` is a goodness-of-fit term and :math:`g` is a function penalizing
 Depending on the problem, you might want to use a specific algorithm to solve it.
 This optimization module is therefore organized in the following three main submodules.
 
-Contents
-========
 
-========================  ====================================  ============
-Module API                Documentation        Description
-========================  ====================================  ============
-:mod:`tick.optim.model`   :ref:`Model classes <optim-model>`    Gives information about :math:`f`: value, gradient, hessian
-========================  ====================================  ============
+.. _linear_model-model:
 
-.. _optim-model:
-
-1. :mod:`tick.optim.model`: model classes
-=========================================
+3. Available models
+===================
 
 In ``tick`` a ``model`` class gives information about a statistical model.
 Depending on the case, it gives first order information (loss, gradient) or
@@ -197,14 +216,14 @@ Model classes can be used with any solver class, by simply passing them using th
 solver's ``set_model`` method, see :ref:`solver`.
 
 
-Regression models
------------------
+1. Regression models
+--------------------
 
 .. plot:: modules/code_samples/optim/plot_losses_regression.py
 
 
-:class:`ModelLinReg <tick.optim.model.ModelLinReg>`
-***************************************************
+:class:`ModelLinReg <tick.linear_model.ModelLinReg>`
+****************************************************
 This is least-squares regression with loss
 
 .. math::
@@ -214,8 +233,8 @@ for :math:`y, y' \in \mathbb R`
 
 ----------------------------------------
 
-:class:`ModelHuber <tick.optim.model.ModelHuber>`
-*************************************************
+:class:`ModelHuber <tick.linear_model.ModelHuber>`
+**************************************************
 
 The Huber loss for robust regression (less sensitive to
 outliers) is given by
@@ -232,8 +251,8 @@ using the ``threshold`` argument.
 
 ----------------------------------------
 
-:class:`ModelEpsilonInsensitive <tick.optim.model.ModelEpsilonInsensitive>`
-***************************************************************************
+:class:`ModelEpsilonInsensitive <tick.linear_model.ModelEpsilonInsensitive>`
+****************************************************************************
 
 Epsilon-insensitive loss, given by
 
@@ -249,8 +268,8 @@ the ``threshold`` argument.
 
 ----------------------------------------
 
-:class:`ModelAbsoluteRegression <tick.optim.model.ModelAbsoluteRegression>`
-***************************************************************************
+:class:`ModelAbsoluteRegression <tick.linear_model.ModelAbsoluteRegression>`
+****************************************************************************
 
 The L1 loss given by
 
@@ -268,8 +287,8 @@ Classification models
 .. plot:: modules/code_samples/optim/plot_losses_classification.py
 
 
-:class:`ModelLogReg <tick.optim.model.ModelLogReg>`
-***************************************************
+:class:`ModelLogReg <tick.linear_model.ModelLogReg>`
+****************************************************
 Logistic regression for binary classification with loss
 
 .. math::
@@ -279,7 +298,7 @@ for :math:`y \in \{ -1, 1\}` and :math:`y' \in \mathbb R`
 
 ----------------------------------------
 
-:class:`ModelHinge <tick.optim.model.ModelHinge>`
+:class:`ModelHinge <tick.linear_model.ModelHinge>`
 *************************************************
 
 This is the hinge loss given by
@@ -296,8 +315,8 @@ for :math:`y \in \{ -1, 1\}` and :math:`y' \in \mathbb R`
 ----------------------------------------
 
 
-:class:`ModelQuadraticHinge <tick.optim.model.ModelQuadraticHinge>`
-*******************************************************************
+:class:`ModelQuadraticHinge <tick.linear_model.ModelQuadraticHinge>`
+********************************************************************
 
 This is the quadratic hinge loss given by
 
@@ -313,8 +332,8 @@ for :math:`y \in \{ -1, 1\}` and :math:`y' \in \mathbb R`
 ----------------------------------------
 
 
-:class:`ModelSmoothedHinge <tick.optim.model.ModelSmoothedHinge>`
-*****************************************************************
+:class:`ModelSmoothedHinge <tick.linear_model.ModelSmoothedHinge>`
+******************************************************************
 
 This is the smoothed hinge loss given by
 
@@ -332,8 +351,8 @@ Note that :math:`\delta = 0` corresponds to the hinge loss.
 
 ----------------------------------------
 
-:class:`ModelModifiedHuber <tick.optim.model.ModelModifiedHuber>`
-*****************************************************************
+:class:`ModelModifiedHuber <tick.linear_model.ModelModifiedHuber>`
+******************************************************************
 
 The modified Huber loss, used for robust classification (less sensitive to
 outliers). The loss is given by
@@ -355,8 +374,8 @@ Count data models
 
 .. plot:: modules/code_samples/optim/plot_losses_count_data.py
 
-:class:`ModelPoisReg <tick.optim.model.ModelPoisReg>`
-*****************************************************
+:class:`ModelPoisReg <tick.linear_model.ModelPoisReg>`
+******************************************************
 
 Poisson regression with exponential link with loss corresponds to the loss
 
@@ -375,6 +394,37 @@ for :math:`y \in \mathbb N` and :math:`y' > 0` is obtained using
 ``link='identity'``.
 
 ----------------------------------------
+
+.. _simulation-linear-model:
+
+2. Simuation
+============
+
+Simulation of several linear models can be done using the following classes.
+All simulation classes simulates a features matrix :math:`\boldsymbol X` with rows :math:`x_i`
+and a labels vector :math:`y` with coordinates :math:`y_i` for :math:`i=1, \ldots, n`, that
+are i.i.d realizations of a random vector :math:`X` and a scalar random variable :math:`Y`.
+
+The conditional distribution of :math:`Y | X` is :math:`\mathbb P(Y=y | X=x)`,
+where :math:`\mathbb P` depends on the considered model.
+
+=====================================  =============================================  ============================
+Model                                  Distribution :math:`\mathbb P(Y=y | X=x)`      Class
+=====================================  =============================================  ============================
+Linear regression                      :math:`\text{Normal}(w^\top x + b, \sigma^2)`  :class:`tick.linear_model.SimuLinReg`
+Logistic regression                    :math:`\text{Binomial}(w^\top x + b)`          :class:`tick.linear_model.SimuLogReg`
+Poisson regression (identity link)     :math:`\text{Poisson}(w^\top x + b)`           :class:`tick.linear_model.SimuPoisReg` with ``link="identity"``
+Poisson regression (exponential link)  :math:`\text{Poisson}(e^{w^\top x + b})`       :class:`tick.linear_model.SimuPoisReg` with ``link="exponential"``
+=====================================  =============================================  ============================
+
+**Example**
+
+.. plot:: ../examples/plot_simulation_linear_model.py
+    :include-source:
+
+.. todo::
+
+    Give more details on these classes abilities
 
 
 
