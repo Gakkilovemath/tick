@@ -69,12 +69,15 @@ class Test(InferenceTest):
         np.testing.assert_array_almost_equal(model.C, expected_C)
         np.testing.assert_array_almost_equal(model.K_c, expected_K)
 
+        self.assertAlmostEqual(model.approximate_optimal_alpha(),
+                               0.999197628503)
+
     def test_hawkes_nphc_cumulants_solve(self):
         timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
         model = NPHC()
         model.fit(timestamps)
-        R_pred = model.solve(alpha=.9, training_epochs=300, display_step=2000,
-                             learning_rate=1e-2, optimizer='adam')
+        R_pred = model.solve(alpha=.9, max_iter=300, display_step=2000,
+                             step=1e-2, optimizer='adam')
 
         expected_R_pred = [[0.69493996, -0.23326304, 0.02567722],
                            [-0.0715943, 0.8538519, 0.20695158],

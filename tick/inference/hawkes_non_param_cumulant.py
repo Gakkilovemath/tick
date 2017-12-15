@@ -97,28 +97,46 @@ class NPHC(object):
             self.C_th = None
             self.K_c_th = None
 
+    def approximate_optimal_alpha(self):
+        norm_sq_C = norm(np.mean([C for C in self.C], axis=0)) ** 2
+        norm_sq_K_c = norm(np.mean([K_c for K_c in self.K_c], axis=0)) ** 2
+        return norm_sq_K_c / (norm_sq_K_c + norm_sq_C)
 
-    def solve(self, alpha=-1, l_l1=0., l_l2=0., initial_point=None, training_epochs=1000, learning_rate=1e6, optimizer='momentum', \
-         display_step = 100, use_average=False, use_projection=False, projection_stable_G=False, positive_baselines=False, l_mu=0.):
+    def solve(self, alpha=None, l_l1=0., l_l2=0., adjacency_start=None,
+              max_iter=1000, step=1e6, optimizer='momentum',
+              display_step = 100, use_average=False, use_projection=False,
+              projection_stable_G=False, positive_baselines=False, l_mu=0.):
         """
 
         Parameters
         ----------
+        adjacency_start : np.ndarray, shape=(dim + dim * dim,), default=`None`
+            Initial guess for the adjacency matrix. Will be used as 
+            starting point in optimization.
+            If `None`, a default starting point is estimated from the 
+            estimated cumulants
 
-            training_epochs : `int`
-                The number of training epochs.
+        alpha : `float`, default=`None`
+            Ratio between skewness and covariance. The higher it is, the
+            more covariance impacts the result which leads to symmetric
+            adjacency matrices.
+            If None, a default value is computed based on the norm of the
+            estimated covariance and skewness cumulants.
 
-            learning_rate : `float`
-                The learning rate used by the optimizer.
+        max_iter : `int`
+            The number of training epochs.
 
-            optimizer : `str`
-                The optimizer used to minimize the objective function. We use optimizers from TensorFlow.
+        step : `float`
+            The learning rate used by the optimizer.
+
+        optimizer : `str`
+            The optimizer used to minimize the objective function. We use optimizers from TensorFlow.
         """
 
         if use_projection:
             self.alpha = 0.
-        elif alpha == -1:
-            self.alpha = 1./(1. + (norm(np.mean([C for C in self.C],axis=0))**2) / (norm(np.mean([K_c for K_c in self.K_c],axis=0))**2) )
+        elif alpha is None:
+            self.alpha = self.approximate_optimal_alpha()
         else:
             self.alpha = alpha
 
@@ -127,10 +145,10 @@ class NPHC(object):
 
         cumulants_list = [self.L, self.C, self.K_c]
         d = len(self.L[0])
-        if initial_point is None:
+        if adjacency_start is None:
             start_point = starting_point(cumulants_list, random=False)
         else:
-            start_point = initial_point.copy()
+            start_point = adjacency_start.copy()
 
         R0 = tf.constant(start_point.astype(np.float64), shape=[d,d])
         L = tf.placeholder(tf.float64, d, name='L')
@@ -147,8 +165,10 @@ class NPHC(object):
                        - 2.0*tf.matmul(R,tf.matmul(tf.diag(L),tf.square(R),transpose_b=True))
         activation_2 = tf.matmul(R,tf.matmul(tf.diag(L),R,transpose_b=True))
 
-        cost =  (1-self.alpha) * tf.reduce_mean( tf.squared_difference( activation_3, K_c ) ) \
-        + self.alpha * tf.reduce_mean( tf.squared_difference( activation_2, C ) )
+        cost = (1 - self.alpha) * tf.reduce_mean(
+            tf.squared_difference(activation_3, K_c)) \
+               + self.alpha * tf.reduce_mean(
+            tf.squared_difference(activation_2, C))
 
         reg_l1 = tf.contrib.layers.l1_regularizer(self.l_l1)
         reg_l2 = tf.contrib.layers.l2_regularizer(self.l_l2)
@@ -184,17 +204,17 @@ class NPHC(object):
             cost += l_mu * tf.reduce_sum(tf.nn.relu(neg_baselines))
 
         if optimizer == 'momentum':
-            optimizer = tf.train.MomentumOptimizer(learning_rate, momentum=0.9).minimize(cost)
+            optimizer = tf.train.MomentumOptimizer(step, momentum=0.9).minimize(cost)
         elif optimizer == 'adam':
-            optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cost)
+            optimizer = tf.train.AdamOptimizer(step).minimize(cost)
         elif optimizer == 'adagrad':
-            optimizer = tf.train.AdagradOptimizer(learning_rate).minimize(cost)
+            optimizer = tf.train.AdagradOptimizer(step).minimize(cost)
         elif optimizer == 'rmsprop':
-            optimizer = tf.train.RMSPropOptimizer(learning_rate).minimize(cost)
+            optimizer = tf.train.RMSPropOptimizer(step).minimize(cost)
         elif optimizer == 'adadelta':
-            optimizer = tf.train.AdadeltaOptimizer(learning_rate).minimize(cost)
+            optimizer = tf.train.AdadeltaOptimizer(step).minimize(cost)
         else:
-            optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
+            optimizer = tf.train.GradientDescentOptimizer(step).minimize(cost)
 
         # Initialize the variables
         init = tf.global_variables_initializer()
@@ -207,7 +227,7 @@ class NPHC(object):
             #summary_writer = tf.train.SummaryWriter('/tmp/tf_cumul', graph=sess.graph)
 
             # Training cycle
-            for epoch in range(training_epochs):
+            for epoch in range(max_iter):
 
                 if epoch % display_step == 0:
                     avg_cost = np.average([sess.run(cost, feed_dict={L: L_, C: C_, K_c: K_c_})

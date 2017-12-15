@@ -40,8 +40,8 @@ nphc = NPHC()
 nphc.fit(multi.timestamps, half_width=10, mu_true=baselines,
          R_true=inv(np.eye(d) - adjacency))
 
-R_pred = nphc.solve(alpha=.9, training_epochs=300, display_step=20,
-                    learning_rate=1e-2, optimizer='adam')
+R_pred = nphc.solve(alpha=.9, max_iter=300, display_step=20,
+                    step=1e-2, optimizer='adam')
 G_pred = np.eye(d) - inv(R_pred)
 
 learner = HawkesExpKern(100)
