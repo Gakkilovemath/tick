@@ -43,7 +43,7 @@ for _ in range(n_days):
 ### Fit (=> compute the cumulants) ###
 ######################################
 nphc = NPHC()
-nphc.fit(ticks,half_width=10,filtr="rectangular",method="parallel_by_day",mu_true=mus,R_true=inv(np.eye(d)-Alpha))
+nphc.fit(ticks,half_width=10,method="parallel_by_day",mu_true=mus,R_true=inv(np.eye(d)-Alpha))
 # print mean error of cumulants estimation
 
 #################################################

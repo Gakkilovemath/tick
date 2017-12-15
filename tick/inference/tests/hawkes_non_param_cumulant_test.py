@@ -64,46 +64,7 @@ class Test(InferenceTest):
 
         for method in ['classic', 'parallel_by_day', 'parallel_by_component']:
             model = NPHC()
-            model.fit(timestamps, method=method, filtr='rectangular')
-
-            np.testing.assert_array_almost_equal(model.L, expected_L)
-            np.testing.assert_array_almost_equal(model.C, expected_C)
-            np.testing.assert_array_almost_equal(model.K_c, expected_K)
-
-
-    def test_hawkes_nphc_gaussian(self):
-        timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
-
-        expected_L = [[2.18034168, 2.8594481, 4.45869871],
-                      [1.99015833, 2.6472106, 4.16933169],
-                      [2.27845603, 2.89257894, 4.7639535]]
-
-        expected_C = [[[13.46997993, 12.80439244, 23.38769407],
-                       [12.80439244, 16.42386725, 25.51214473],
-                       [23.38769407, 25.51214473, 47.48551437]],
-
-                      [[18.25904694, 20.351048, 37.05065869],
-                       [20.351048, 25.97551921, 43.21649302],
-                       [37.05065869, 43.21649302, 81.48058524]],
-
-                      [[7.7311428, 4.59067863, 13.75166764],
-                       [4.59067863, 10.06180264, 14.23649572],
-                       [13.75166764, 14.23649572, 37.35567706]]]
-
-        expected_K = [
-            np.array([[268.34025438, -16.7512349, 589.79949575],
-                      [134.076714, -185.32556299, 207.679562],
-                      [398.81411791, -109.17929498, 1124.91155354]]),
-            np.array([[57.44595962, -107.46285564, 627.05718534],
-                      [-16.88754034, -224.42590084, 455.44475719],
-                      [192.44204653, -98.24137747, 1879.98149655]]),
-            np.array([[283.34149916, 271.60393925, 428.00189363],
-                      [291.72437524, 306.74765368, 173.30696925],
-                      [384.77307656, 246.61404879, 401.65027457]])]
-
-        for method in ['classic']:
-            model = NPHC()
-            model.fit(timestamps, method=method, filtr='gaussian')
+            model.fit(timestamps, method=method)
 
             np.testing.assert_array_almost_equal(model.L, expected_L)
             np.testing.assert_array_almost_equal(model.C, expected_C)

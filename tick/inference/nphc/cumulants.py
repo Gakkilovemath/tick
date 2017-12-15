@@ -13,16 +13,11 @@ from tick.inference.build.inference import (
 
 class Cumulants(object):
 
-    def __init__(self, realizations, half_width=100., filtr='rectangular',
+    def __init__(self, realizations, half_width=100.,
                  method="parallel", mu_true=None, R_true=None):
         self.realizations = realizations
         self.half_width = half_width
         self.sigma = self.half_width / 5.
-
-        if filtr not in ['rectangular', 'gaussian']:
-            raise ValueError("`filtr` should either equal `rectangular` "
-                             "or `gaussian`, recieved {}".format(filtr))
-        self.filtr = filtr
 
         if method not in ['classic', 'parallel_by_day',
                           'parallel_by_component']:
@@ -83,24 +78,16 @@ class Cumulants(object):
         h_w = self.half_width
         d = self.dim
 
-        if self.filtr == "rectangular":
-            A_and_I_ij = A_and_I_ij_rect
-        elif self.filtr == "gaussian":
-            A_and_I_ij = A_and_I_ij_gauss
+        A_and_I_ij = A_and_I_ij_rect
 
         if self.method == 'classic':
             for day in range(len(self.realizations)):
-                realization = self.realizations[day]
                 C = np.zeros((d,d))
                 J = np.zeros((d, d))
                 for i, j in product(range(d), repeat=2):
-                    if self.filtr == "rectangular":
-                        res = self._cumulant.compute_A_and_I_ij_rect(day, i, j, self.L[day][j])
-                        z = res[0] + res[1] * 1.j
-                    else:
-                        z = A_and_I_ij(realization[i], realization[j], h_w, self.time[day], self.L[day][j], self.sigma)
-                    C[i,j] = z.real
-                    J[i,j] = z.imag
+                    res = self._cumulant.compute_A_and_I_ij_rect(day, i, j, self.L[day][j])
+                    C[i, j] = res[0]
+                    J[i, j] = res[1]
                 # we keep the symmetric part to remove edge effects
                 C[:] = 0.5 * (C + C.T)
                 J[:] = 0.5 * (J + J.T)
@@ -131,10 +118,7 @@ class Cumulants(object):
         h_w = self.half_width
         d = self.dim
 
-        if self.filtr == "rectangular":
-            E_ijk = E_ijk_rect
-        elif self.filtr == "gaussian":
-            E_ijk = E_ijk_gauss
+        E_ijk = E_ijk_rect
 
         if self.method == 'classic':
             for day in range(len(self.realizations)):
@@ -286,67 +270,6 @@ def E_ijk_rect(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, J
     res /= T
     return res
 
-
-@jit(nopython=True)
-def E_ijk_gauss(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, J_ij, sigma=1.0):
-    """
-    Computes the mean of the centered product of i's and j's jumps between \tau + a and \tau + b, that is
-    \frac{1}{T} \sum_{\tau \in Z^k} ( N^i_{\tau + b} - N^i_{\tau + a} - \Lambda^i * ( b - a ) )
-                                  * ( N^j_{\tau + b} - N^j_{\tau + a} - \Lambda^j * ( b - a ) )
-    """
-    res = 0
-    u = 0
-    x = 0
-    n_i = realization_i.shape[0]
-    n_j = realization_j.shape[0]
-    n_k = realization_k.shape[0]
-
-    trend_i = L_i * sigma * sqrt(2 * pi) * (norm_cdf(b/sigma) - norm_cdf(a/sigma))
-    trend_j = L_j * sigma * sqrt(2 * pi) * (norm_cdf(b/sigma) - norm_cdf(a/sigma))
-
-    for t in range(n_k):
-        tau = realization_k[t]
-
-        if tau + a < 0: continue
-        # work on realization_i
-        while u < n_i:
-            if realization_i[u] <= tau + a:
-                u += 1
-            else:
-                break
-        v = u
-        sub_res_i = 0.
-        while v < n_i:
-            if realization_i[v] < tau + b:
-                sub_res_i += exp(-.5*((realization_i[v]-tau)/sigma)**2)
-                v += 1
-            else:
-                break
-        if v == n_i: continue
-
-        # work on realization_j
-        while x < n_j:
-            if realization_j[x] <= tau + a:
-                x += 1
-            else:
-                break
-        y = x
-        sub_res_j = 0.
-        while y < n_j:
-            if realization_j[y] < tau + b:
-                sub_res_j += exp(-.5*((realization_j[y]-tau)/sigma)**2)
-                y += 1
-            else:
-                break
-        if y == n_j: continue
-        res += (sub_res_i - trend_i) * (sub_res_j - trend_j) - J_ij
-    res /= T
-    return res
-
-@jit
-def norm_cdf(x):
-    return 0.5 * (1 + erf(x / sqrt(2)))
-
 @jit
 def A_and_I_ij_rect(realization_i, realization_j, half_width, T, L_j, sigma=1.0):
     """
@@ -398,59 +321,6 @@ def A_and_I_ij_rect(realization_i, realization_j, half_width, T, L_j, sigma=1.0)
         if v == n_j: continue
         res_C += w - u - trend_C_j
         res_J += sub_res - trend_J_j
-    res_C /= T
-    res_J /= T
-    return res_C + res_J * 1j
-
-
-@jit
-def A_and_I_ij_gauss(realization_i, realization_j, half_width, T, L_j, sigma=1.0):
-    """
-    Computes the integral \int_{(0,H)} t c^{ij} (t) dt. This integral equals
-    \frac{1}{T} \sum_{\tau \in Z^i} \sum_{\tau' \in Z^j} [ (\tau - \tau') 1_{ \tau - H < \tau' < \tau } - H^2 / 2 \Lambda^j ]
-    """
-    n_i = realization_i.shape[0]
-    n_j = realization_j.shape[0]
-    res_C = 0
-    res_J = 0
-    u = 0
-    width = sqrt(2) * half_width
-    trend_C_j = L_j * sigma * sqrt(2 * pi) * (norm_cdf(half_width/sigma) - norm_cdf(-half_width/sigma))
-    trend_J_j = L_j * sigma**2 * 2 * pi * (norm_cdf(half_width/(sqrt(2)*sigma)) - norm_cdf(-half_width/(sqrt(2)*sigma)))
-
-    for t in range(n_i):
-        tau = realization_i[t]
-        tau_minus_half_width = tau - half_width
-        tau_minus_width = tau - width
-
-        if tau_minus_half_width < 0: continue
-
-        while u < n_j:
-            if realization_j[u] <= tau_minus_width:
-                u += 1
-            else:
-                break
-        v = u
-        w = u
-        sub_res_C = 0.
-        sub_res_J = 0.
-        while v < n_j:
-            tau_p_minus_tau = realization_j[v] - tau
-            if tau_p_minus_tau < -half_width:
-                sub_res_J += sigma*sqrt(pi)*exp(-.25*(tau_p_minus_tau/sigma)**2)
-                v += 1
-            elif tau_p_minus_tau < half_width:
-                sub_res_C += exp(-.5*(tau_p_minus_tau/sigma)**2)
-                sub_res_J += sigma*sqrt(pi)*exp(-.25*(tau_p_minus_tau/sigma)**2)
-                v += 1
-            elif tau_p_minus_tau < width:
-                sub_res_J += sigma*sqrt(pi)*exp(-.25*(tau_p_minus_tau/sigma)**2)
-                v += 1
-            else:
-                break
-        if v == n_j: continue
-        res_C += sub_res_C - trend_C_j
-        res_J += sub_res_J - trend_J_j
     res_C /= T
     res_J /= T
     return res_C + res_J * 1j
