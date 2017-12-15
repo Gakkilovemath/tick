@@ -19,6 +19,10 @@ class HawkesNonParamCumulant : public ModelHawkesList {
   HawkesNonParamCumulant(double half_width, double sigma);
 
   SArrayDoublePtr compute_A_and_I_ij_rect(ulong r, ulong i, ulong j, double mean_intensity_j);
+
+  double compute_E_ijk_rect(ulong r, ulong i, ulong j, ulong k,
+                            double mean_intensity_i, double mean_intensity_j,
+                            double J_ij);
 };
 
 #endif //TICK_HAWKES_NON_PARAM_CUMULANT_H

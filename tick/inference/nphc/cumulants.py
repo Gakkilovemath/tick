@@ -7,6 +7,7 @@ from tick.inference.build.inference import (
     HawkesNonParamCumulant as _HawkesNonParamCumulant
 )
 
+
 class Cumulants(object):
 
     def __init__(self, realizations, half_width=100.,
@@ -90,16 +91,25 @@ class Cumulants(object):
             E_c = np.zeros((d, d, 2))
             for i in range(d):
                 for j in range(d):
-                    E_c[i, j, 0] = E_ijk(realization[i], realization[j],
-                                         realization[j], -h_w, h_w,
-                                         self.time[day], self.L[day][i],
-                                         self.L[day][j], self._J[day][i, j],
-                                         self.sigma)
-                    E_c[i, j, 1] = E_ijk(realization[j], realization[j],
-                                         realization[i], -h_w, h_w,
-                                         self.time[day], self.L[day][j],
-                                         self.L[day][j], self._J[day][j, j],
-                                         self.sigma)
+                    # E_c[i, j, 0] = E_ijk(realization[i], realization[j],
+                    #                      realization[j], -h_w, h_w,
+                    #                      self.time[day], self.L[day][i],
+                    #                      self.L[day][j], self._J[day][i, j],
+                    #                      self.sigma)
+                    # E_c[i, j, 1] = E_ijk(realization[j], realization[j],
+                    #                      realization[i], -h_w, h_w,
+                    #                      self.time[day], self.L[day][j],
+                    #                      self.L[day][j], self._J[day][j, j],
+                    #                      self.sigma)
+
+                    E_c[i, j, 0] = self._cumulant.compute_E_ijk_rect(
+                        day, i, j, j, self.L[day][i], self.L[day][j],
+                        self._J[day][i, j])
+
+                    E_c[i, j, 1] = self._cumulant.compute_E_ijk_rect(
+                        day, j, j, i, self.L[day][j], self.L[day][j],
+                        self._J[day][j, j])
+
             self._E_c[day] = E_c.copy()
 
     def set_R_true(self, R_true):
