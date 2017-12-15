@@ -81,27 +81,12 @@ class Cumulants(object):
             self._J[day] = J.copy()
 
     def compute_E_c(self):
-        h_w = self.half_width
         d = self.dim
 
-        E_ijk = E_ijk_rect
-
         for day in range(len(self.realizations)):
-            realization = self.realizations[day]
             E_c = np.zeros((d, d, 2))
             for i in range(d):
                 for j in range(d):
-                    # E_c[i, j, 0] = E_ijk(realization[i], realization[j],
-                    #                      realization[j], -h_w, h_w,
-                    #                      self.time[day], self.L[day][i],
-                    #                      self.L[day][j], self._J[day][i, j],
-                    #                      self.sigma)
-                    # E_c[i, j, 1] = E_ijk(realization[j], realization[j],
-                    #                      realization[i], -h_w, h_w,
-                    #                      self.time[day], self.L[day][j],
-                    #                      self.L[day][j], self._J[day][j, j],
-                    #                      self.sigma)
-
                     E_c[i, j, 0] = self._cumulant.compute_E_ijk_rect(
                         day, i, j, j, self.L[day][i], self.L[day][j],
                         self._J[day][i, j])
@@ -170,60 +155,3 @@ def get_K_c_th(L, C, R):
     K_c += 2 * np.dot(R_, (R_ * C).T)
     K_c -= 2 * np.dot(np.dot(R_, np.diag(L)), (R_ * R_).T)
     return K_c
-
-
-@jit
-def E_ijk_rect(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, J_ij, sigma=1.0):
-    """
-    Computes the mean of the centered product of i's and j's jumps between \tau + a and \tau + b, that is
-    \frac{1}{T} \sum_{\tau \in Z^k} ( N^i_{\tau + b} - N^i_{\tau + a} - \Lambda^i * ( b - a ) )
-                                  * ( N^j_{\tau + b} - N^j_{\tau + a} - \Lambda^j * ( b - a ) )
-    """
-    res = 0
-    u = 0
-    x = 0
-    n_i = realization_i.shape[0]
-    n_j = realization_j.shape[0]
-    n_k = realization_k.shape[0]
-
-    trend_i = L_i * (b - a)
-    trend_j = L_j * (b - a)
-
-    for t in range(n_k):
-        tau = realization_k[t]
-
-        if tau + a < 0: continue
-
-        # work on realization_i
-        while u < n_i:
-            if realization_i[u] <= tau + a:
-                u += 1
-            else:
-                break
-        v = u
-
-        while v < n_i:
-            if realization_i[v] < tau + b:
-                v += 1
-            else:
-                break
-
-        # work on realization_j
-        while x < n_j:
-            if realization_j[x] <= tau + a:
-                x += 1
-            else:
-                break
-        y = x
-
-        while y < n_j:
-            if realization_j[y] < tau + b:
-                y += 1
-            else:
-                break
-        if y == n_j or v == n_i: continue
-
-        res += (v - u - trend_i) * (y - x - trend_j) - J_ij
-    res /= T
-    return res
-
