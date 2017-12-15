@@ -65,59 +65,54 @@ SArrayDoublePtr HawkesNonParamCumulant::compute_A_and_I_ij_rect(ulong r, ulong i
 double HawkesNonParamCumulant::compute_E_ijk_rect(ulong r, ulong i, ulong j, ulong k,
                                                   double mean_intensity_i, double mean_intensity_j,
                                                   double J_ij) {
-  auto realization_i = timestamps_list[r][i];
-  auto realization_j = timestamps_list[r][j];
-  auto realization_k = timestamps_list[r][k];
+  auto timestamps_i = timestamps_list[r][i];
+  auto timestamps_j = timestamps_list[r][j];
+  auto timestamps_k = timestamps_list[r][k];
 
   double L_i = mean_intensity_i;
   double L_j = mean_intensity_j;
 
-  double T = (*end_times)[r];
-
   double res = 0;
-  ulong u = 0;
-  ulong x = 0;
-  ulong n_i = realization_i->size();
-  ulong n_j = realization_j->size();
-  ulong n_k = realization_k->size();
+  ulong last_l = 0;
+  ulong last_m = 0;
+  ulong n_i = timestamps_i->size();
+  ulong n_j = timestamps_j->size();
+  ulong n_k = timestamps_k->size();
 
   double trend_i = L_i * 2 * half_width;
   double trend_j = L_j * 2 * half_width;
 
-  double b = half_width;
-  double a = -half_width;
-
   for (ulong t = 0; t < n_k; ++t) {
-    double tau = (*realization_k)[t];
+    double tau = (*timestamps_k)[t];
 
-    if (tau + a < 0) continue;
+    if (tau - half_width < 0) continue;
 
-    while (u < n_i) {
-      if ((*realization_i)[u] <= tau + a) u += 1;
+    while (last_l < n_i) {
+      if ((*timestamps_i)[last_l] <= tau - half_width) last_l += 1;
       else break;
     }
-    ulong v = u;
+    ulong l = last_l;
 
-    while (v < n_i) {
-      if ((*realization_i)[v] < tau + b) v += 1;
-      else break;
-    }
-
-    while (x < n_j) {
-      if ((*realization_j)[x] <= tau + a) x += 1;
-      else break;
-    }
-    ulong y = x;
-
-    while (y < n_j) {
-      if ((*realization_j)[y] < tau + b) y += 1;
+    while (l < n_i) {
+      if ((*timestamps_i)[l] < tau + half_width) l += 1;
       else break;
     }
 
-    if ((y == n_j) || (v == n_i)) continue;
+    while (last_m < n_j) {
+      if ((*timestamps_j)[last_m] <= tau - half_width) last_m += 1;
+      else break;
+    }
+    ulong m = last_m;
 
-    res += (v - u - trend_i) * (y - x - trend_j) - J_ij;
+    while (m < n_j) {
+      if ((*timestamps_j)[m] < tau + half_width) m += 1;
+      else break;
+    }
+
+    if ((m == n_j) || (l == n_i)) continue;
+
+    res += (l - last_l - trend_i) * (m - last_m - trend_j) - J_ij;
   }
-  res /= T;
+  res /= (*end_times)[r];
   return res;
 }
