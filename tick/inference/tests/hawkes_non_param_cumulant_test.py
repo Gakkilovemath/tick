@@ -62,13 +62,12 @@ class Test(InferenceTest):
                       [3205.74610429, 4797.78697804, 1563.66300526],
                       [2798.54371545, 4421.71603128, -5824.92071766]])]
 
-        for method in ['classic', 'parallel_by_day', 'parallel_by_component']:
-            model = NPHC()
-            model.fit(timestamps, method=method)
+        model = NPHC()
+        model.fit(timestamps)
 
-            np.testing.assert_array_almost_equal(model.L, expected_L)
-            np.testing.assert_array_almost_equal(model.C, expected_C)
-            np.testing.assert_array_almost_equal(model.K_c, expected_K)
+        np.testing.assert_array_almost_equal(model.L, expected_L)
+        np.testing.assert_array_almost_equal(model.C, expected_C)
+        np.testing.assert_array_almost_equal(model.K_c, expected_K)
 
 
 if __name__ == "__main__":

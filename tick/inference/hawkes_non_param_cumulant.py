@@ -62,7 +62,7 @@ class NPHC(object):
         self.optcost = None
 
     def fit(self, realizations, half_width=100.,
-            method="parallel", mu_true=None, R_true=None):
+            mu_true=None, R_true=None):
         """
         Set the corresponding realization(s) of the process.
         Compute the cumulants.
@@ -82,7 +82,7 @@ class NPHC(object):
             self.realizations = [realizations]
 
         cumul = Cumulants(realizations, half_width=half_width,
-                          method=method, mu_true=mu_true, R_true=R_true)
+                          mu_true=mu_true, R_true=R_true)
         cumul.compute_cumulants()
 
         self.L = cumul.L.copy()

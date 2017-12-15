@@ -1,11 +1,7 @@
 from itertools import product
 
 import numpy as np
-from joblib import Parallel, delayed
 from numba import jit
-from math import erf
-from numpy import sqrt, pi, exp
-from scipy.stats import norm
 
 from tick.inference.build.inference import (
     HawkesNonParamCumulant as _HawkesNonParamCumulant
@@ -14,18 +10,11 @@ from tick.inference.build.inference import (
 class Cumulants(object):
 
     def __init__(self, realizations, half_width=100.,
-                 method="parallel", mu_true=None, R_true=None):
+                 mu_true=None, R_true=None):
         self.realizations = realizations
         self.half_width = half_width
         self.sigma = self.half_width / 5.
 
-        if method not in ['classic', 'parallel_by_day',
-                          'parallel_by_component']:
-            raise ValueError("`method` should either equal `parallel_by_day`, "
-                             "`parallel_by_component` or `classic`, "
-                             "recieved {}".format(method))
-
-        self.method = method
         self.mu_true = mu_true
         self.R_true = R_true
 
@@ -80,39 +69,18 @@ class Cumulants(object):
 
         A_and_I_ij = A_and_I_ij_rect
 
-        if self.method == 'classic':
-            for day in range(len(self.realizations)):
-                C = np.zeros((d,d))
-                J = np.zeros((d, d))
-                for i, j in product(range(d), repeat=2):
-                    res = self._cumulant.compute_A_and_I_ij_rect(day, i, j, self.L[day][j])
-                    C[i, j] = res[0]
-                    J[i, j] = res[1]
-                # we keep the symmetric part to remove edge effects
-                C[:] = 0.5 * (C + C.T)
-                J[:] = 0.5 * (J + J.T)
-                self.C[day] = C.copy()
-                self._J[day] = J.copy()
-
-        elif self.method == 'parallel_by_day':
-            l = Parallel(-1)(delayed(worker_day_C_J)(A_and_I_ij, realization, h_w, T, L, self.sigma, d) for (realization, T, L) in zip(self.realizations, self.time, self.L))
-            self.C = [0.5*(z.real+z.real.T) for z in l]
-            self._J = [0.5*(z.imag+z.imag.T) for z in l]
-
-        elif self.method == 'parallel_by_component':
-            for day in range(len(self.realizations)):
-                realization = self.realizations[day]
-                l = Parallel(-1)(
-                        delayed(A_and_I_ij)(realization[i], realization[j], h_w, self.time[day], self.L[day][j], self.sigma)
-                        for i in range(d) for j in range(d))
-                C_and_J = np.array(l).reshape(d, d)
-                C = C_and_J.real
-                J = C_and_J.imag
-                # we keep the symmetric part to remove edge effects
-                C[:] = 0.5 * (C + C.T)
-                J[:] = 0.5 * (J + J.T)
-                self.C[day] = C.copy()
-                self._J[day] = J.copy()
+        for day in range(len(self.realizations)):
+            C = np.zeros((d,d))
+            J = np.zeros((d, d))
+            for i, j in product(range(d), repeat=2):
+                res = self._cumulant.compute_A_and_I_ij_rect(day, i, j, self.L[day][j])
+                C[i, j] = res[0]
+                J[i, j] = res[1]
+            # we keep the symmetric part to remove edge effects
+            C[:] = 0.5 * (C + C.T)
+            J[:] = 0.5 * (J + J.T)
+            self.C[day] = C.copy()
+            self._J[day] = J.copy()
 
     def compute_E_c(self):
         h_w = self.half_width
@@ -120,40 +88,22 @@ class Cumulants(object):
 
         E_ijk = E_ijk_rect
 
-        if self.method == 'classic':
-            for day in range(len(self.realizations)):
-                realization = self.realizations[day]
-                E_c = np.zeros((d, d, 2))
-                for i in range(d):
-                    for j in range(d):
-                        E_c[i, j, 0] = E_ijk(realization[i], realization[j],
-                                             realization[j], -h_w, h_w,
-                                             self.time[day], self.L[day][i],
-                                             self.L[day][j], self._J[day][i, j],
-                                             self.sigma)
-                        E_c[i, j, 1] = E_ijk(realization[j], realization[j],
-                                             realization[i], -h_w, h_w,
-                                             self.time[day], self.L[day][j],
-                                             self.L[day][j], self._J[day][j, j],
-                                             self.sigma)
-                self._E_c[day] = E_c.copy()
-
-        elif self.method == 'parallel_by_day':
-            self._E_c = Parallel(-1)(delayed(worker_day_E)(E_ijk, realization, h_w, T, L, J, self.sigma, d) for (realization, T, L, J) in zip(self.realizations, self.time, self.L, self._J))
-
-        elif self.method == 'parallel_by_component':
-            for day in range(len(self.realizations)):
-                realization = self.realizations[day]
-                E_c = np.zeros((d, d, 2))
-                l1 = Parallel(-1)(
-                        delayed(E_ijk)(realization[i], realization[j], realization[j], -h_w, h_w,
-                                            self.time[day], self.L[day][i], self.L[day][j], self._J[day][i, j], self.sigma) for i in range(d) for j in range(d))
-                l2 = Parallel(-1)(
-                        delayed(E_ijk)(realization[j], realization[j], realization[i], -h_w, h_w,
-                                            self.time[day], self.L[day][j], self.L[day][j], self._J[day][j, j], self.sigma) for i in range(d) for j in range(d))
-                E_c[:, :, 0] = np.array(l1).reshape(d, d)
-                E_c[:, :, 1] = np.array(l2).reshape(d, d)
-                self._E_c[day] = E_c.copy()
+        for day in range(len(self.realizations)):
+            realization = self.realizations[day]
+            E_c = np.zeros((d, d, 2))
+            for i in range(d):
+                for j in range(d):
+                    E_c[i, j, 0] = E_ijk(realization[i], realization[j],
+                                         realization[j], -h_w, h_w,
+                                         self.time[day], self.L[day][i],
+                                         self.L[day][j], self._J[day][i, j],
+                                         self.sigma)
+                    E_c[i, j, 1] = E_ijk(realization[j], realization[j],
+                                         realization[i], -h_w, h_w,
+                                         self.time[day], self.L[day][j],
+                                         self.L[day][j], self._J[day][j, j],
+                                         self.sigma)
+            self._E_c[day] = E_c.copy()
 
     def set_R_true(self, R_true):
         self.R_true = R_true

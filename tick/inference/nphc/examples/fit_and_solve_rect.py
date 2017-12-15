@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 
-from tick.inference.hawkes_non_param_cumulant import NPHC
 import numpy as np
 from scipy.linalg import inv
-import tick.simulation as hk
 
+import tick.simulation as hk
+from tick.inference.hawkes_non_param_cumulant import NPHC
 
 #####################################################
 ### Simulation of a 10-dimensional Hawkes process ###
@@ -43,7 +43,7 @@ for _ in range(n_days):
 ### Fit (=> compute the cumulants) ###
 ######################################
 nphc = NPHC()
-nphc.fit(ticks,half_width=10,method="parallel_by_day",mu_true=mus,R_true=inv(np.eye(d)-Alpha))
+nphc.fit(ticks, half_width=10, mu_true=mus, R_true=inv(np.eye(d) - Alpha))
 # print mean error of cumulants estimation
 
 #################################################
