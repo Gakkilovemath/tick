@@ -1,7 +1,6 @@
 from itertools import product
 
 import numpy as np
-from numba import jit
 
 from tick.inference.build.inference import (
     HawkesNonParamCumulant as _HawkesNonParamCumulant
@@ -121,7 +120,6 @@ class Cumulants(object):
 ## Empirical cumulants with formula from the paper
 ###########
 
-@jit
 def get_K_c(E_c):
     K_c = np.zeros_like(E_c[:, :, 0])
     K_c += 2 * E_c[:, :, 0]
@@ -134,17 +132,14 @@ def get_K_c(E_c):
 ## Theoretical cumulants L, C, K, K_c
 ##########
 
-@jit
 def get_L_th(mu, R):
     return np.dot(R, mu)
 
 
-@jit
 def get_C_th(L, R):
     return np.dot(R, np.dot(np.diag(L), R.T))
 
 
-@jit
 def get_K_c_th(L, C, R):
     d = len(L)
     if R.shape[0] == d ** 2:
