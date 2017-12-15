@@ -32,7 +32,7 @@ class Test(InferenceTest):
         multi.simulate()
         return multi.timestamps, baseline, adjacency
 
-    def test_hawkes_nphc_rectangular(self):
+    def test_hawkes_nphc_cumulants(self):
         timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
 
         expected_L = [[2.18034168, 2.8594481, 4.45869871],
@@ -68,6 +68,19 @@ class Test(InferenceTest):
         np.testing.assert_array_almost_equal(model.L, expected_L)
         np.testing.assert_array_almost_equal(model.C, expected_C)
         np.testing.assert_array_almost_equal(model.K_c, expected_K)
+
+    def test_hawkes_nphc_cumulants_solve(self):
+        timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
+        model = NPHC()
+        model.fit(timestamps)
+        R_pred = model.solve(alpha=.9, training_epochs=300, display_step=2000,
+                             learning_rate=1e-2, optimizer='adam')
+
+        expected_R_pred = [[0.69493996, -0.23326304, 0.02567722],
+                           [-0.0715943, 0.8538519, 0.20695158],
+                           [0.85575898, 0.68885453, 1.82055179]]
+
+        np.testing.assert_array_almost_equal(R_pred, expected_R_pred)
 
 
 if __name__ == "__main__":
