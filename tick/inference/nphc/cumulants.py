@@ -39,15 +39,10 @@ class Cumulants(object):
 
     def compute_cumulants(self):
         self.compute_L()
-        print("L is computed")
-
         self.compute_C_and_J()
-        print("C is computed")
-
         self.compute_E_c()
         self.K_c = [get_K_c(self._E_c[day]) for day in
                     range(self.n_realizations)]
-        print("K_c is computed")
 
         if self.R_true is not None and self.mu_true is not None:
             self.set_L_th()

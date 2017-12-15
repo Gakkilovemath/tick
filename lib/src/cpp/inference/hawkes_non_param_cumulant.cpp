@@ -33,7 +33,7 @@ SArrayDoublePtr HawkesNonParamCumulant::compute_A_and_I_ij_rect(ulong r, ulong i
     }
 
     ulong l = last_l;
-    ulong timestamps_in_half_width_interval = 0;
+    ulong timestamps_in_interval = 0;
 
     double sub_res = 0.;
 
@@ -44,14 +44,14 @@ SArrayDoublePtr HawkesNonParamCumulant::compute_A_and_I_ij_rect(ulong r, ulong i
       if (abs_t_j_l_minus_t_i_k < width) {
         sub_res += width - abs_t_j_l_minus_t_i_k;
 
-        if (abs_t_j_l_minus_t_i_k < half_width) timestamps_in_half_width_interval++;
+        if (abs_t_j_l_minus_t_i_k < half_width) timestamps_in_interval++;
       } else break;
 
       l += 1;
     }
 
     if (l == n_j) continue;
-    res_C += timestamps_in_half_width_interval - trend_C_j;
+    res_C += timestamps_in_interval - trend_C_j;
     res_J += sub_res - trend_J_j;
   }
 
