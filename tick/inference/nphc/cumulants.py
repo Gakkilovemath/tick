@@ -64,10 +64,7 @@ class Cumulants(object):
             self.L[day] = L.copy()
 
     def compute_C_and_J(self):
-        h_w = self.half_width
         d = self.dim
-
-        A_and_I_ij = A_and_I_ij_rect
 
         for day in range(len(self.realizations)):
             C = np.zeros((d,d))
@@ -219,62 +216,6 @@ def E_ijk_rect(realization_i, realization_j, realization_k, a, b, T, L_i, L_j, J
         res += (v - u - trend_i) * (y - x - trend_j) - J_ij
     res /= T
     return res
-
-@jit
-def A_and_I_ij_rect(realization_i, realization_j, half_width, T, L_j, sigma=1.0):
-    """
-    Computes the integral \int_{(0,H)} t c^{ij} (t) dt. This integral equals
-    \frac{1}{T} \sum_{\tau \in Z^i} \sum_{\tau' \in Z^j} [ (\tau - \tau') 1_{ \tau - H < \tau' < \tau } - H^2 / 2 \Lambda^j ]
-    """
-    n_i = realization_i.shape[0]
-    n_j = realization_j.shape[0]
-    res_C = 0
-    res_J = 0
-    u = 0
-    width = 2 * half_width
-    trend_C_j = L_j * width
-    trend_J_j = L_j * width ** 2
-
-    for t in range(n_i):
-        tau = realization_i[t]
-        tau_minus_half_width = tau - half_width
-        tau_minus_width = tau - width
-
-        if tau_minus_half_width < 0: continue
-
-        while u < n_j:
-            if realization_j[u] <= tau_minus_width:
-                u += 1
-            else:
-                break
-        v = u
-        w = u
-        sub_res = 0.
-        while v < n_j:
-            tau_p_minus_tau = realization_j[v] - tau
-            if tau_p_minus_tau < -half_width:
-                sub_res += width + tau_p_minus_tau
-                v += 1
-            elif tau_p_minus_tau < 0:
-                sub_res += width + tau_p_minus_tau
-                w += 1
-                v += 1
-            elif tau_p_minus_tau < half_width:
-                sub_res += width - tau_p_minus_tau
-                w += 1
-                v += 1
-            elif tau_p_minus_tau < width:
-                sub_res += width - tau_p_minus_tau
-                v += 1
-            else:
-                break
-        if v == n_j: continue
-        res_C += w - u - trend_C_j
-        res_J += sub_res - trend_J_j
-    res_C /= T
-    res_J /= T
-    return res_C + res_J * 1j
-
 
 def worker_day_C_J(fun, realization, h_w, T, L, sigma, d):
     C = np.zeros((d, d))
