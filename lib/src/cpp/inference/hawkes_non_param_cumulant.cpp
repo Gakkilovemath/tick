@@ -1,7 +1,7 @@
 #include "tick/inference/hawkes_non_param_cumulant.h"
 
-HawkesNonParamCumulant::HawkesNonParamCumulant(double half_width, double sigma)
-  : half_width(half_width), sigma(sigma) {
+HawkesNonParamCumulant::HawkesNonParamCumulant(double half_width)
+  : half_width(half_width){
 
 }
 

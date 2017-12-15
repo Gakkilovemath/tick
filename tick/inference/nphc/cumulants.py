@@ -13,7 +13,6 @@ class Cumulants(object):
                  mu_true=None, R_true=None):
         self.realizations = realizations
         self.half_width = half_width
-        self.sigma = self.half_width / 5.
 
         self.mu_true = mu_true
         self.R_true = R_true
@@ -35,7 +34,7 @@ class Cumulants(object):
         self.R_true = None
         self.mu_true = None
 
-        self._cumulant = _HawkesNonParamCumulant(self.half_width, self.sigma)
+        self._cumulant = _HawkesNonParamCumulant(self.half_width)
         self._cumulant.set_data(realizations, self.time)
 
     def compute_cumulants(self):
