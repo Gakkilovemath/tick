@@ -77,7 +77,7 @@ class Test(InferenceTest):
         model = NPHC()
         model.fit(timestamps)
         R_pred = model.solve(alpha=.9, max_iter=300, display_step=2000,
-                             step=1e-2, optimizer='adam')
+                             step=1e-2, solver='adam')
 
         expected_R_pred = [[0.69493996, -0.23326304, 0.02567722],
                            [-0.0715943, 0.8538519, 0.20695158],

@@ -1,5 +1,4 @@
 import numpy as np
-import tensorflow as tf
 from scipy.linalg import qr, sqrtm, norm
 
 from tick.inference.nphc.cumulants import Cumulants
@@ -103,7 +102,7 @@ class NPHC(object):
         return norm_sq_K_c / (norm_sq_K_c + norm_sq_C)
 
     def solve(self, alpha=None, l_l1=0., l_l2=0., adjacency_start=None,
-              max_iter=1000, step=1e6, optimizer='momentum',
+              max_iter=1000, step=1e6, solver='adam',
               display_step = 100, use_average=False, use_projection=False,
               projection_stable_G=False, positive_baselines=False, l_mu=0.):
         """
@@ -129,9 +128,11 @@ class NPHC(object):
         step : `float`
             The learning rate used by the optimizer.
 
-        optimizer : `str`
-            The optimizer used to minimize the objective function. We use optimizers from TensorFlow.
+        solver : {'adam', 'momentum', 'adagrad', 'rmsprop', 'adadelta', 'gd'}, default='adam'
+            Solver used to minimize the loss. As the loss is not convex, it
+            cannot be optimized with `tick.optim.solver` solvers
         """
+        import tensorflow as tf
 
         if use_projection:
             self.alpha = 0.
@@ -203,18 +204,18 @@ class NPHC(object):
             neg_baselines = - tf.matmul(tf.matrix_inverse(R), L_avg.reshape(d,1))
             cost += l_mu * tf.reduce_sum(tf.nn.relu(neg_baselines))
 
-        if optimizer == 'momentum':
-            optimizer = tf.train.MomentumOptimizer(step, momentum=0.9).minimize(cost)
-        elif optimizer == 'adam':
-            optimizer = tf.train.AdamOptimizer(step).minimize(cost)
-        elif optimizer == 'adagrad':
-            optimizer = tf.train.AdagradOptimizer(step).minimize(cost)
-        elif optimizer == 'rmsprop':
-            optimizer = tf.train.RMSPropOptimizer(step).minimize(cost)
-        elif optimizer == 'adadelta':
-            optimizer = tf.train.AdadeltaOptimizer(step).minimize(cost)
+        if solver == 'momentum':
+            solver = tf.train.MomentumOptimizer(step, momentum=0.9).minimize(cost)
+        elif solver == 'adam':
+            solver = tf.train.AdamOptimizer(step).minimize(cost)
+        elif solver == 'adagrad':
+            solver = tf.train.AdagradOptimizer(step).minimize(cost)
+        elif solver == 'rmsprop':
+            solver = tf.train.RMSPropOptimizer(step).minimize(cost)
+        elif solver == 'adadelta':
+            solver = tf.train.AdadeltaOptimizer(step).minimize(cost)
         else:
-            optimizer = tf.train.GradientDescentOptimizer(step).minimize(cost)
+            solver = tf.train.GradientDescentOptimizer(step).minimize(cost)
 
         # Initialize the variables
         init = tf.global_variables_initializer()
@@ -235,12 +236,12 @@ class NPHC(object):
                     print("Epoch:", '%04d' % (epoch), "log10(cost)=", "{:.9f}".format(np.log10(avg_cost)))
 
                 if use_average:
-                    sess.run(optimizer, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
+                    sess.run(solver, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
 
                 elif use_projection:
                     # Fit training using batch data
                     i = np.random.randint(0,len(self.realizations))
-                    sess.run(optimizer, feed_dict={L: self.L[i], C: self.C[i], K_c: self.K_c[i]})
+                    sess.run(solver, feed_dict={L: self.L[i], C: self.C[i], K_c: self.K_c[i]})
                     to_be_projected = np.dot(C_avg_sqrt_inv,np.dot(sess.run(R),np.diag(L_avg_sqrt)))
                     U, S, V = np.linalg.svd(to_be_projected)
                     R_projected = np.dot( C_avg_sqrt, np.dot( np.dot(U,V), np.diag(L_avg_sqrt_inv) ) )
@@ -249,7 +250,7 @@ class NPHC(object):
                 else:
                     # Fit training using batch data
                     i = np.random.randint(0,len(self.realizations))
-                    sess.run(optimizer, feed_dict={L: self.L[i], C: self.C[i], K_c: self.K_c[i]})
+                    sess.run(solver, feed_dict={L: self.L[i], C: self.C[i], K_c: self.K_c[i]})
 
                 if projection_stable_G:
                     to_be_projected = np.eye(d) - np.dot( np.dot(np.diag(L_avg), sess.run(tf.transpose(R))), C_avg_inv)
@@ -269,7 +270,3 @@ class NPHC(object):
             return sess.run(R)
 
 
-'''
-Run the command line: tensorboard --logdir=/tmp/tf_cumul
-Open http://localhost:6006/ into your web browser
-'''
