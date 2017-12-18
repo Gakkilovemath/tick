@@ -140,6 +140,14 @@ class NPHC(LearnerHawkesNoParam):
     def objective(self, coeffs, loss: float=None):
         raise NotImplementedError()
 
+    @property
+    def model_coeffs(self):
+        import tensorflow as tf
+
+        d = len(self.L[0])
+        with tf.variable_scope("model", reuse=tf.AUTO_REUSE):
+            return tf.get_variable("R", [d, d], dtype=tf.float64)
+
     def _solve(self, adjacency_start=None):
         """
 
@@ -177,13 +185,12 @@ class NPHC(LearnerHawkesNoParam):
         else:
             start_point = adjacency_start.copy()
 
-        R0 = tf.constant(start_point.astype(np.float64), shape=[d,d])
         L = tf.placeholder(tf.float64, d, name='L')
         C = tf.placeholder(tf.float64, (d,d), name='C')
         K_c = tf.placeholder(tf.float64, (d,d), name='K_c')
 
-        R = tf.Variable(R0, name='R', dtype=tf.float64)
-        I = tf.Variable(initial_value=np.eye(d), dtype=tf.float64)
+        R = self.model_coeffs
+        I = tf.constant(np.eye(d), dtype=tf.float64)
 
         # Construct model
         activation_3 = tf.matmul(C,tf.square(R),transpose_b=True) + 2.0*tf.matmul(R,R*C,transpose_b=True) \
@@ -214,13 +221,10 @@ class NPHC(LearnerHawkesNoParam):
 
         solver = self.tf_solver(self.step).minimize(cost)
 
-        # Initialize the variables
-        init = tf.global_variables_initializer()
-
         # Launch the graph
         with tf.Session() as sess:
-            sess.run(init)
-
+            sess.run(tf.global_variables_initializer())
+            sess.run(R.assign(start_point))
             # Training cycle
             for epoch in range(self.max_iter):
 
@@ -233,7 +237,7 @@ class NPHC(LearnerHawkesNoParam):
 
             print("Optimization Finished!")
 
-            self._set('solution', sess.run(R))
+            self._set('solution', sess.run(self.model_coeffs))
 
 
     @property
