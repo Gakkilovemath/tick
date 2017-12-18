@@ -69,13 +69,15 @@ class NPHC(LearnerHawkesNoParam):
     """
     _attrinfos = {
         'cumul': {'writable': False},
+        '_solver': {'writable': False},
     }
 
-    def __init__(self, half_width):
+    def __init__(self, half_width, solver='adam'):
         LearnerHawkesNoParam.__init__(self)
         self.cumul = Cumulants(half_width=half_width, mu_true=None,
                                R_true=None)
         self._learner = self.cumul._cumulant
+        self._solver = solver
 
     def _set_data(self, events):
         LearnerHawkesNoParam._set_data(self, events)
@@ -197,18 +199,7 @@ class NPHC(LearnerHawkesNoParam):
             neg_baselines = - tf.matmul(tf.matrix_inverse(R), L_avg.reshape(d,1))
             cost += l_mu * tf.reduce_sum(tf.nn.relu(neg_baselines))
 
-        if solver == 'momentum':
-            solver = tf.train.MomentumOptimizer(step, momentum=0.9).minimize(cost)
-        elif solver == 'adam':
-            solver = tf.train.AdamOptimizer(step).minimize(cost)
-        elif solver == 'adagrad':
-            solver = tf.train.AdagradOptimizer(step).minimize(cost)
-        elif solver == 'rmsprop':
-            solver = tf.train.RMSPropOptimizer(step).minimize(cost)
-        elif solver == 'adadelta':
-            solver = tf.train.AdadeltaOptimizer(step).minimize(cost)
-        else:
-            solver = tf.train.GradientDescentOptimizer(step).minimize(cost)
+        solver = self.tf_solver(step).minimize(cost)
 
         # Initialize the variables
         init = tf.global_variables_initializer()
@@ -262,4 +253,35 @@ class NPHC(LearnerHawkesNoParam):
 
             self._set('solution', sess.run(R))
 
+
+    @property
+    def solver(self):
+        return self._solver
+
+    @solver.setter
+    def solver(self, val):
+        available_solvers = ['momentum', 'adam', 'adagrad', 'rmsprop',
+                             'adadelta', 'gd']
+        if val.lower() not in available_solvers:
+            raise ValueError('solver must be one of {}, recieved {}'
+                             .format(available_solvers, val))
+
+        self._set('_solver', val)
+
+    @property
+    def tf_solver(self):
+        import tensorflow as tf
+
+        if self.solver.lower() == 'momentum':
+            return tf.train.MomentumOptimizer
+        elif self.solver.lower() == 'adam':
+            return tf.train.AdamOptimizer
+        elif self.solver.lower() == 'adagrad':
+            return tf.train.AdagradOptimizer
+        elif self.solver.lower() == 'rmsprop':
+            return tf.train.RMSPropOptimizer
+        elif self.solver.lower() == 'adadelta':
+            return tf.train.AdadeltaOptimizer
+        elif self.solver.lower() == 'adadelta':
+            return tf.train.GradientDescentOptimizer
 
