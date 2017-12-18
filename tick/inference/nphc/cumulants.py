@@ -9,25 +9,12 @@ from tick.inference.build.inference import (
 
 class Cumulants(object):
 
-    def __init__(self, realizations, half_width=100.,
-                 mu_true=None, R_true=None):
-        self.realizations = realizations
+    def __init__(self, half_width=100., mu_true=None, R_true=None):
         self.half_width = half_width
 
         self.mu_true = mu_true
         self.R_true = R_true
 
-        self.dim = len(self.realizations[0])
-        self.n_realizations = len(self.realizations)
-        self.time = np.zeros(self.n_realizations)
-        for day, realization in enumerate(self.realizations):
-            T_day = float(max(x[-1] for x in realization if len(x) > 0))
-            self.time[day] = T_day
-        self.L = np.zeros((self.n_realizations, self.dim))
-        self.C = np.zeros((self.n_realizations, self.dim, self.dim))
-        self._J = np.zeros((self.n_realizations, self.dim, self.dim))
-        self._E_c = np.zeros((self.n_realizations, self.dim, self.dim, 2))
-        self.K_c = np.zeros((self.n_realizations, self.dim, self.dim))
         self.L_th = None
         self.C_th = None
         self.K_c_th = None
@@ -35,7 +22,6 @@ class Cumulants(object):
         self.mu_true = None
 
         self._cumulant = _HawkesNonParamCumulant(self.half_width)
-        self._cumulant.set_data(realizations, self.time)
 
     def compute_cumulants(self):
         self.compute_L()
@@ -109,6 +95,24 @@ class Cumulants(object):
         assert self.R_true is not None, "You should provide R_true."
         self.K_c_th = get_K_c_th(self.L_th, self.C_th, self.R_true)
 
+    @property
+    def realizations(self):
+        return self._realizations
+
+    @realizations.setter
+    def realizations(self, val):
+        self._realizations = val
+        self.dim = len(self.realizations[0])
+        self.n_realizations = len(self.realizations)
+        self.time = np.zeros(self.n_realizations)
+        for day, realization in enumerate(self.realizations):
+            T_day = float(max(x[-1] for x in realization if len(x) > 0))
+            self.time[day] = T_day
+        self.L = np.zeros((self.n_realizations, self.dim))
+        self.C = np.zeros((self.n_realizations, self.dim, self.dim))
+        self._J = np.zeros((self.n_realizations, self.dim, self.dim))
+        self._E_c = np.zeros((self.n_realizations, self.dim, self.dim, 2))
+        self.K_c = np.zeros((self.n_realizations, self.dim, self.dim))
 
 ###########
 ## Empirical cumulants with formula from the paper

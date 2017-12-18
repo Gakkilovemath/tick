@@ -29,6 +29,10 @@ class NPHC(LearnerHawkesNoParam):
     `Uncovering Causality from Multivariate Hawkes Integrated Cumulants` by
     Achab, Bacry, Gaiffas, Mastromatteo and Muzy (2016, Preprint).
 
+    Parameters
+    ----------
+    half_width : `double`
+        kernel support
 
     Attributes
     ----------
@@ -64,43 +68,29 @@ class NPHC(LearnerHawkesNoParam):
 
     """
     _attrinfos = {
-        'l_l1': {}, 'l_l2': {},
+        'cumul': {'writable': False},
     }
 
-    def __init__(self):
+    def __init__(self, half_width):
         LearnerHawkesNoParam.__init__(self)
+        self.cumul = Cumulants(half_width=half_width, mu_true=None,
+                               R_true=None)
+        self._learner = self.cumul._cumulant
 
-    def fit(self, realizations, half_width=100.,
-            mu_true=None, R_true=None):
-        """
-        Set the corresponding realization(s) of the process.
-        Compute the cumulants.
+    def _set_data(self, events):
+        LearnerHawkesNoParam._set_data(self, events)
+        self.cumul.realizations = events
 
-        Parameters
-        ----------
+    def _compute_cumulants(self, R_true=None, mu_true=None):
+        self.cumul.compute_cumulants()
 
-            realizations : `list`
-                * Either a single realization as a list of np_arrays each representing
-                the time stamps of a node of the Hawkes process
-                * Or a list of realizations represented as above.
-
-        """
-        if all(isinstance(x,list) for x in realizations):
-            self._set('data', realizations)
-        else:
-            self._set('data', [realizations])
-
-        cumul = Cumulants(realizations, half_width=half_width,
-                          mu_true=mu_true, R_true=R_true)
-        cumul.compute_cumulants()
-
-        self.L = cumul.L.copy()
-        self.C = cumul.C.copy()
-        self.K_c = cumul.K_c.copy()
+        self.L = self.cumul.L.copy()
+        self.C = self.cumul.C.copy()
+        self.K_c = self.cumul.K_c.copy()
         if R_true is not None and mu_true is not None:
-            self.L_th = cumul.L_th
-            self.C_th = cumul.C_th
-            self.K_c_th = cumul.K_c_th
+            self.L_th = self.cumul.L_th
+            self.C_th = self.cumul.C_th
+            self.K_c_th = self.cumul.K_c_th
         else:
             self.L_th = None
             self.C_th = None
@@ -140,6 +130,8 @@ class NPHC(LearnerHawkesNoParam):
         """
         import tensorflow as tf
 
+        self._compute_cumulants()
+
         if use_projection:
             self.alpha = 0.
         elif alpha is None:
@@ -160,8 +152,6 @@ class NPHC(LearnerHawkesNoParam):
         K_c = tf.placeholder(tf.float64, (d,d), name='K_c')
 
         R = tf.Variable(R0, name='R', dtype=tf.float64)
-
-        #I = tf.diag(tf.ones(d,dtype=tf.float64))
         I = tf.Variable(initial_value=np.eye(d), dtype=tf.float64)
 
         # Construct model

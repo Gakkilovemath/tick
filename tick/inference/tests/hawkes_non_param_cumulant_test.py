@@ -62,8 +62,9 @@ class Test(InferenceTest):
                       [3205.74610429, 4797.78697804, 1563.66300526],
                       [2798.54371545, 4421.71603128, -5824.92071766]])]
 
-        model = NPHC()
+        model = NPHC(100.)
         model.fit(timestamps)
+        model._compute_cumulants()
 
         np.testing.assert_array_almost_equal(model.L, expected_L)
         np.testing.assert_array_almost_equal(model.C, expected_C)
@@ -74,7 +75,7 @@ class Test(InferenceTest):
 
     def test_hawkes_nphc_cumulants_solve(self):
         timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
-        model = NPHC()
+        model = NPHC(100.)
         model.fit(timestamps)
         R_pred = model.solve(alpha=.9, max_iter=300, display_step=2000,
                              step=1e-2, solver='adam')
