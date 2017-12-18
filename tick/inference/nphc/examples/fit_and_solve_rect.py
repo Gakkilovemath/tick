@@ -1,13 +1,12 @@
 import matplotlib.pyplot as plt
+
 import numpy as np
 from scipy.linalg import inv
 
-from tick.inference.hawkes_non_param_cumulant import NPHC
-from tick.simulation import SimuHawkesExpKernels, SimuHawkesMulti
-
-from tick.plot import plot_hawkes_kernel_norms
 from tick.inference import HawkesExpKern
-
+from tick.inference.hawkes_non_param_cumulant import NPHC
+from tick.plot import plot_hawkes_kernel_norms
+from tick.simulation import SimuHawkesExpKernels, SimuHawkesMulti
 
 beta = 1.
 mu = 0.01
@@ -36,9 +35,8 @@ simu_hawkes = SimuHawkesExpKernels(baseline=baselines, adjacency=adjacency,
 multi = SimuHawkesMulti(simu_hawkes, n_simulations=n_days, n_threads=-1)
 multi.simulate()
 
-nphc = NPHC()
-nphc.fit(multi.timestamps, half_width=10, mu_true=baselines,
-         R_true=inv(np.eye(d) - adjacency))
+nphc = NPHC(10, mu_true=baselines, R_true=inv(np.eye(d) - adjacency))
+nphc.fit(multi.timestamps)
 
 R_pred = nphc.solve(alpha=.9, max_iter=300, display_step=20,
                     step=1e-2, solver='adam')
@@ -49,4 +47,6 @@ learner.fit(multi.timestamps[0])
 
 coeffs = np.hstack((baselines, G_pred.ravel()))
 learner._set('coeffs', coeffs)
-plot_hawkes_kernel_norms(learner, show=True)
+plot_hawkes_kernel_norms(learner, show=False)
+
+plt.show()

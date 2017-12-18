@@ -72,24 +72,26 @@ class NPHC(LearnerHawkesNoParam):
         '_solver': {'writable': False},
     }
 
-    def __init__(self, half_width, solver='adam'):
+    def __init__(self, half_width, solver='adam', R_true=None, mu_true=None):
         LearnerHawkesNoParam.__init__(self)
         self.cumul = Cumulants(half_width=half_width, mu_true=None,
                                R_true=None)
         self._learner = self.cumul._cumulant
         self._solver = solver
+        self.R_true = R_true
+        self.mu_true = mu_true
 
     def _set_data(self, events):
         LearnerHawkesNoParam._set_data(self, events)
         self.cumul.realizations = events
 
-    def _compute_cumulants(self, R_true=None, mu_true=None):
+    def _compute_cumulants(self):
         self.cumul.compute_cumulants()
 
         self.L = self.cumul.L.copy()
         self.C = self.cumul.C.copy()
         self.K_c = self.cumul.K_c.copy()
-        if R_true is not None and mu_true is not None:
+        if self.R_true is not None and self.mu_true is not None:
             self.L_th = self.cumul.L_th
             self.C_th = self.cumul.C_th
             self.K_c_th = self.cumul.K_c_th
