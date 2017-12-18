@@ -76,7 +76,7 @@ class Test(InferenceTest):
     def test_hawkes_nphc_cumulants_solve(self):
         timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
         model = NPHC(100., alpha=0.9, max_iter=300, print_every=30,
-                     step=1e-2, solver='adam')
+                     step=1e-2, solver='adam', verbose=True)
         model.fit(timestamps)
         R_pred = model.solve()
 

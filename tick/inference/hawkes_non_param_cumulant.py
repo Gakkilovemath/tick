@@ -114,6 +114,8 @@ class NPHC(LearnerHawkesNoParam):
         self.mu_true = mu_true
         self._tf_feed_dict = None
 
+        self.history.print_order = ["n_iter", "objective"]
+
     def _set_data(self, events):
         LearnerHawkesNoParam._set_data(self, events)
         self.cumul.realizations = events
@@ -253,9 +255,9 @@ class NPHC(LearnerHawkesNoParam):
             # Training cycle
             for epoch in range(self.max_iter):
 
-                if epoch % self.print_every == 0:
-                    avg_cost = sess.run(cost, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
-                    print("Epoch:", '%04d' % (epoch), "log10(cost)=", "{:.9f}".format(np.log10(avg_cost)))
+                avg_cost = sess.run(cost, feed_dict={L: L_avg, C: C_avg,
+                                                     K_c: K_avg})
+                self._handle_history(epoch, objective=avg_cost)
 
                 sess.run(solver, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
 
