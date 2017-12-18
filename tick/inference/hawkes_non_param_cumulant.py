@@ -254,8 +254,7 @@ class NPHC(LearnerHawkesNoParam):
             for epoch in range(self.max_iter):
 
                 if epoch % self.print_every == 0:
-                    avg_cost = np.average([sess.run(cost, feed_dict={L: L_, C: C_, K_c: K_c_})
-                                           for (L_, C_, K_c_) in zip(self.L, self.C, self.K_c)])
+                    avg_cost = sess.run(cost, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
                     print("Epoch:", '%04d' % (epoch), "log10(cost)=", "{:.9f}".format(np.log10(avg_cost)))
 
                 sess.run(solver, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
