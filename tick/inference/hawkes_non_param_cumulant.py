@@ -132,8 +132,7 @@ class NPHC(LearnerHawkesNoParam):
 
     def _solve(self, alpha=None, adjacency_start=None,
                max_iter=1000, step=1e6, solver='adam',
-               display_step = 100, use_average=True, use_projection=False,
-               projection_stable_G=False, positive_baselines=False, l_mu=0.):
+               display_step=100):
         """
 
         Parameters
@@ -158,9 +157,7 @@ class NPHC(LearnerHawkesNoParam):
 
         self._compute_cumulants()
 
-        if use_projection:
-            self.alpha = 0.
-        elif alpha is None:
+        if alpha is None:
             self.alpha = self.approximate_optimal_alpha()
         else:
             self.alpha = alpha
@@ -203,25 +200,9 @@ class NPHC(LearnerHawkesNoParam):
             cost = tf.cast(cost, tf.float64)
 
         # always use the average cumulants over all realizations
-        if use_average or use_projection or projection_stable_G or positive_baselines:
-            L_avg = np.mean(self.L, axis=0)
-            C_avg = np.mean(self.C, axis=0)
-            K_avg = np.mean(self.K_c, axis=0)
-        if use_projection:
-            L_avg_sqrt = np.sqrt(L_avg)
-            L_avg_sqrt_inv = 1./L_avg_sqrt
-            from scipy.linalg import inv, sqrtm
-            C_avg_sqrt = sqrtm(C_avg)
-            C_avg_sqrt_inv = inv(C_avg_sqrt)
-        if projection_stable_G or positive_baselines:
-            from scipy.linalg import inv
-            C_avg_inv = inv(C_avg)
-
-        if positive_baselines:
-            #neg_baselines = - tf.matmul(tf.matmul(np.diag(L_avg),R,transpose_b=True),\
-            #                            np.dot(C_avg_inv,L_avg.reshape(d,1)))
-            neg_baselines = - tf.matmul(tf.matrix_inverse(R), L_avg.reshape(d,1))
-            cost += l_mu * tf.reduce_sum(tf.nn.relu(neg_baselines))
+        L_avg = np.mean(self.L, axis=0)
+        C_avg = np.mean(self.C, axis=0)
+        K_avg = np.mean(self.K_c, axis=0)
 
         solver = self.tf_solver(step).minimize(cost)
 
@@ -232,9 +213,6 @@ class NPHC(LearnerHawkesNoParam):
         with tf.Session() as sess:
             sess.run(init)
 
-            # Set logs writer into folder /tmp/tf_cumul
-            #summary_writer = tf.train.SummaryWriter('/tmp/tf_cumul', graph=sess.graph)
-
             # Training cycle
             for epoch in range(max_iter):
 
@@ -243,35 +221,7 @@ class NPHC(LearnerHawkesNoParam):
                                            for (L_, C_, K_c_) in zip(self.L, self.C, self.K_c)])
                     print("Epoch:", '%04d' % (epoch), "log10(cost)=", "{:.9f}".format(np.log10(avg_cost)))
 
-                if use_average:
-                    sess.run(solver, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
-
-                elif use_projection:
-                    # Fit training using batch data
-                    i = np.random.randint(0, len(self.data))
-                    sess.run(solver, feed_dict={L: self.L[i], C: self.C[i], K_c: self.K_c[i]})
-                    to_be_projected = np.dot(C_avg_sqrt_inv,np.dot(sess.run(R),np.diag(L_avg_sqrt)))
-                    U, S, V = np.linalg.svd(to_be_projected)
-                    R_projected = np.dot( C_avg_sqrt, np.dot( np.dot(U,V), np.diag(L_avg_sqrt_inv) ) )
-                    assign_op = R.assign(R_projected)
-                    sess.run(assign_op)
-                else:
-                    # Fit training using batch data
-                    i = np.random.randint(0, len(self.data))
-                    sess.run(solver, feed_dict={L: self.L[i], C: self.C[i], K_c: self.K_c[i]})
-
-                if projection_stable_G:
-                    to_be_projected = np.eye(d) - np.dot( np.dot(np.diag(L_avg), sess.run(tf.transpose(R))), C_avg_inv)
-                    U, S, V = np.linalg.svd(to_be_projected)
-                    S[S >= .99] = .99
-                    G_projected = np.dot( U, np.dot(np.diag(S), V) )
-                    R_projected = np.dot(C_avg, np.dot( np.eye(d) - G_projected.T, np.diag(1./L_avg) ) )
-                    assign_op = R.assign(R_projected)
-                    sess.run(assign_op)
-
-                # Write logs at every iteration
-                #summary_str = sess.run(merged_summary_op, feed_dict={L: cumul.L, C: cumul.C, K_c: cumul.K_c})
-                #summary_writer.add_summary(summary_str, epoch)
+                sess.run(solver, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
 
             print("Optimization Finished!")
 
