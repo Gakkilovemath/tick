@@ -84,7 +84,7 @@ class NPHC(LearnerHawkesNoParam):
         'cumul': {'writable': False},
         '_solver': {'writable': False},
         '_elastic_net_ratio': {'writable': False},
-        'C_pen': {},
+        'C_pen': {}, '_tf_feed_dict': {},
     }
 
     def __init__(self, half_width, C=1e-3, penalty='none', solver='adam',
@@ -112,6 +112,7 @@ class NPHC(LearnerHawkesNoParam):
         self._solver = solver
         self.R_true = R_true
         self.mu_true = mu_true
+        self._tf_feed_dict = None
 
     def _set_data(self, events):
         LearnerHawkesNoParam._set_data(self, events)
@@ -141,12 +142,67 @@ class NPHC(LearnerHawkesNoParam):
         raise NotImplementedError()
 
     @property
-    def model_coeffs(self):
+    def _tf_model_coeffs(self):
         import tensorflow as tf
 
         d = len(self.L[0])
         with tf.variable_scope("model", reuse=tf.AUTO_REUSE):
             return tf.get_variable("R", [d, d], dtype=tf.float64)
+
+    def _tf_placeholders(self):
+        import tensorflow as tf
+
+        d = len(self.L[0])
+        if self._tf_feed_dict is None:
+            L = tf.placeholder(tf.float64, d, name='L')
+            C = tf.placeholder(tf.float64, (d, d), name='C')
+            K_c = tf.placeholder(tf.float64, (d, d), name='K_c')
+            self._tf_feed_dict = L, C, K_c
+
+        return self._tf_feed_dict
+
+    def _tf_objective_graph(self):
+        import tensorflow as tf
+        d = len(self.L[0])
+
+        if self.alpha is None:
+            alpha = self.approximate_optimal_alpha()
+        else:
+            alpha = self.alpha
+
+        L, C, K_c = self._tf_placeholders()
+        R = self._tf_model_coeffs
+        I = tf.constant(np.eye(d), dtype=tf.float64)
+
+        # Construct model
+        activation_3 = tf.matmul(C, tf.square(R),
+                                 transpose_b=True) + 2.0 * tf.matmul(R, R * C,
+                                                                     transpose_b=True) \
+                       - 2.0 * tf.matmul(R, tf.matmul(tf.diag(L), tf.square(R),
+                                                      transpose_b=True))
+        activation_2 = tf.matmul(R, tf.matmul(tf.diag(L), R, transpose_b=True))
+
+        cost = (1 - alpha) * tf.reduce_mean(
+            tf.squared_difference(activation_3, K_c)) \
+               + alpha * tf.reduce_mean(
+            tf.squared_difference(activation_2, C))
+
+        reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
+        reg_l2 = tf.contrib.layers.l2_regularizer(self.strength_ridge)
+
+        if self.strength_ridge * self.strength_lasso > 0:
+            cost = tf.cast(cost, tf.float64) + reg_l1(
+                (I - tf.matrix_inverse(R))) + reg_l2((I - tf.matrix_inverse(R)))
+        elif self.strength_lasso > 0:
+            cost = tf.cast(cost, tf.float64) + reg_l1(
+                (I - tf.matrix_inverse(R)))
+        elif self.strength_ridge > 0:
+            cost = tf.cast(cost, tf.float64) + reg_l2(
+                (I - tf.matrix_inverse(R)))
+        else:
+            cost = tf.cast(cost, tf.float64)
+
+        return cost
 
     def _solve(self, adjacency_start=None):
         """
@@ -173,11 +229,6 @@ class NPHC(LearnerHawkesNoParam):
 
         self._compute_cumulants()
 
-        if self.alpha is None:
-            alpha = self.approximate_optimal_alpha()
-        else:
-            alpha = self.alpha
-
         cumulants_list = [self.L, self.C, self.K_c]
         d = len(self.L[0])
         if adjacency_start is None:
@@ -185,46 +236,20 @@ class NPHC(LearnerHawkesNoParam):
         else:
             start_point = adjacency_start.copy()
 
-        L = tf.placeholder(tf.float64, d, name='L')
-        C = tf.placeholder(tf.float64, (d,d), name='C')
-        K_c = tf.placeholder(tf.float64, (d,d), name='K_c')
-
-        R = self.model_coeffs
-        I = tf.constant(np.eye(d), dtype=tf.float64)
-
-        # Construct model
-        activation_3 = tf.matmul(C,tf.square(R),transpose_b=True) + 2.0*tf.matmul(R,R*C,transpose_b=True) \
-                       - 2.0*tf.matmul(R,tf.matmul(tf.diag(L),tf.square(R),transpose_b=True))
-        activation_2 = tf.matmul(R,tf.matmul(tf.diag(L),R,transpose_b=True))
-
-        cost = (1 - alpha) * tf.reduce_mean(
-            tf.squared_difference(activation_3, K_c)) \
-               + alpha * tf.reduce_mean(
-            tf.squared_difference(activation_2, C))
-
-        reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
-        reg_l2 = tf.contrib.layers.l2_regularizer(self.strength_ridge)
-
-        if self.strength_ridge * self.strength_lasso > 0:
-            cost = tf.cast(cost, tf.float64) + reg_l1((I - tf.matrix_inverse(R))) + reg_l2((I - tf.matrix_inverse(R)))
-        elif self.strength_lasso > 0:
-            cost = tf.cast(cost, tf.float64) + reg_l1((I - tf.matrix_inverse(R)))
-        elif self.strength_ridge > 0:
-            cost = tf.cast(cost, tf.float64) + reg_l2((I - tf.matrix_inverse(R)))
-        else:
-            cost = tf.cast(cost, tf.float64)
 
         # always use the average cumulants over all realizations
         L_avg = np.mean(self.L, axis=0)
         C_avg = np.mean(self.C, axis=0)
         K_avg = np.mean(self.K_c, axis=0)
 
+        cost = self._tf_objective_graph()
+        L, C, K_c = self._tf_placeholders()
         solver = self.tf_solver(self.step).minimize(cost)
 
         # Launch the graph
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
-            sess.run(R.assign(start_point))
+            sess.run(self._tf_model_coeffs.assign(start_point))
             # Training cycle
             for epoch in range(self.max_iter):
 
@@ -237,7 +262,7 @@ class NPHC(LearnerHawkesNoParam):
 
             print("Optimization Finished!")
 
-            self._set('solution', sess.run(self.model_coeffs))
+            self._set('solution', sess.run(self._tf_model_coeffs))
 
 
     @property
