@@ -132,7 +132,7 @@ class NPHC(LearnerHawkesNoParam):
 
     def _solve(self, alpha=None, adjacency_start=None,
                max_iter=1000, step=1e6, solver='adam',
-               display_step = 100, use_average=False, use_projection=False,
+               display_step = 100, use_average=True, use_projection=False,
                projection_stable_G=False, positive_baselines=False, l_mu=0.):
         """
 

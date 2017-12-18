@@ -80,9 +80,9 @@ class Test(InferenceTest):
         R_pred = model.solve(alpha=.9, max_iter=300, display_step=2000,
                              step=1e-2, solver='adam')
 
-        expected_R_pred = [[0.69493996, -0.23326304, 0.02567722],
-                           [-0.0715943, 0.8538519, 0.20695158],
-                           [0.85575898, 0.68885453, 1.82055179]]
+        expected_R_pred = [[0.423305, -0.559607, -0.307212],
+                           [-0.30411, 0.27066, -0.347162],
+                           [0.484648, 0.331057, 1.591584]]
 
         np.testing.assert_array_almost_equal(R_pred, expected_R_pred)
 
