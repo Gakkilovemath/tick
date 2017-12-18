@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.linalg import qr, sqrtm, norm
 
+from tick.inference.base import LearnerHawkesNoParam
 from tick.inference.nphc.cumulants import Cumulants
 
 
@@ -22,43 +23,52 @@ def random_orthogonal_matrix(dim):
     return Q
 
 
-class NPHC(object):
+class NPHC(LearnerHawkesNoParam):
     """
     A class that implements non-parametric estimation described in th paper
     `Uncovering Causality from Multivariate Hawkes Integrated Cumulants` by
     Achab, Bacry, Gaiffas, Mastromatteo and Muzy (2016, Preprint).
 
 
-    Methods
-    -------
-
-        fit : compute the Cumulants using function from `cumulants.py`
-
-        solve : minimize the objective function
-
-
     Attributes
     ----------
+    L : list of `np.array` shape=(dim,)
+        Estimated means
 
-        L : list of `np.array` shape=(dim,)
-            Estimated means
+    C : list of `np.array` shape=(dim,dim)
+        Estimated covariance
 
-        C : list of `np.array` shape=(dim,dim)
-            Estimated covariance
+    K_c : list of `np.array` shape=(dim,dim)
+        Estimated skewness (sliced)
 
-        K : list of `np.array` shape=(dim,dim)
-            Estimated skewness (sliced)
+    L_th : list of `np.array` shape=(dim,)
+        Theoric means
 
-        R : `np.array` shape=(dim,dim)
-            Parameter of interest, linked to the integrals of Hawkes kernels
+    C_th : list of `np.array` shape=(dim,dim)
+        Theoric covariance
+
+    K_c_th : list of `np.array` shape=(dim,dim)
+        Theoric skewness (sliced)
+
+    R : `np.array` shape=(dim,dim)
+        Parameter of interest, linked to the integrals of Hawkes kernels
+
+    Other Parameters
+    ----------------
+    alpha : `float`, default=`None`
+        Ratio between skewness and covariance. The higher it is, the
+        more covariance impacts the result which leads to symmetric
+        adjacency matrices.
+        If None, a default value is computed based on the norm of the
+        estimated covariance and skewness cumulants.
+
     """
+    _attrinfos = {
+        'l_l1': {}, 'l_l2': {},
+    }
 
     def __init__(self):
-
-        object.__init__(self)
-
-        # we will store here the optimal cost reached
-        self.optcost = None
+        LearnerHawkesNoParam.__init__(self)
 
     def fit(self, realizations, half_width=100.,
             mu_true=None, R_true=None):
@@ -76,9 +86,9 @@ class NPHC(object):
 
         """
         if all(isinstance(x,list) for x in realizations):
-            self.realizations = realizations
+            self._set('data', realizations)
         else:
-            self.realizations = [realizations]
+            self._set('data', [realizations])
 
         cumul = Cumulants(realizations, half_width=half_width,
                           mu_true=mu_true, R_true=R_true)
@@ -101,10 +111,13 @@ class NPHC(object):
         norm_sq_K_c = norm(np.mean([K_c for K_c in self.K_c], axis=0)) ** 2
         return norm_sq_K_c / (norm_sq_K_c + norm_sq_C)
 
-    def solve(self, alpha=None, l_l1=0., l_l2=0., adjacency_start=None,
-              max_iter=1000, step=1e6, solver='adam',
-              display_step = 100, use_average=False, use_projection=False,
-              projection_stable_G=False, positive_baselines=False, l_mu=0.):
+    def objective(self, coeffs, loss: float=None):
+        raise NotImplementedError()
+
+    def _solve(self, alpha=None, l_l1=0., l_l2=0., adjacency_start=None,
+               max_iter=1000, step=1e6, solver='adam',
+               display_step = 100, use_average=False, use_projection=False,
+               projection_stable_G=False, positive_baselines=False, l_mu=0.):
         """
 
         Parameters
@@ -114,13 +127,6 @@ class NPHC(object):
             starting point in optimization.
             If `None`, a default starting point is estimated from the 
             estimated cumulants
-
-        alpha : `float`, default=`None`
-            Ratio between skewness and covariance. The higher it is, the
-            more covariance impacts the result which leads to symmetric
-            adjacency matrices.
-            If None, a default value is computed based on the norm of the
-            estimated covariance and skewness cumulants.
 
         max_iter : `int`
             The number of training epochs.
@@ -140,9 +146,6 @@ class NPHC(object):
             self.alpha = self.approximate_optimal_alpha()
         else:
             self.alpha = alpha
-
-        self.l_l1 = l_l1
-        self.l_l2 = l_l2
 
         cumulants_list = [self.L, self.C, self.K_c]
         d = len(self.L[0])
@@ -171,14 +174,14 @@ class NPHC(object):
                + self.alpha * tf.reduce_mean(
             tf.squared_difference(activation_2, C))
 
-        reg_l1 = tf.contrib.layers.l1_regularizer(self.l_l1)
-        reg_l2 = tf.contrib.layers.l2_regularizer(self.l_l2)
+        reg_l1 = tf.contrib.layers.l1_regularizer(l_l1)
+        reg_l2 = tf.contrib.layers.l2_regularizer(l_l2)
 
-        if (self.l_l2 * self.l_l1 > 0):
+        if l_l2 * l_l1 > 0:
             cost = tf.cast(cost, tf.float64) + reg_l1((I - tf.matrix_inverse(R))) + reg_l2((I - tf.matrix_inverse(R)))
-        elif (self.l_l1 > 0):
+        elif l_l1 > 0:
             cost = tf.cast(cost, tf.float64) + reg_l1((I - tf.matrix_inverse(R)))
-        elif (self.l_l2 > 0):
+        elif l_l2 > 0:
             cost = tf.cast(cost, tf.float64) + reg_l2((I - tf.matrix_inverse(R)))
         else:
             cost = tf.cast(cost, tf.float64)
@@ -240,7 +243,7 @@ class NPHC(object):
 
                 elif use_projection:
                     # Fit training using batch data
-                    i = np.random.randint(0,len(self.realizations))
+                    i = np.random.randint(0, len(self.data))
                     sess.run(solver, feed_dict={L: self.L[i], C: self.C[i], K_c: self.K_c[i]})
                     to_be_projected = np.dot(C_avg_sqrt_inv,np.dot(sess.run(R),np.diag(L_avg_sqrt)))
                     U, S, V = np.linalg.svd(to_be_projected)
@@ -249,7 +252,7 @@ class NPHC(object):
                     sess.run(assign_op)
                 else:
                     # Fit training using batch data
-                    i = np.random.randint(0,len(self.realizations))
+                    i = np.random.randint(0, len(self.data))
                     sess.run(solver, feed_dict={L: self.L[i], C: self.C[i], K_c: self.K_c[i]})
 
                 if projection_stable_G:
@@ -267,6 +270,6 @@ class NPHC(object):
 
             print("Optimization Finished!")
 
-            return sess.run(R)
+            self._set('solution', sess.run(R))
 
 
