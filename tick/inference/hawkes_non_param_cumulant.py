@@ -88,13 +88,23 @@ class NPHC(LearnerHawkesNoParam):
     }
 
     def __init__(self, half_width, C=1e-3, penalty='none', solver='adam',
-                 elastic_net_ratio=0.95, R_true=None, mu_true=None):
-        LearnerHawkesNoParam.__init__(self)
+                 elastic_net_ratio=0.95,
+                 tol=1e-5, verbose=False, max_iter=1000,
+                 print_every=100, record_every=10,
+                 step=1e-2,
+                 alpha=None, R_true=None, mu_true=None):
+
+        LearnerHawkesNoParam.__init__(
+            self, tol=tol, verbose=verbose, max_iter=max_iter,
+            print_every=print_every, record_every=record_every
+        )
 
         self._elastic_net_ratio = None
         self.C_pen = C
         self.penalty = penalty
         self.elastic_net_ratio = elastic_net_ratio
+        self.step = step
+        self.alpha = alpha
 
         self.cumul = Cumulants(half_width=half_width, mu_true=None,
                                R_true=None)
@@ -130,9 +140,7 @@ class NPHC(LearnerHawkesNoParam):
     def objective(self, coeffs, loss: float=None):
         raise NotImplementedError()
 
-    def _solve(self, alpha=None, adjacency_start=None,
-               max_iter=1000, step=1e6, solver='adam',
-               display_step=100):
+    def _solve(self, adjacency_start=None):
         """
 
         Parameters
@@ -157,10 +165,10 @@ class NPHC(LearnerHawkesNoParam):
 
         self._compute_cumulants()
 
-        if alpha is None:
-            self.alpha = self.approximate_optimal_alpha()
+        if self.alpha is None:
+            alpha = self.approximate_optimal_alpha()
         else:
-            self.alpha = alpha
+            alpha = self.alpha
 
         cumulants_list = [self.L, self.C, self.K_c]
         d = len(self.L[0])
@@ -182,9 +190,9 @@ class NPHC(LearnerHawkesNoParam):
                        - 2.0*tf.matmul(R,tf.matmul(tf.diag(L),tf.square(R),transpose_b=True))
         activation_2 = tf.matmul(R,tf.matmul(tf.diag(L),R,transpose_b=True))
 
-        cost = (1 - self.alpha) * tf.reduce_mean(
+        cost = (1 - alpha) * tf.reduce_mean(
             tf.squared_difference(activation_3, K_c)) \
-               + self.alpha * tf.reduce_mean(
+               + alpha * tf.reduce_mean(
             tf.squared_difference(activation_2, C))
 
         reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
@@ -204,7 +212,7 @@ class NPHC(LearnerHawkesNoParam):
         C_avg = np.mean(self.C, axis=0)
         K_avg = np.mean(self.K_c, axis=0)
 
-        solver = self.tf_solver(step).minimize(cost)
+        solver = self.tf_solver(self.step).minimize(cost)
 
         # Initialize the variables
         init = tf.global_variables_initializer()
@@ -214,9 +222,9 @@ class NPHC(LearnerHawkesNoParam):
             sess.run(init)
 
             # Training cycle
-            for epoch in range(max_iter):
+            for epoch in range(self.max_iter):
 
-                if epoch % display_step == 0:
+                if epoch % self.print_every == 0:
                     avg_cost = np.average([sess.run(cost, feed_dict={L: L_, C: C_, K_c: K_c_})
                                            for (L_, C_, K_c_) in zip(self.L, self.C, self.K_c)])
                     print("Epoch:", '%04d' % (epoch), "log10(cost)=", "{:.9f}".format(np.log10(avg_cost)))
