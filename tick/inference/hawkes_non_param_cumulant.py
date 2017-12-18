@@ -34,6 +34,12 @@ class NPHC(LearnerHawkesNoParam):
     half_width : `double`
         kernel support
 
+    C : `float`, default=1e3
+        Level of penalization
+
+    penalty : {'l1', 'l2', 'elasticnet', 'none'}, default='none'
+        The penalization to use. By default no penalization is used.
+
     Attributes
     ----------
     L : list of `np.array` shape=(dim,)
@@ -66,14 +72,30 @@ class NPHC(LearnerHawkesNoParam):
         If None, a default value is computed based on the norm of the
         estimated covariance and skewness cumulants.
 
+    elastic_net_ratio : `float`, default=0.95
+        Ratio of elastic net mixing parameter with 0 <= ratio <= 1.
+        For ratio = 0 this is ridge (L2 squared) regularization
+        For ratio = 1 this is lasso (L1) regularization
+        For 0 < ratio < 1, the regularization is a linear combination
+        of L1 and L2.
+        Used in 'elasticnet' penalty
     """
     _attrinfos = {
         'cumul': {'writable': False},
         '_solver': {'writable': False},
+        '_elastic_net_ratio': {'writable': False},
+        'C_pen': {},
     }
 
-    def __init__(self, half_width, solver='adam', R_true=None, mu_true=None):
+    def __init__(self, half_width, C=1e-3, penalty='none', solver='adam',
+                 elastic_net_ratio=0.95, R_true=None, mu_true=None):
         LearnerHawkesNoParam.__init__(self)
+
+        self._elastic_net_ratio = None
+        self.C_pen = C
+        self.penalty = penalty
+        self.elastic_net_ratio = elastic_net_ratio
+
         self.cumul = Cumulants(half_width=half_width, mu_true=None,
                                R_true=None)
         self._learner = self.cumul._cumulant
@@ -108,7 +130,7 @@ class NPHC(LearnerHawkesNoParam):
     def objective(self, coeffs, loss: float=None):
         raise NotImplementedError()
 
-    def _solve(self, alpha=None, l_l1=0., l_l2=0., adjacency_start=None,
+    def _solve(self, alpha=None, adjacency_start=None,
                max_iter=1000, step=1e6, solver='adam',
                display_step = 100, use_average=False, use_projection=False,
                projection_stable_G=False, positive_baselines=False, l_mu=0.):
@@ -168,14 +190,14 @@ class NPHC(LearnerHawkesNoParam):
                + self.alpha * tf.reduce_mean(
             tf.squared_difference(activation_2, C))
 
-        reg_l1 = tf.contrib.layers.l1_regularizer(l_l1)
-        reg_l2 = tf.contrib.layers.l2_regularizer(l_l2)
+        reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
+        reg_l2 = tf.contrib.layers.l2_regularizer(self.strength_ridge)
 
-        if l_l2 * l_l1 > 0:
+        if self.strength_ridge * self.strength_lasso > 0:
             cost = tf.cast(cost, tf.float64) + reg_l1((I - tf.matrix_inverse(R))) + reg_l2((I - tf.matrix_inverse(R)))
-        elif l_l1 > 0:
+        elif self.strength_lasso > 0:
             cost = tf.cast(cost, tf.float64) + reg_l1((I - tf.matrix_inverse(R)))
-        elif l_l2 > 0:
+        elif self.strength_ridge > 0:
             cost = tf.cast(cost, tf.float64) + reg_l2((I - tf.matrix_inverse(R)))
         else:
             cost = tf.cast(cost, tf.float64)
@@ -286,4 +308,34 @@ class NPHC(LearnerHawkesNoParam):
             return tf.train.AdadeltaOptimizer
         elif self.solver.lower() == 'adadelta':
             return tf.train.GradientDescentOptimizer
+
+
+    @property
+    def elastic_net_ratio(self):
+        return self._elastic_net_ratio
+
+    @elastic_net_ratio.setter
+    def elastic_net_ratio(self, val):
+        if val < 0 or val > 1:
+            raise ValueError("`elastic_net_ratio` must be between 0 and 1, "
+                             "got %s" % str(val))
+        else:
+            self._set("_elastic_net_ratio", val)
+
+    @property
+    def strength_lasso(self):
+        if self.penalty == 'elasticnet':
+            return self.elastic_net_ratio / self.C_pen
+        elif self.penalty == 'l1':
+            return 1. / self.C_pen
+        else:
+            return 0.
+
+    @property
+    def strength_ridge(self):
+        if self.penalty == 'elasticnet':
+            return (1 - self.elastic_net_ratio) / self.C_pen
+        elif self.penalty == 'l2':
+            return 1. / self.C_pen
+        return 0.
 
