@@ -177,18 +177,25 @@ class NPHC(LearnerHawkesNoParam):
             I = tf.constant(np.eye(d), dtype=tf.float64)
 
             # Construct model
-            activation_3 = tf.matmul(C, tf.square(R),
-                                     transpose_b=True) + 2.0 * tf.matmul(R, R * C,
-                                                                         transpose_b=True) \
-                           - 2.0 * tf.matmul(R, tf.matmul(tf.diag(L), tf.square(R),
-                                                          transpose_b=True))
-            activation_2 = tf.matmul(R, tf.matmul(tf.diag(L), R, transpose_b=True))
+            variable_covariance = \
+                tf.matmul(R, tf.matmul(tf.diag(L), R, transpose_b=True))
 
-            cost = (1 - alpha) * tf.reduce_mean(
-                tf.squared_difference(activation_3, K_c)) \
-                   + alpha * tf.reduce_mean(
-                tf.squared_difference(activation_2, C))
+            variable_skewness = \
+                tf.matmul(C, tf.square(R), transpose_b=True) \
+                + 2.0 * tf.matmul(R, R * C, transpose_b=True) \
+                - 2.0 * tf.matmul(R, tf.matmul(
+                    tf.diag(L), tf.square(R), transpose_b=True))
 
+            covariance_divergence = tf.reduce_mean(
+                tf.squared_difference(variable_covariance, C))
+
+            skewness_divergence = tf.reduce_mean(
+                tf.squared_difference(variable_skewness, K_c))
+
+            cost = (1 - alpha) * skewness_divergence
+            cost += alpha * covariance_divergence
+
+            # Add potential regularization
             cost = tf.cast(cost, tf.float64)
             if self.strength_lasso > 0:
                 reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
