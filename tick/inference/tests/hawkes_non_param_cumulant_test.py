@@ -98,6 +98,57 @@ class Test(InferenceTest):
         np.testing.assert_array_almost_equal(model.adjacency,
                                              expected_adjacency)
 
+    def test_hawkes_nphc_cumulants_solve_l1(self):
+        timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
+        model = NPHC(100., alpha=0.9, max_iter=300, print_every=30,
+                     step=1e-2, solver='adam', verbose=True, penalty='l1', C=1)
+        model.fit(timestamps)
+        R_pred = model.solve()
+
+        expected_R_pred = [[0.434197, -0.552021, -0.308883],
+                           [-0.299366, 0.272764, -0.347764],
+                           [0.48448, 0.331059, 1.591587]]
+
+        np.testing.assert_array_almost_equal(R_pred, expected_R_pred)
+
+        expected_baseline = [32.788801, 29.324684, -13.275885]
+
+        np.testing.assert_array_almost_equal(model.baseline,
+                                             expected_baseline)
+
+        expected_adjacency = [[-2.925945, -5.54899, -1.97438],
+                              [-2.201373, -5.009153, -1.740234],
+                              [1.652958, 2.939054, 1.334677]]
+
+        np.testing.assert_array_almost_equal(model.adjacency,
+                                             expected_adjacency)
+
+    def test_hawkes_nphc_cumulants_solve_l2(self):
+        timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
+        model = NPHC(100., alpha=0.9, max_iter=300, print_every=30,
+                     step=1e-2, solver='adam', verbose=True, penalty='l2',
+                     C=0.1)
+        model.fit(timestamps)
+        R_pred = model.solve()
+
+        expected_R_pred = [[0.516135, -0.484529, -0.323191],
+                           [-0.265853, 0.291741, -0.35285],
+                           [0.482819, 0.331344, 1.591535]]
+
+        np.testing.assert_array_almost_equal(R_pred, expected_R_pred)
+
+        expected_baseline = [17.066997, 17.79795, -6.07811]
+
+        np.testing.assert_array_almost_equal(model.baseline,
+                                             expected_baseline)
+
+        expected_adjacency = [[-1.310854, -2.640152, -1.054596],
+                              [-1.004887, -2.886297, -1.065671],
+                              [0.910245, 1.610029, 0.913469]]
+
+        np.testing.assert_array_almost_equal(model.adjacency,
+                                             expected_adjacency)
+
 
 if __name__ == "__main__":
     unittest.main()
