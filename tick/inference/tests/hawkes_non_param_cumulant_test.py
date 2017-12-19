@@ -86,6 +86,11 @@ class Test(InferenceTest):
 
         np.testing.assert_array_almost_equal(R_pred, expected_R_pred)
 
+        expected_baseline = [36.808583, 32.304106, -15.123118]
+
+        np.testing.assert_array_almost_equal(model.baseline,
+                                             expected_baseline)
+
         expected_adjacency = [[-3.34742247, -6.28527387, -2.21012092],
                               [-2.51556256, -5.55341413, -1.91501755],
                               [1.84706793, 3.2770494, 1.44302449]]

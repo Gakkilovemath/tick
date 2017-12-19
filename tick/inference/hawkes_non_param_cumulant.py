@@ -143,6 +143,11 @@ class NPHC(LearnerHawkesNoParam):
         d = self.cumul._cumulant.get_n_nodes()
         return np.eye(d) - scipy.linalg.inv(self.solution)
 
+    @property
+    def baseline(self):
+        L_avg = np.mean(self.L, axis=0)
+        return scipy.linalg.inv(self.solution).dot(L_avg)
+
     def _tf_placeholders(self):
         import tensorflow as tf
 
