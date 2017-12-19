@@ -35,9 +35,8 @@ simu_hawkes = SimuHawkesExpKernels(baseline=baselines, adjacency=adjacency,
 multi = SimuHawkesMulti(simu_hawkes, n_simulations=n_days, n_threads=-1)
 multi.simulate()
 
-nphc = NPHC(10, mu_true=baselines, R_true=inv(np.eye(d) - adjacency),
-            alpha=.9, max_iter=300, print_every=20,
-            step=1e-2, solver='adam')
+nphc = NPHC(10, alpha=.9, max_iter=300, print_every=20,
+            step=1e-2, solver='adam', penalty='l1', C=1e-4)
 nphc.fit(multi.timestamps)
 
 R_pred = nphc.solve()

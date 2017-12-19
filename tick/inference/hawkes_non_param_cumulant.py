@@ -51,15 +51,6 @@ class NPHC(LearnerHawkesNoParam):
     K_c : list of `np.array` shape=(dim,dim)
         Estimated skewness (sliced)
 
-    L_th : list of `np.array` shape=(dim,)
-        Theoric means
-
-    C_th : list of `np.array` shape=(dim,dim)
-        Theoric covariance
-
-    K_c_th : list of `np.array` shape=(dim,dim)
-        Theoric skewness (sliced)
-
     R : `np.array` shape=(dim,dim)
         Parameter of interest, linked to the integrals of Hawkes kernels
 
@@ -91,8 +82,7 @@ class NPHC(LearnerHawkesNoParam):
                  elastic_net_ratio=0.95,
                  tol=1e-5, verbose=False, max_iter=1000,
                  print_every=100, record_every=10,
-                 step=1e-2,
-                 alpha=None, R_true=None, mu_true=None):
+                 step=1e-2, alpha=None):
 
         LearnerHawkesNoParam.__init__(
             self, tol=tol, verbose=verbose, max_iter=max_iter,
@@ -110,8 +100,6 @@ class NPHC(LearnerHawkesNoParam):
                                R_true=None)
         self._learner = self.cumul._cumulant
         self._solver = solver
-        self.R_true = R_true
-        self.mu_true = mu_true
         self._tf_feed_dict = None
 
         self.history.print_order = ["n_iter", "objective"]
@@ -126,14 +114,6 @@ class NPHC(LearnerHawkesNoParam):
         self.L = self.cumul.L.copy()
         self.C = self.cumul.C.copy()
         self.K_c = self.cumul.K_c.copy()
-        if self.R_true is not None and self.mu_true is not None:
-            self.L_th = self.cumul.L_th
-            self.C_th = self.cumul.C_th
-            self.K_c_th = self.cumul.K_c_th
-        else:
-            self.L_th = None
-            self.C_th = None
-            self.K_c_th = None
 
     def approximate_optimal_alpha(self):
         norm_sq_C = norm(np.mean([C for C in self.C], axis=0)) ** 2

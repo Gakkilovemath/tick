@@ -76,25 +76,6 @@ class Cumulants(object):
 
             self._E_c[day] = E_c.copy()
 
-    def set_R_true(self, R_true):
-        self.R_true = R_true
-
-    def set_mu_true(self, mu_true):
-        self.mu_true = mu_true
-
-    def set_L_th(self):
-        assert self.R_true is not None, "You should provide R_true."
-        assert self.mu_true is not None, "You should provide mu_true."
-        self.L_th = get_L_th(self.mu_true, self.R_true)
-
-    def set_C_th(self):
-        assert self.R_true is not None, "You should provide R_true."
-        self.C_th = get_C_th(self.L_th, self.R_true)
-
-    def set_K_c_th(self):
-        assert self.R_true is not None, "You should provide R_true."
-        self.K_c_th = get_K_c_th(self.L_th, self.C_th, self.R_true)
-
     @property
     def realizations(self):
         return self._realizations
@@ -123,28 +104,4 @@ def get_K_c(E_c):
     K_c += 2 * E_c[:, :, 0]
     K_c += E_c[:, :, 1]
     K_c /= 3.
-    return K_c
-
-
-##########
-## Theoretical cumulants L, C, K, K_c
-##########
-
-def get_L_th(mu, R):
-    return np.dot(R, mu)
-
-
-def get_C_th(L, R):
-    return np.dot(R, np.dot(np.diag(L), R.T))
-
-
-def get_K_c_th(L, C, R):
-    d = len(L)
-    if R.shape[0] == d ** 2:
-        R_ = R.reshape(d, d)
-    else:
-        R_ = R.copy()
-    K_c = np.dot(C, (R_ * R_).T)
-    K_c += 2 * np.dot(R_, (R_ * C).T)
-    K_c -= 2 * np.dot(np.dot(R_, np.diag(L)), (R_ * R_).T)
     return K_c
