@@ -4,7 +4,7 @@
 """
 
 from tick.plot import plot_point_process
-from tick.simulation import SimuHawkes, HawkesKernelSumExp
+from tick.hawkes import SimuHawkes, HawkesKernelSumExp
 import matplotlib.pyplot as plt
 
 run_time = 40

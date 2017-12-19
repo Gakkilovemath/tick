@@ -5,7 +5,7 @@ Simulation of 3-dimensional hawkes process
 import numpy as np
 import matplotlib.pyplot as plt
 
-from tick.simulation import SimuHawkesExpKernels
+from tick.hawkes import SimuHawkesExpKernels
 from tick.plot import plot_point_process
 
 n_nodes = 3  # dimension of the Hawkes process

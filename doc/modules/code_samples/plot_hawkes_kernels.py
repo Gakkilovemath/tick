@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from tick.simulation import HawkesKernel0, HawkesKernelExp, \
-    HawkesKernelPowerLaw, HawkesKernelTimeFunc
+from tick.hawkes import HawkesKernel0, HawkesKernelExp, HawkesKernelPowerLaw, \
+    HawkesKernelTimeFunc
 
 kernel_0 = HawkesKernel0()
 kernel_exp = HawkesKernelExp(.7, 1.3)

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tick.optim.model import ModelPoisReg
+from tick.linear_model import ModelPoisReg
 
 n = 1000
 x = np.linspace(-1.5, 2, n)

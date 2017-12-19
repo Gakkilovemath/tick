@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from tick.simulation import SimuLogReg, weights_sparse_gauss
-from tick.optim.model import ModelLogReg
+from tick.linear_model import ModelLogReg, SimuLogReg
+from tick.simulation import weights_sparse_gauss
 
 n_samples, n_features = 2000, 50
 weights0 = weights_sparse_gauss(n_weights=n_features, nnz=10)

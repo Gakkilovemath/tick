@@ -14,17 +14,16 @@ variance_reduction_methods_mapper = {
 
 
 class SAGA(SolverFirstOrderSto):
-    """Stochastic Average Gradient solver
-
-    For the minimization of objectives of the form
+    """Stochastic Average Gradient solver, for the minimization of objectives
+    of the form
 
     .. math::
         \\frac 1n \\sum_{i=1}^n f_i(w) + g(w),
 
     where the functions :math:`f_i` have smooth gradients and :math:`g` is
     prox-capable. Note that :class:`SAGA <tick.solver.SAGA>` works only
-    with linear models, see :ref:`linear-models` where all linear models are
-    listed.
+    with linear models, see :ref:`linear_model` and :ref:`robust`, where all
+    linear models are listed.
     Function :math:`f = \\frac 1n \\sum_{i=1}^n f_i` corresponds
     to the ``model.loss`` method of the model (passed with ``set_model`` to the
     solver) and :math:`g` corresponds to the ``prox.value`` method of the

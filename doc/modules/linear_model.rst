@@ -57,15 +57,8 @@ its associated class and label type.
 
 The first learner types concern linear models presented in
 
-:ref:`linear-models`
 
-Theses learners are essentially a combination of
-
-* :ref:`optim-model`
-* :ref:`prox`
-* :ref:`solver`
-
-which are described in depth in :ref:`optim`.
+which are described in depth in ???
 
 
 Note that models for robust supervised learning are available in the
@@ -81,7 +74,6 @@ Poisson regression (exponential link)     Count data      Integer     :class:`Mo
 Hinge loss                                Classification  Binary      :class:`ModelHinge <tick.linear_model.ModelHinge>`
 Quadratic hinge loss                      Classification  Binary      :class:`ModelQuadraticHinge <tick.linear_model.ModelQuadraticHinge>`
 Smoothed hinge loss                       Classification  Binary      :class:`ModelSmoothedHinge <tick.linear_model.ModelSmoothedHinge>`
-Modified Huber loss                       Classification  Binary      :class:`ModelModifiedHuber <tick.linear_model.ModelModifiedHuber>`
 ========================================  ==============  ==========  ==========================================
 
 
@@ -100,6 +92,33 @@ Depending on the problem, you might want to use a specific algorithm to solve it
 This optimization module is therefore organized in the following three main submodules.
 
 
+BLABLA
+======
+
+In ``tick`` a ``model`` class gives information about a statistical model.
+Depending on the case, it gives first order information (loss, gradient) or
+second order information (hessian norm evaluation).
+
+
+
+We describe here (generalized) linear methods for supervised learning.
+Given training data :math:`(x_i, y_i) \in \mathbb R^d \times \mathbb R`
+for :math:`i=1, \ldots, n`, we consider goodness-of-fit that writes
+
+.. math::
+	f(w, b) = \frac 1n \sum_{i=1}^n \ell(y_i, b + x_i^\top w),
+
+where :math:`w \in \mathbb R^d` is a vector containing the model weights,
+:math:`b \in \mathbb R` is the intercept and
+:math:`\ell : \mathbb R^2 \rightarrow \mathbb R` is a loss function.
+Note that for binary regression we have actually binary labels :math:`y_i \in \{ -1, 1 \}`
+while for counts data (Poisson models, see below) we have natural integer :math:`y_i \in \mathbb N`.
+
+The loss function depends on the model. The advantages of using one or another
+are explained in the documentation of the classes themselves.
+The following table lists the different losses implemented for now in `tick`,
+
+
 .. _linear_model-model:
 
 3. Available models
@@ -114,7 +133,7 @@ second order information (hessian norm evaluation).
 
 All model classes allow to compute the loss (value of the objective function :math:`f`) and
 its gradient. Let us illustrate this with the logistic regression model. First, we simulate
-some data, see :ref:`linear model simulation <simulation-linear-model>` to have more information about this.
+some data, see ??? to have more information about this.
 
 .. testcode:: [optim-model-glm]
 
@@ -208,7 +227,7 @@ The gradient of the model can be computed using the ``grad`` method
 
 which plots
 
-.. plot:: modules/code_samples/optim/plot_grad_coeff0.py
+.. plot:: modules/code_samples/plot_grad_coeff0.py
 
 We observe that the gradient near the optimum is much smaller than far from it.
 
@@ -219,7 +238,7 @@ solver's ``set_model`` method, see :ref:`solver`.
 1. Regression models
 --------------------
 
-.. plot:: modules/code_samples/optim/plot_losses_regression.py
+.. plot:: modules/code_samples/plot_losses_regression.py
 
 
 :class:`ModelLinReg <tick.linear_model.ModelLinReg>`
@@ -233,58 +252,11 @@ for :math:`y, y' \in \mathbb R`
 
 ----------------------------------------
 
-:class:`ModelHuber <tick.linear_model.ModelHuber>`
-**************************************************
-
-The Huber loss for robust regression (less sensitive to
-outliers) is given by
-
-.. math::
-    \ell(y, y') =
-    \begin{cases}
-    \frac 12 (y' - y)^2 &\text{ if } |y' - y| \leq \delta \\
-    \delta (|y' - y| - \frac 12 \delta) &\text{ if } |y' - y| > \delta
-    \end{cases}
-
-for :math:`y, y' \in \mathbb R`, where :math:`\delta > 0` can be tuned
-using the ``threshold`` argument.
-
-----------------------------------------
-
-:class:`ModelEpsilonInsensitive <tick.linear_model.ModelEpsilonInsensitive>`
-****************************************************************************
-
-Epsilon-insensitive loss, given by
-
-.. math::
-    \ell(y, y') =
-    \begin{cases}
-    |y' - y| - \epsilon &\text{ if } |y' - y| > \epsilon \\
-    0 &\text{ if } |y' - y| \leq \epsilon
-    \end{cases}
-
-for :math:`y, y' \in \mathbb R`, where :math:`\epsilon > 0` can be tuned using
-the ``threshold`` argument.
-
-----------------------------------------
-
-:class:`ModelAbsoluteRegression <tick.linear_model.ModelAbsoluteRegression>`
-****************************************************************************
-
-The L1 loss given by
-
-.. math::
-    \ell(y, y') = |y' - y|
-
-for :math:`y, y' \in \mathbb R`
-
-----------------------------------------
-
 
 Classification models
 ---------------------
 
-.. plot:: modules/code_samples/optim/plot_losses_classification.py
+.. plot:: modules/code_samples/plot_losses_classification.py
 
 
 :class:`ModelLogReg <tick.linear_model.ModelLogReg>`
@@ -299,7 +271,7 @@ for :math:`y \in \{ -1, 1\}` and :math:`y' \in \mathbb R`
 ----------------------------------------
 
 :class:`ModelHinge <tick.linear_model.ModelHinge>`
-*************************************************
+**************************************************
 
 This is the hinge loss given by
 
@@ -349,30 +321,13 @@ for :math:`y \in \{ -1, 1\}` and :math:`y' \in \mathbb R`,
 where :math:`\delta \in (0, 1)` can be tuned using the ``smoothness`` parameter.
 Note that :math:`\delta = 0` corresponds to the hinge loss.
 
-----------------------------------------
-
-:class:`ModelModifiedHuber <tick.linear_model.ModelModifiedHuber>`
-******************************************************************
-
-The modified Huber loss, used for robust classification (less sensitive to
-outliers). The loss is given by
-
-.. math::
-    \ell(y, y') =
-    \begin{cases}
-    - 4 y y' &\text{ if } y y' \leq -1 \\
-    (1 - y y')^2 &\text{ if } -1 < y y' < 1 \\
-    0 &\text{ if } y y' \geq 1
-    \end{cases}
-
-for :math:`y \in \{ -1, 1\}` and :math:`y' \in \mathbb R`
 
 ----------------------------------------
 
 Count data models
 -----------------
 
-.. plot:: modules/code_samples/optim/plot_losses_count_data.py
+.. plot:: modules/code_samples/plot_losses_count_data.py
 
 :class:`ModelPoisReg <tick.linear_model.ModelPoisReg>`
 ******************************************************

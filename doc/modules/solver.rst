@@ -1,9 +1,11 @@
 
 .. _solver:
 
-==================================
-:mod:`tick.solver`: solver toolbox
-==================================
+==================
+:mod:`tick.solver`
+==================
+
+Solver toolbox.
 
 This is a solver toolbox, which is used to train almost all models in ``tick``.
 It features two types of solvers: deterministic and stochastic.
@@ -19,7 +21,7 @@ considered, and :math:`g` is a function penalizing :math:`w` (see the
 :ref:`tick.prox <prox>` module).
 
 1. The ``solver`` class API
----------------------------
+===========================
 
 All the solvers have a ``set_model`` method, which corresponds to the function
 :math:`f` to pass the model to be trained, and a ``set_prox`` method to pass
@@ -31,9 +33,9 @@ also given :ref:`below <solver-example>`.
 .. testcode::
 
     import numpy as np
-    from tick.simulation import SimuLogReg, weights_sparse_gauss
+    from tick.linear_model import SimuLogReg, ModelLogReg
+    from tick.simulation import weights_sparse_gauss
     from tick.solver import SVRG
-    from tick.optim.model import ModelLogReg
     from tick.prox import ProxElasticNet
 
     n_samples, n_features = 5000, 10
@@ -91,7 +93,7 @@ an automatic tuning of the step size.
 
 
 2. Available solvers
---------------------
+====================
 
 Here is the list of the solvers available in ``tick``. Note that a lot of
 details about each solver is available in the classes documentations, linked
@@ -115,7 +117,7 @@ Stochastic Dual Coordinate Ascent                        :class:`SDCA <tick.solv
 .. _solver-example:
 
 3. Example
-----------
+==========
 
 Here is an example of combination of a ``model`` a ``prox`` and a ``solver`` to
 compare the training time of several solvers for logistic regression with the
@@ -123,5 +125,5 @@ elastic-net penalization.
 Note that, we specify a ``range=(0, n_features)`` so that the intercept is not penalized
 (see :ref:`tick.prox <prox>` for more details).
 
-.. plot:: modules/code_samples/solver/plot_solver_comparison.py
+.. plot:: modules/code_samples/plot_solver_comparison.py
     :include-source:

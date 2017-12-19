@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tick.optim.model import ModelHinge, ModelModifiedHuber, \
-    ModelQuadraticHinge, ModelSmoothedHinge, ModelLogReg
+from tick.linear_model import ModelHinge, ModelQuadraticHinge, \
+    ModelSmoothedHinge, ModelLogReg
+from tick.robust import ModelModifiedHuber
 
 n = 1000
 x = np.linspace(-3, 2, n)

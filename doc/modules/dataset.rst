@@ -1,9 +1,11 @@
 
 .. _dataset:
 
-========================================
-:mod:`tick.dataset`: real world datasets
-========================================
+===================
+:mod:`tick.dataset`
+===================
+
+Real world datasets
 
 Functions
 ---------

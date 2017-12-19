@@ -2,10 +2,11 @@
 
 .. _plot:
 
-====================================
-:mod:`tick.plot`: plotting utilities
-====================================
+================
+:mod:`tick.plot`
+================
 
+Plotting utilities.
 *tick* provides some plot routines able to achieve common plots from tick
 objects.
 
@@ -27,7 +28,7 @@ Used to compare efficiency of optimization algorithms implemented in
 
     plot.plot_history
 
-.. plot:: modules/code_samples/solver/plot_solver_comparison.py
+.. plot:: modules/code_samples/plot_solver_comparison.py
     :include-source:
 
 Hawkes estimation
@@ -45,7 +46,7 @@ Used to observe hawkes parameters obtained by hawkes learners.
    plot.plot_hawkes_kernel_norms
    plot.plot_basis_kernels
 
-.. plot:: modules/code_samples/plot/plot_hawkes_matrix_exp_kernels.py
+.. plot:: modules/code_samples/plot_hawkes_matrix_exp_kernels.py
     :include-source:
 
 Point process simulation
@@ -78,5 +79,5 @@ Some other plot utilities.
    plot.plot_timefunction
    plot.stems
 
-.. plot:: modules/code_samples/simulation/plot_time_function.py
+.. plot:: modules/code_samples/plot_time_function.py
     :include-source:

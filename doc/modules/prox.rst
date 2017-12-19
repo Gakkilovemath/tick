@@ -1,9 +1,11 @@
 
 .. _prox:
 
-====================================
-:mod:`tick.prox`: proximal operators
-====================================
+================
+:mod:`tick.prox`
+================
+
+Proximal operators
 
 This module proposes a large number of proximal operator, allowing the use
 many penalization techniques for model fitting. Namely, most optimization
@@ -32,12 +34,12 @@ and :math:`+\infty` otherwise).
 Note that depending on the problem, :math:`g` might actually be used only a subset of
 entries of :math:`w`.
 For instance, for generalized linear models, :math:`w` contains the model weights and
-an intercept, which is not penalized, see :ref:`generalized linear models <linear-models>`.
+an intercept, which is not penalized, see :ref:`linear_model`.
 Indeed, in all ``prox`` classes, an optional ``range`` parameter is available, to apply
 the regularization only to a subset of entries of :math:`w`.
 
 1. The ``prox`` class API
--------------------------
+=========================
 
 Let us describe the ``prox`` API with the :class:`ProxL1<tick.prox.ProxL1>`
 class, that provides the proximal operator of the function :math:`g(w) = s \|w\|_1 = s \sum_{j=1}^d |w_j|`.
@@ -95,7 +97,7 @@ where :math:`t` is a parameter passed using the ``step`` argument.
 The output of ``call`` can optionally be passed using the ``out`` argument (this avoid unnecessary copies, and
 thus extra memory allocation).
 
-.. plot:: modules/code_samples/prox/plot_prox_api.py
+.. plot:: modules/code_samples/plot_prox_api.py
     :include-source:
 
 The value of :math:`g` is simply obtained using the ``value`` method
@@ -116,7 +118,7 @@ which corresponds to the sum of integers between 5 and 9 included.
 
 
 2. Available operators
-----------------------
+======================
 
 The list of available operators in ``tick`` given in the next table.
 
@@ -144,11 +146,11 @@ It simply applies sequentially each operator passed to :class:`ProxMulti <tick.p
 one after the other. Here is an example of combination of a total-variation penalization and L1 penalization
 applied to different parts of a vector.
 
-.. plot:: modules/code_samples/prox/plot_prox_multi.py
+.. plot:: modules/code_samples/plot_prox_multi.py
     :include-source:
 
 3. Example
-----------
+==========
 Here is an illustration of the effect of these proximal operators on an example.
 
 .. plot:: ../examples/plot_prox_example.py

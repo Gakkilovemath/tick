@@ -1,6 +1,5 @@
 from tick.plot import plot_hawkes_kernels
-from tick.simulation import SimuHawkesExpKernels, SimuHawkesMulti
-from tick.inference import HawkesExpKern
+from tick.hawkes import SimuHawkesExpKernels, SimuHawkesMulti, HawkesExpKern
 
 end_time = 1000
 n_realizations = 10

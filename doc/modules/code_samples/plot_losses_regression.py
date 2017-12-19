@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tick.optim.model import ModelLinReg, ModelEpsilonInsensitive, \
-    ModelHuber, ModelAbsoluteRegression
+from tick.linear_model import ModelLinReg
+from tick.robust import ModelEpsilonInsensitive, ModelHuber, \
+    ModelAbsoluteRegression
 
 n = 1000
 x = np.linspace(-2, 2, n)

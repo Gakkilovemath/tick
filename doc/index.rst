@@ -43,7 +43,7 @@
      </div>
 
      <div class="col-sm-4 col-sm-offset-1">
-        <a class="reference internal" href="modules/inference.html">
+        <a class="reference internal" href="modules/hawkes.html">
            <h2>tick.hawkes</h2>
         </a>
         <p>
@@ -54,7 +54,7 @@
 
   <div class="row">
      <div class="col-sm-4 col-sm-offset-1">
-        <a class="reference internal" href="modules/simulation.html">
+        <a class="reference internal" href="modules/linear_model.html">
            <h2>tick.linear_model</h2>
         </a>
         <p>
@@ -68,31 +68,32 @@
      </div>
 
      <div class="col-sm-4 col-sm-offset-1">
-        <a class="reference internal" href="modules/optim.html">
+        <a class="reference internal" href="modules/robust.html">
            <h2>tick.robust</h2>
         </a>
         <p>
             A scikit-learn compatible module that proposes tools for robust
-            inference. It features models such as Huber regression, among a
-            bunch of others.
+            inference. It features tools for outliers detection and models such
+            as Huber regression, among others.
         </p>
      </div>
   </div>
 
   <div class="row">
      <div class="col-sm-4 col-sm-offset-1">
-        <a class="reference internal" href="modules/simulation.html">
+        <a class="reference internal" href="modules/survival.html">
            <h2>tick.survival</h2>
         </a>
-        <p>
+        <p>A module that provides basic tools for survival analysis, such as
+            Cox regression.
         </p>
      </div>
 
      <div class="col-sm-4 col-sm-offset-1">
-        <a class="reference internal" href="modules/optim.html">
+        <a class="reference internal" href="modules/dataset.html">
            <h2>tick.dataset</h2>
         </a>
-        <p>
+        <p>Provides easy access to datasets used as benchmarks in tick.
         </p>
      </div>
   </div>
@@ -102,15 +103,18 @@
         <a class="reference internal" href="modules/simulation.html">
            <h2>tick.simulation</h2>
         </a>
-        <p>
+        <p>Basic tools for simulation, such as simulation of model weights and
+            feature matrices.
         </p>
      </div>
 
      <div class="col-sm-4 col-sm-offset-1">
-        <a class="reference internal" href="modules/optim.html">
+        <a class="reference internal" href="modules/preprocessing.html">
            <h2>tick.preprocessing</h2>
         </a>
-        <p>
+        <p>Some tools for preprocessing, such as features binarization (useful
+            for the binarsity penalization) and some tools for preprocessing of
+            longitudinal features.
         </p>
      </div>
   </div>
@@ -118,10 +122,12 @@
   <div class="row" style="margin-bottom:40px">
      <div class="col-sm-4 col-sm-offset-1">
         <a class="reference internal" href="modules/solver.html">
-           <h2>Solvers</h2>
+           <h2>tick.solver</h2>
         </a>
         <p>
-           Optimization algorithm
+           A module that provides a bunch of state-of-the-art optimization
+           algorithms, both batch and stochastic. This is one of the main
+           pillars of tick.
         </p>
      </div>
      <div class="col-sm-4 col-sm-offset-1">
@@ -129,7 +135,9 @@
            <h2>Proximal operators</h2>
         </a>
         <p>
-           Proximal operators for penalization of models weights
+           Flexible proximal operators for penalization of models weights. It
+           can be used seeminglessly with (almost) any model and any solver.
+            This module is used throughout the library.
         </p>
      </div>
  </div>
@@ -170,13 +178,15 @@
     :maxdepth: 2
     :hidden:
 
-    modules/inference
-    modules/optim
+    modules/hawkes
+    modules/linear_model
+    modules/robust
+    modules/survival
+    modules/simulation
     modules/solver
     modules/prox
     modules/plot
     modules/preprocessing
-    modules/simulation
     modules/dataset
     modules/dev
     modules/R

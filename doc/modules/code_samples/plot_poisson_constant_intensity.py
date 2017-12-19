@@ -1,4 +1,4 @@
-from tick.simulation import SimuPoissonProcess
+from tick.hawkes import SimuPoissonProcess
 from tick.plot import plot_point_process
 
 run_time = 10

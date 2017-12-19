@@ -1,7 +1,7 @@
 import numpy as np
-from tick.simulation import SimuLogReg, weights_sparse_gauss
+from tick.linear_model import ModelLogReg ,SimuLogReg
+from tick.simulation import weights_sparse_gauss
 from tick.solver import GD, AGD, SGD, SVRG, SDCA
-from tick.optim.model import ModelLogReg
 from tick.prox import ProxElasticNet, ProxL1
 from tick.plot import plot_history
 

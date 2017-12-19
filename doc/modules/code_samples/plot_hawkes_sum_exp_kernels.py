@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 
 from tick.plot import plot_hawkes_kernels
-from tick.simulation import SimuHawkesSumExpKernels, SimuHawkesMulti
-from tick.inference import HawkesSumExpKern
+from tick.hawkes import SimuHawkesSumExpKernels, SimuHawkesMulti, \
+    HawkesSumExpKern
 
 end_time = 1000
 n_realizations = 10
