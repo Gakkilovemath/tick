@@ -6,20 +6,20 @@ from tick.inference.base import LearnerHawkesNoParam
 from tick.inference.nphc.cumulants import Cumulants
 
 
-def starting_point(cumulants_list,random=False):
-    L_list, C_list, K_c_list = cumulants_list
-    d = len(L_list[0])
-    sqrt_C = sqrtm(np.mean(C_list,axis=0))
-    sqrt_L = np.sqrt(np.mean(L_list,axis=0))
+def starting_point(L, C, random=False):
+    d = len(C)
+    sqrt_C = sqrtm(C)
+    sqrt_L = np.sqrt(L)
     if random:
         M = random_orthogonal_matrix(d)
     else:
         M = np.eye(d)
-    initial = np.dot(np.dot(sqrt_C,M),np.diag(1./sqrt_L))
+    initial = np.dot(np.dot(sqrt_C, M), np.diag(1. / sqrt_L))
     return initial
 
+
 def random_orthogonal_matrix(dim):
-    M = np.random.rand(dim**2).reshape(dim, dim)
+    M = np.random.rand(dim ** 2).reshape(dim, dim)
     Q, _ = qr(M)
     return Q
 
@@ -122,8 +122,8 @@ class NPHC(LearnerHawkesNoParam):
         self.K_c = self.cumul.K_c.copy()
 
     def approximate_optimal_alpha(self):
-        norm_sq_C = norm(np.mean([C for C in self.C], axis=0)) ** 2
-        norm_sq_K_c = norm(np.mean([K_c for K_c in self.K_c], axis=0)) ** 2
+        norm_sq_C = norm(self.C) ** 2
+        norm_sq_K_c = norm(self.K_c) ** 2
         return norm_sq_K_c / (norm_sq_K_c + norm_sq_C)
 
     def objective(self, coeffs, loss: float=None):
@@ -133,25 +133,23 @@ class NPHC(LearnerHawkesNoParam):
     def _tf_model_coeffs(self):
         import tensorflow as tf
 
-        d = len(self.L[0])
         with self._tf_graph.as_default():
             with tf.variable_scope("model", reuse=tf.AUTO_REUSE):
-                return tf.get_variable("R", [d, d], dtype=tf.float64)
+                return tf.get_variable("R", [self.n_nodes, self.n_nodes],
+                                       dtype=tf.float64)
 
     @property
     def adjacency(self):
-        d = self.cumul._cumulant.get_n_nodes()
-        return np.eye(d) - scipy.linalg.inv(self.solution)
+        return np.eye(self.n_nodes) - scipy.linalg.inv(self.solution)
 
     @property
     def baseline(self):
-        L_avg = np.mean(self.L, axis=0)
-        return scipy.linalg.inv(self.solution).dot(L_avg)
+        return scipy.linalg.inv(self.solution).dot(self.L)
 
     def _tf_placeholders(self):
         import tensorflow as tf
 
-        d = len(self.L[0])
+        d = self.n_nodes
         if self._tf_feed_dict is None:
             with self._tf_graph.as_default():
                 L = tf.placeholder(tf.float64, d, name='L')
@@ -163,7 +161,7 @@ class NPHC(LearnerHawkesNoParam):
 
     def _tf_objective_graph(self):
         import tensorflow as tf
-        d = len(self.L[0])
+        d = self.n_nodes
 
         if self.alpha is None:
             alpha = self.approximate_optimal_alpha()
@@ -230,17 +228,15 @@ class NPHC(LearnerHawkesNoParam):
 
         self._compute_cumulants()
 
-        cumulants_list = [self.L, self.C, self.K_c]
-        d = len(self.L[0])
         if adjacency_start is None:
-            start_point = starting_point(cumulants_list, random=False)
+            start_point = starting_point(self.L, self.C, random=False)
         else:
             start_point = adjacency_start.copy()
 
         # always use the average cumulants over all realizations
-        L_avg = np.mean(self.L, axis=0)
-        C_avg = np.mean(self.C, axis=0)
-        K_avg = np.mean(self.K_c, axis=0)
+        L_avg = self.L
+        C_avg = self.C
+        K_avg = self.K_c
 
         cost = self._tf_objective_graph()
         L, C, K_c = self._tf_placeholders()
