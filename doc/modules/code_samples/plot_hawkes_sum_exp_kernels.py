@@ -29,5 +29,3 @@ fig = plot_hawkes_kernels(learner, hawkes=hawkes_exp_kernels, show=False)
 
 for ax in fig.axes:
     ax.set_ylim([0., 1.])
-
-plt.show()

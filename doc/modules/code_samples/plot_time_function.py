@@ -19,5 +19,4 @@ _, ax_list = plt.subplots(1, 3, figsize=(14, 4), sharey=True)
 for tf, ax in zip(time_functions, ax_list):
     plot_timefunction(tf_1, ax=ax)
     ax.set_ylim([-0.5, 6.0])
-
 plt.show()

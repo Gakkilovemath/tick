@@ -22,5 +22,4 @@ for i in range(2):
         ax[i, j].plot(t_values, kernels[i][j].get_values(t_values),
                       label=kernels[i][j])
         ax[i, j].legend()
-
 plt.show()

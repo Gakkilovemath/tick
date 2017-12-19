@@ -12,3 +12,4 @@ plt.subplot(1, 2, 2)
 plt.stem(weights2)
 
 plt.tight_layout()
+plt.show()

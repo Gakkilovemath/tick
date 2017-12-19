@@ -24,5 +24,3 @@ intensity_times = hawkes.intensity_tracked_times
 _, ax = plt.subplots(1, 2, figsize=(16, 4))
 plot_point_process(hawkes, n_points=50000, t_min=2, max_jumps=10, ax=ax[0])
 plot_point_process(hawkes, n_points=50000, t_min=2, t_max=20, ax=ax[1])
-
-plt.show()

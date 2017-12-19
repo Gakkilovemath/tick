@@ -1,5 +1,6 @@
 from tick.plot import plot_hawkes_kernels
 from tick.hawkes import SimuHawkesExpKernels, SimuHawkesMulti, HawkesExpKern
+import matplotlib.pyplot as plt
 
 end_time = 1000
 n_realizations = 10

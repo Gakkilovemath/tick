@@ -132,7 +132,7 @@
      </div>
      <div class="col-sm-4 col-sm-offset-1">
         <a class="reference internal" href="modules/prox.html">
-           <h2>Proximal operators</h2>
+           <h2>tick.prox</h2>
         </a>
         <p>
            Flexible proximal operators for penalization of models weights. It

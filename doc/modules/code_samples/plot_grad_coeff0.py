@@ -19,5 +19,4 @@ ax[0].stem(model.grad(coeffs0))
 ax[0].set_title(r"$\nabla f(\mathrm{coeffs0})$", fontsize=16)
 ax[1].stem(model.grad(np.ones(model.n_coeffs)))
 ax[1].set_title(r"$\nabla f(\mathrm{coeffs1})$", fontsize=16)
-
 plt.show()
