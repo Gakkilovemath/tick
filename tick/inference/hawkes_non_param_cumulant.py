@@ -40,6 +40,7 @@ class NPHC(LearnerHawkesNoParam):
 
     penalty : {'l1', 'l2', 'elasticnet', 'none'}, default='none'
         The penalization to use. By default no penalization is used.
+        Penalty is only applied to adjacency matrix.
 
     Attributes
     ----------
@@ -188,20 +189,13 @@ class NPHC(LearnerHawkesNoParam):
                    + alpha * tf.reduce_mean(
                 tf.squared_difference(activation_2, C))
 
-            reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
-            reg_l2 = tf.contrib.layers.l2_regularizer(self.strength_ridge)
-
-            if self.strength_ridge * self.strength_lasso > 0:
-                cost = tf.cast(cost, tf.float64) + reg_l1(
-                    (I - tf.matrix_inverse(R))) + reg_l2((I - tf.matrix_inverse(R)))
-            elif self.strength_lasso > 0:
-                cost = tf.cast(cost, tf.float64) + reg_l1(
-                    (I - tf.matrix_inverse(R)))
-            elif self.strength_ridge > 0:
-                cost = tf.cast(cost, tf.float64) + reg_l2(
-                    (I - tf.matrix_inverse(R)))
-            else:
-                cost = tf.cast(cost, tf.float64)
+            cost = tf.cast(cost, tf.float64)
+            if self.strength_lasso > 0:
+                reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
+                cost += reg_l1((I - tf.matrix_inverse(R)))
+            if self.strength_ridge > 0:
+                reg_l2 = tf.contrib.layers.l2_regularizer(self.strength_ridge)
+                cost += reg_l2((I - tf.matrix_inverse(R)))
 
             return cost
 
