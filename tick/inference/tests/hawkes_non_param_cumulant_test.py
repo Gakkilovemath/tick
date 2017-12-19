@@ -49,9 +49,9 @@ class Test(InferenceTest):
         model.fit(timestamps)
         model._compute_cumulants()
 
-        np.testing.assert_array_almost_equal(model.L, expected_L)
-        np.testing.assert_array_almost_equal(model.C, expected_C)
-        np.testing.assert_array_almost_equal(model.K_c, expected_K)
+        np.testing.assert_array_almost_equal(model.mean_intensity, expected_L)
+        np.testing.assert_array_almost_equal(model.covariance, expected_C)
+        np.testing.assert_array_almost_equal(model.skewness, expected_K)
 
         self.assertAlmostEqual(model.approximate_optimal_alpha(),
                                0.999197628503)

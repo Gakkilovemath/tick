@@ -26,17 +26,27 @@ class NPHC(LearnerHawkesNoParam):
 
     Attributes
     ----------
-    L : list of `np.array` shape=(dim,)
-        Estimated means
+    n_nodes : `int`
+        Number of nodes / components in the Hawkes model
 
-    C : list of `np.array` shape=(dim,dim)
-        Estimated covariance
+    baseline : `np.array`, shape=(n_nodes,)
+        Inferred baseline of each component's intensity
 
-    K_c : list of `np.array` shape=(dim,dim)
-        Estimated skewness (sliced)
+    adjacency : `np.ndarray`, shape=(n_nodes, n_nodes)
+        Inferred adjacency matrix
+
+    mean_intensity : list of `np.array` shape=(dim,)
+        Estimated mean intensities, named :math:`\\widehat{L}` in the paper
+
+    covariance : list of `np.array` shape=(dim,dim)
+        Estimated covariance, named :math:`\\widehat{C}` in the paper
+
+    skewness : list of `np.array` shape=(dim,dim)
+        Estimated skewness (sliced), named :math:`\\widehat{K^c}` in the paper
 
     R : `np.array` shape=(dim,dim)
-        Parameter of interest, linked to the integrals of Hawkes kernels
+        Estimated weight, linked to the integrals of Hawkes kernels.
+        Use to derive adjacency and baseline
 
     Other Parameters
     ----------------
@@ -63,9 +73,8 @@ class NPHC(LearnerHawkesNoParam):
     }
 
     def __init__(self, half_width, C=1e-3, penalty='none', solver='adam',
-                 elastic_net_ratio=0.95,
-                 tol=1e-5, verbose=False, max_iter=1000,
-                 print_every=100, record_every=10,
+                 elastic_net_ratio=0.95, tol=1e-5, verbose=False,
+                 max_iter=1000, print_every=100, record_every=10,
                  step=1e-2, alpha=None):
         try:
             import tensorflow as tf
@@ -79,7 +88,7 @@ class NPHC(LearnerHawkesNoParam):
         )
 
         self._elastic_net_ratio = None
-        self.C_pen = C
+        self.C = C
         self.penalty = penalty
         self.elastic_net_ratio = elastic_net_ratio
         self.step = step
@@ -99,13 +108,13 @@ class NPHC(LearnerHawkesNoParam):
     def _compute_cumulants(self):
         self.cumul.compute_cumulants()
 
-        self.L = self.cumul.L.copy()
-        self.C = self.cumul.C.copy()
-        self.K_c = self.cumul.K_c.copy()
+        self.mean_intensity = self.cumul.L.copy()
+        self.covariance = self.cumul.C.copy()
+        self.skewness = self.cumul.K_c.copy()
 
     def approximate_optimal_alpha(self):
-        norm_sq_C = norm(self.C) ** 2
-        norm_sq_K_c = norm(self.K_c) ** 2
+        norm_sq_C = norm(self.covariance) ** 2
+        norm_sq_K_c = norm(self.skewness) ** 2
         return norm_sq_K_c / (norm_sq_K_c + norm_sq_C)
 
     def objective(self, adjacency=None, R=None):
@@ -138,8 +147,9 @@ class NPHC(LearnerHawkesNoParam):
                 sess.run(tf.global_variables_initializer())
                 sess.run(self._tf_model_coeffs.assign(R))
 
-                return sess.run(cost,
-                                feed_dict={L: self.L, C: self.C, K_c: self.K_c})
+                return sess.run(cost, feed_dict={L: self.mean_intensity,
+                                                 C: self.covariance,
+                                                 K_c: self.skewness})
 
     @property
     def _tf_model_coeffs(self):
@@ -156,7 +166,7 @@ class NPHC(LearnerHawkesNoParam):
 
     @property
     def baseline(self):
-        return scipy.linalg.inv(self.solution).dot(self.L)
+        return scipy.linalg.inv(self.solution).dot(self.mean_intensity)
 
     def _tf_placeholders(self):
         import tensorflow as tf
@@ -264,19 +274,19 @@ class NPHC(LearnerHawkesNoParam):
 
                     # We don't use self.objective here as it would be very slow
                     objective = sess.run(
-                        cost, feed_dict={L: self.L, C: self.C, K_c: self.K_c})
+                        cost, feed_dict={L: self.mean_intensity, C: self.covariance, K_c: self.skewness})
                     self._handle_history(epoch, objective=objective)
 
                     sess.run(solver,
-                             feed_dict={L: self.L, C: self.C, K_c: self.K_c})
+                             feed_dict={L: self.mean_intensity, C: self.covariance, K_c: self.skewness})
 
                 print("Optimization Finished!")
 
                 self._set('solution', sess.run(self._tf_model_coeffs))
 
     def starting_point(self, random=False):
-        sqrt_C = sqrtm(self.C)
-        sqrt_L = np.sqrt(self.L)
+        sqrt_C = sqrtm(self.covariance)
+        sqrt_L = np.sqrt(self.mean_intensity)
         if random:
             random_matrix = np.random.rand(self.n_nodes, self.n_nodes)
             M, _ = qr(random_matrix)
@@ -333,17 +343,17 @@ class NPHC(LearnerHawkesNoParam):
     @property
     def strength_lasso(self):
         if self.penalty == 'elasticnet':
-            return self.elastic_net_ratio / self.C_pen
+            return self.elastic_net_ratio / self.C
         elif self.penalty == 'l1':
-            return 1. / self.C_pen
+            return 1. / self.C
         else:
             return 0.
 
     @property
     def strength_ridge(self):
         if self.penalty == 'elasticnet':
-            return (1 - self.elastic_net_ratio) / self.C_pen
+            return (1 - self.elastic_net_ratio) / self.C
         elif self.penalty == 'l2':
-            return 1. / self.C_pen
+            return 1. / self.C
         return 0.
 
