@@ -81,6 +81,12 @@ class Test(InferenceTest):
         np.testing.assert_array_almost_equal(model.adjacency,
                                              expected_adjacency)
 
+        np.testing.assert_array_almost_equal(model.objective(model.adjacency),
+                                             149029.4540306161)
+
+        np.testing.assert_array_almost_equal(model.objective(R=R_pred),
+                                             149029.4540306161)
+
     def test_hawkes_nphc_cumulants_solve_l1(self):
         timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
         model = NPHC(100., alpha=0.9, max_iter=300, print_every=30,
@@ -105,6 +111,12 @@ class Test(InferenceTest):
 
         np.testing.assert_array_almost_equal(model.adjacency,
                                              expected_adjacency)
+
+        np.testing.assert_array_almost_equal(model.objective(model.adjacency),
+                                             149061.5590630687)
+
+        np.testing.assert_array_almost_equal(model.objective(R=R_pred),
+                                             149061.5590630687)
 
     def test_hawkes_nphc_cumulants_solve_l2(self):
         timestamps, baseline, adjacency = Test.get_train_data(decay=3.)
@@ -131,6 +143,12 @@ class Test(InferenceTest):
 
         np.testing.assert_array_almost_equal(model.adjacency,
                                              expected_adjacency)
+
+        np.testing.assert_array_almost_equal(model.objective(model.adjacency),
+                                             149232.94041039888)
+
+        np.testing.assert_array_almost_equal(model.objective(R=R_pred),
+                                             149232.94041039888)
 
 
 if __name__ == "__main__":

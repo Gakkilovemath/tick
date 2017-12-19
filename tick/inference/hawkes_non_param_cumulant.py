@@ -126,8 +126,38 @@ class NPHC(LearnerHawkesNoParam):
         norm_sq_K_c = norm(self.K_c) ** 2
         return norm_sq_K_c / (norm_sq_K_c + norm_sq_C)
 
-    def objective(self, coeffs, loss: float=None):
-        raise NotImplementedError()
+    def objective(self, adjacency=None, R=None):
+        """Compute objective value for a given adjacency or variable R
+
+        Parameters
+        ----------
+        adjacency : `np.ndarray`, shape=(n_nodes, n_nodes), default=None
+            Adjacency matrix at which we compute objective.
+            If `None`, objective will be computed at `R`
+
+        R : `np.ndarray`, shape=(n_nodes, n_nodes), default=None
+            R variable at which objective is computed. Superseded by
+            adjacency if adjacency is not `None`
+
+        Returns
+        -------
+        Value of objective function
+        """
+        import tensorflow as tf
+        cost = self._tf_objective_graph()
+        L, C, K_c = self._tf_placeholders()
+
+        if adjacency is not None:
+            R = scipy.linalg.inv(np.eye(self.n_nodes) - adjacency)
+
+        with self._tf_graph.as_default():
+
+            with tf.Session() as sess:
+                sess.run(tf.global_variables_initializer())
+                sess.run(self._tf_model_coeffs.assign(R))
+
+                return sess.run(cost,
+                                feed_dict={L: self.L, C: self.C, K_c: self.K_c})
 
     @property
     def _tf_model_coeffs(self):
@@ -246,9 +276,10 @@ class NPHC(LearnerHawkesNoParam):
                 # Training cycle
                 for epoch in range(self.max_iter):
 
-                    avg_cost = sess.run(
+                    # We don't use self.objective here as it would be very slow
+                    objective = sess.run(
                         cost, feed_dict={L: self.L, C: self.C, K_c: self.K_c})
-                    self._handle_history(epoch, objective=avg_cost)
+                    self._handle_history(epoch, objective=objective)
 
                     sess.run(solver,
                              feed_dict={L: self.L, C: self.C, K_c: self.K_c})
