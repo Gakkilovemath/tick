@@ -233,11 +233,6 @@ class NPHC(LearnerHawkesNoParam):
         else:
             start_point = adjacency_start.copy()
 
-        # always use the average cumulants over all realizations
-        L_avg = self.L
-        C_avg = self.C
-        K_avg = self.K_c
-
         cost = self._tf_objective_graph()
         L, C, K_c = self._tf_placeholders()
 
@@ -251,11 +246,12 @@ class NPHC(LearnerHawkesNoParam):
                 # Training cycle
                 for epoch in range(self.max_iter):
 
-                    avg_cost = sess.run(cost, feed_dict={L: L_avg, C: C_avg,
-                                                         K_c: K_avg})
+                    avg_cost = sess.run(
+                        cost, feed_dict={L: self.L, C: self.C, K_c: self.K_c})
                     self._handle_history(epoch, objective=avg_cost)
 
-                    sess.run(solver, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
+                    sess.run(solver,
+                             feed_dict={L: self.L, C: self.C, K_c: self.K_c})
 
                 print("Optimization Finished!")
 
