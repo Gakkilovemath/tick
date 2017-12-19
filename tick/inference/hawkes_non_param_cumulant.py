@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 from scipy.linalg import qr, sqrtm, norm
 
 from tick.inference.base import LearnerHawkesNoParam
@@ -137,6 +138,11 @@ class NPHC(LearnerHawkesNoParam):
             with tf.variable_scope("model", reuse=tf.AUTO_REUSE):
                 return tf.get_variable("R", [d, d], dtype=tf.float64)
 
+    @property
+    def adjacency(self):
+        d = self.cumul._cumulant.get_n_nodes()
+        return np.eye(d) - scipy.linalg.inv(self.solution)
+
     def _tf_placeholders(self):
         import tensorflow as tf
 
@@ -225,7 +231,6 @@ class NPHC(LearnerHawkesNoParam):
             start_point = starting_point(cumulants_list, random=False)
         else:
             start_point = adjacency_start.copy()
-
 
         # always use the average cumulants over all realizations
         L_avg = np.mean(self.L, axis=0)

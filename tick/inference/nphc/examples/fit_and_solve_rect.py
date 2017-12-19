@@ -38,14 +38,12 @@ multi.simulate()
 nphc = NPHC(10, alpha=.9, max_iter=300, print_every=30,
             step=1e-2, solver='adam', penalty='l1', C=2e8, verbose=True)
 nphc.fit(multi.timestamps)
-
-R_pred = nphc.solve()
-G_pred = np.eye(d) - inv(R_pred)
+nphc.solve()
 
 learner = HawkesExpKern(100)
 learner.fit(multi.timestamps[0])
 
-coeffs = np.hstack((baselines, G_pred.ravel()))
+coeffs = np.hstack((baselines, nphc.adjacency.ravel()))
 learner._set('coeffs', coeffs)
 plot_hawkes_kernel_norms(learner, show=False)
 

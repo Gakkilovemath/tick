@@ -86,6 +86,13 @@ class Test(InferenceTest):
 
         np.testing.assert_array_almost_equal(R_pred, expected_R_pred)
 
+        expected_adjacency = [[-3.34742247, -6.28527387, -2.21012092],
+                              [-2.51556256, -5.55341413, -1.91501755],
+                              [1.84706793, 3.2770494, 1.44302449]]
+
+        np.testing.assert_array_almost_equal(model.adjacency,
+                                             expected_adjacency)
+
 
 if __name__ == "__main__":
     unittest.main()
