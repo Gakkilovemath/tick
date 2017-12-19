@@ -65,7 +65,7 @@ fig = plt.figure(figsize=(7, 6))
 titles = ['Model weights', 'Learned weights',
           'Sample intercepts', 'Learned intercepts']
 vectors = [weights0, learner.weights, sample_intercepts0,
-          learner.sample_intercepts]
+           learner.sample_intercepts]
 for idx_plot, title, vector in zip(range(221, 225), titles, vectors):
     ax = fig.add_subplot(idx_plot)
     ax.stem(vector)
