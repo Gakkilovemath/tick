@@ -75,7 +75,7 @@ class NPHC(LearnerHawkesNoParam):
         'cumul': {'writable': False},
         '_solver': {'writable': False},
         '_elastic_net_ratio': {'writable': False},
-        'C_pen': {}, '_tf_feed_dict': {},
+        'C_pen': {}, '_tf_feed_dict': {}, '_tf_graph': {},
     }
 
     def __init__(self, half_width, C=1e-3, penalty='none', solver='adam',
@@ -83,6 +83,11 @@ class NPHC(LearnerHawkesNoParam):
                  tol=1e-5, verbose=False, max_iter=1000,
                  print_every=100, record_every=10,
                  step=1e-2, alpha=None):
+        try:
+            import tensorflow as tf
+            self._tf_graph = tf.Graph()
+        except ImportError:
+            raise ImportError('`tensorflow` must be available to use NPHC')
 
         LearnerHawkesNoParam.__init__(
             self, tol=tol, verbose=verbose, max_iter=max_iter,
@@ -128,18 +133,20 @@ class NPHC(LearnerHawkesNoParam):
         import tensorflow as tf
 
         d = len(self.L[0])
-        with tf.variable_scope("model", reuse=tf.AUTO_REUSE):
-            return tf.get_variable("R", [d, d], dtype=tf.float64)
+        with self._tf_graph.as_default():
+            with tf.variable_scope("model", reuse=tf.AUTO_REUSE):
+                return tf.get_variable("R", [d, d], dtype=tf.float64)
 
     def _tf_placeholders(self):
         import tensorflow as tf
 
         d = len(self.L[0])
         if self._tf_feed_dict is None:
-            L = tf.placeholder(tf.float64, d, name='L')
-            C = tf.placeholder(tf.float64, (d, d), name='C')
-            K_c = tf.placeholder(tf.float64, (d, d), name='K_c')
-            self._tf_feed_dict = L, C, K_c
+            with self._tf_graph.as_default():
+                L = tf.placeholder(tf.float64, d, name='L')
+                C = tf.placeholder(tf.float64, (d, d), name='C')
+                K_c = tf.placeholder(tf.float64, (d, d), name='K_c')
+                self._tf_feed_dict = L, C, K_c
 
         return self._tf_feed_dict
 
@@ -152,39 +159,40 @@ class NPHC(LearnerHawkesNoParam):
         else:
             alpha = self.alpha
 
-        L, C, K_c = self._tf_placeholders()
-        R = self._tf_model_coeffs
-        I = tf.constant(np.eye(d), dtype=tf.float64)
+        with self._tf_graph.as_default():
+            L, C, K_c = self._tf_placeholders()
+            R = self._tf_model_coeffs
+            I = tf.constant(np.eye(d), dtype=tf.float64)
 
-        # Construct model
-        activation_3 = tf.matmul(C, tf.square(R),
-                                 transpose_b=True) + 2.0 * tf.matmul(R, R * C,
-                                                                     transpose_b=True) \
-                       - 2.0 * tf.matmul(R, tf.matmul(tf.diag(L), tf.square(R),
-                                                      transpose_b=True))
-        activation_2 = tf.matmul(R, tf.matmul(tf.diag(L), R, transpose_b=True))
+            # Construct model
+            activation_3 = tf.matmul(C, tf.square(R),
+                                     transpose_b=True) + 2.0 * tf.matmul(R, R * C,
+                                                                         transpose_b=True) \
+                           - 2.0 * tf.matmul(R, tf.matmul(tf.diag(L), tf.square(R),
+                                                          transpose_b=True))
+            activation_2 = tf.matmul(R, tf.matmul(tf.diag(L), R, transpose_b=True))
 
-        cost = (1 - alpha) * tf.reduce_mean(
-            tf.squared_difference(activation_3, K_c)) \
-               + alpha * tf.reduce_mean(
-            tf.squared_difference(activation_2, C))
+            cost = (1 - alpha) * tf.reduce_mean(
+                tf.squared_difference(activation_3, K_c)) \
+                   + alpha * tf.reduce_mean(
+                tf.squared_difference(activation_2, C))
 
-        reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
-        reg_l2 = tf.contrib.layers.l2_regularizer(self.strength_ridge)
+            reg_l1 = tf.contrib.layers.l1_regularizer(self.strength_lasso)
+            reg_l2 = tf.contrib.layers.l2_regularizer(self.strength_ridge)
 
-        if self.strength_ridge * self.strength_lasso > 0:
-            cost = tf.cast(cost, tf.float64) + reg_l1(
-                (I - tf.matrix_inverse(R))) + reg_l2((I - tf.matrix_inverse(R)))
-        elif self.strength_lasso > 0:
-            cost = tf.cast(cost, tf.float64) + reg_l1(
-                (I - tf.matrix_inverse(R)))
-        elif self.strength_ridge > 0:
-            cost = tf.cast(cost, tf.float64) + reg_l2(
-                (I - tf.matrix_inverse(R)))
-        else:
-            cost = tf.cast(cost, tf.float64)
+            if self.strength_ridge * self.strength_lasso > 0:
+                cost = tf.cast(cost, tf.float64) + reg_l1(
+                    (I - tf.matrix_inverse(R))) + reg_l2((I - tf.matrix_inverse(R)))
+            elif self.strength_lasso > 0:
+                cost = tf.cast(cost, tf.float64) + reg_l1(
+                    (I - tf.matrix_inverse(R)))
+            elif self.strength_ridge > 0:
+                cost = tf.cast(cost, tf.float64) + reg_l2(
+                    (I - tf.matrix_inverse(R)))
+            else:
+                cost = tf.cast(cost, tf.float64)
 
-        return cost
+            return cost
 
     def _solve(self, adjacency_start=None):
         """
@@ -226,24 +234,26 @@ class NPHC(LearnerHawkesNoParam):
 
         cost = self._tf_objective_graph()
         L, C, K_c = self._tf_placeholders()
-        solver = self.tf_solver(self.step).minimize(cost)
 
         # Launch the graph
-        with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
-            sess.run(self._tf_model_coeffs.assign(start_point))
-            # Training cycle
-            for epoch in range(self.max_iter):
+        with self._tf_graph.as_default():
+            solver = self.tf_solver(self.step).minimize(cost)
 
-                avg_cost = sess.run(cost, feed_dict={L: L_avg, C: C_avg,
-                                                     K_c: K_avg})
-                self._handle_history(epoch, objective=avg_cost)
+            with tf.Session() as sess:
+                sess.run(tf.global_variables_initializer())
+                sess.run(self._tf_model_coeffs.assign(start_point))
+                # Training cycle
+                for epoch in range(self.max_iter):
 
-                sess.run(solver, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
+                    avg_cost = sess.run(cost, feed_dict={L: L_avg, C: C_avg,
+                                                         K_c: K_avg})
+                    self._handle_history(epoch, objective=avg_cost)
 
-            print("Optimization Finished!")
+                    sess.run(solver, feed_dict={L: L_avg, C: C_avg, K_c: K_avg})
 
-            self._set('solution', sess.run(self._tf_model_coeffs))
+                print("Optimization Finished!")
+
+                self._set('solution', sess.run(self._tf_model_coeffs))
 
 
     @property
