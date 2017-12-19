@@ -103,8 +103,7 @@ class NPHC(LearnerHawkesNoParam):
         self.step = step
         self.alpha = alpha
 
-        self.cumul = Cumulants(half_width=half_width, mu_true=None,
-                               R_true=None)
+        self.cumul = Cumulants(half_width=half_width)
         self._learner = self.cumul._cumulant
         self._solver = solver
         self._tf_feed_dict = None

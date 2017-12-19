@@ -9,19 +9,28 @@ from tick.inference.build.inference import (
 
 class Cumulants(object):
 
-    def __init__(self, half_width=100., mu_true=None, R_true=None):
+    def __init__(self, half_width=100.):
         self.half_width = half_width
-
-        self.mu_true = mu_true
-        self.R_true = R_true
-
-        self.L_th = None
-        self.C_th = None
-        self.K_c_th = None
-        self.R_true = None
-        self.mu_true = None
-
         self._cumulant = _HawkesNonParamCumulant(self.half_width)
+
+    @property
+    def realizations(self):
+        return self._realizations
+
+    @realizations.setter
+    def realizations(self, val):
+        self._realizations = val
+        self.dim = len(self.realizations[0])
+        self.n_realizations = len(self.realizations)
+        self.time = np.zeros(self.n_realizations)
+        for day, realization in enumerate(self.realizations):
+            T_day = float(max(x[-1] for x in realization if len(x) > 0))
+            self.time[day] = T_day
+        self.L = np.zeros((self.n_realizations, self.dim))
+        self.C = np.zeros((self.n_realizations, self.dim, self.dim))
+        self._J = np.zeros((self.n_realizations, self.dim, self.dim))
+        self._E_c = np.zeros((self.n_realizations, self.dim, self.dim, 2))
+        self.K_c = np.zeros((self.n_realizations, self.dim, self.dim))
 
     def compute_cumulants(self):
         self.compute_L()
@@ -29,11 +38,6 @@ class Cumulants(object):
         self.compute_E_c()
         self.K_c = [get_K_c(self._E_c[day]) for day in
                     range(self.n_realizations)]
-
-        if self.R_true is not None and self.mu_true is not None:
-            self.set_L_th()
-            self.set_C_th()
-            self.set_K_c_th()
 
     def compute_L(self):
         for day, realization in enumerate(self.realizations):
@@ -76,24 +80,6 @@ class Cumulants(object):
 
             self._E_c[day] = E_c.copy()
 
-    @property
-    def realizations(self):
-        return self._realizations
-
-    @realizations.setter
-    def realizations(self, val):
-        self._realizations = val
-        self.dim = len(self.realizations[0])
-        self.n_realizations = len(self.realizations)
-        self.time = np.zeros(self.n_realizations)
-        for day, realization in enumerate(self.realizations):
-            T_day = float(max(x[-1] for x in realization if len(x) > 0))
-            self.time[day] = T_day
-        self.L = np.zeros((self.n_realizations, self.dim))
-        self.C = np.zeros((self.n_realizations, self.dim, self.dim))
-        self._J = np.zeros((self.n_realizations, self.dim, self.dim))
-        self._E_c = np.zeros((self.n_realizations, self.dim, self.dim, 2))
-        self.K_c = np.zeros((self.n_realizations, self.dim, self.dim))
 
 ###########
 ## Empirical cumulants with formula from the paper
