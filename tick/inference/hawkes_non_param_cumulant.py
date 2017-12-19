@@ -6,24 +6,6 @@ from tick.inference.base import LearnerHawkesNoParam
 from tick.inference.nphc.cumulants import Cumulants
 
 
-def starting_point(L, C, random=False):
-    d = len(C)
-    sqrt_C = sqrtm(C)
-    sqrt_L = np.sqrt(L)
-    if random:
-        M = random_orthogonal_matrix(d)
-    else:
-        M = np.eye(d)
-    initial = np.dot(np.dot(sqrt_C, M), np.diag(1. / sqrt_L))
-    return initial
-
-
-def random_orthogonal_matrix(dim):
-    M = np.random.rand(dim ** 2).reshape(dim, dim)
-    Q, _ = qr(M)
-    return Q
-
-
 class NPHC(LearnerHawkesNoParam):
     """
     A class that implements non-parametric estimation described in th paper
@@ -238,11 +220,13 @@ class NPHC(LearnerHawkesNoParam):
 
         Parameters
         ----------
-        adjacency_start : np.ndarray, shape=(dim + dim * dim,), default=`None`
+        adjacency_start : `str` or `np.ndarray, shape=(dim + dim * dim,), default=`None`
             Initial guess for the adjacency matrix. Will be used as 
             starting point in optimization.
             If `None`, a default starting point is estimated from the 
             estimated cumulants
+            If `"random"`, as with `None`, a starting point is estimated from
+            estimated cumulants with a bit a randomness
 
         max_iter : `int`
             The number of training epochs.
@@ -258,10 +242,12 @@ class NPHC(LearnerHawkesNoParam):
 
         self._compute_cumulants()
 
-        if adjacency_start is None:
-            start_point = starting_point(self.L, self.C, random=False)
+        if adjacency_start is None or adjacency_start == 'random':
+            random = adjacency_start == 'random'
+            start_point = self.starting_point(random=random)
         else:
-            start_point = adjacency_start.copy()
+            start_point = scipy.linalg.inv(
+                np.eye(self.n_nodes) - adjacency_start)
 
         cost = self._tf_objective_graph()
         L, C, K_c = self._tf_placeholders()
@@ -287,6 +273,17 @@ class NPHC(LearnerHawkesNoParam):
                 print("Optimization Finished!")
 
                 self._set('solution', sess.run(self._tf_model_coeffs))
+
+    def starting_point(self, random=False):
+        sqrt_C = sqrtm(self.C)
+        sqrt_L = np.sqrt(self.L)
+        if random:
+            random_matrix = np.random.rand(self.n_nodes, self.n_nodes)
+            M, _ = qr(random_matrix)
+        else:
+            M = np.eye(self.n_nodes)
+        initial = np.dot(np.dot(sqrt_C, M), np.diag(1. / sqrt_L))
+        return initial
 
 
     @property
